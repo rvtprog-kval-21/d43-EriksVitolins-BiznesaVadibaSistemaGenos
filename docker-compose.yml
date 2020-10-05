@@ -1,0 +1,43 @@
+version: '3.2'
+
+services:
+    php:
+        build:
+            context: .
+            dockerfile: ./ops/Dockerfile-php
+        environment:
+            APP_ENV: dev
+            DATABASE_URL: mysql://root:mua3Rgadasdadasdasdasasagas2a41aASeXK8XMUPvMN@mysql:3306/genos?serverVersion=5.7
+        volumes:
+            - ./api/:/var/www/api/
+        networks:
+            - webNet
+        depends_on:
+            - mysql
+    nginx:
+        build:
+            context: .
+            dockerfile: ./ops/Dockerfile-nginx
+        volumes:
+            - ./api/:/var/www/api/
+        ports:
+            - 8000:8000
+        networks:
+            - webNet
+    mysql:
+        image: mysql
+        command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-authentication-plugin=mysql_native_password']
+        environment:
+            MYSQL_DATABASE: genos
+            MYSQL_USER: genos
+            MYSQL_PASSWORD: mua3Rgadasdadasdasdasasagas2a41aASeXK8XMUPvMN
+            MYSQL_ROOT_PASSWORD: mua3Rgadasdadasdasdasasagas2a41aASeXK8XMUPvMN
+            Service_Name: mysql
+        ports:
+            - 3306:3306
+        volumes:
+            - ./mysql:/var/lib/mysql
+        networks:
+            - webNet
+networks:
+    webNet:
