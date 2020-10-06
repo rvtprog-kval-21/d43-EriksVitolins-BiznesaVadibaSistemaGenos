@@ -104,7 +104,7 @@
               class="nav-row nav-links"
               tag="li"
               active-class="active"
-              to="/progile/settings"
+              to="/profile/settings"
               exact
             >
               <a>Settings</a>
@@ -112,6 +112,46 @@
           </div>
         </NavMenuDropDown>
         <AdminNavItems v-if="currentUser.role === 'admin'"></AdminNavItems>
+        <NavMenuDropDown title="Tags">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon icon-tabler icon-tabler-traffic-cone"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="#ffffff"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1="4" y1="20" x2="20" y2="20" />
+            <line x1="9.4" y1="10" x2="14.6" y2="10" />
+            <line x1="7.8" y1="15" x2="16.2" y2="15" />
+            <path d="M6 20l5 -15h2l5 15" />
+          </svg>
+          <div slot="nav-menu-content">
+            <router-link
+              class="nav-row nav-links"
+              tag="li"
+              active-class="active"
+              to="/tags"
+              exact
+            >
+              <a>Tags</a>
+            </router-link>
+            <router-link
+              class="nav-row nav-links"
+              tag="li"
+              active-class="active"
+              to="/locations"
+              exact
+            >
+              <a>Location</a>
+            </router-link>
+          </div>
+        </NavMenuDropDown>
         <router-link
           class="nav-row"
           tag="li"

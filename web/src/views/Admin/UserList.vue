@@ -41,7 +41,7 @@
       </div>
       <div class="body">
         <div class="table-header grid">
-          <p class="id">Id</p>
+          <p class="id">Avatar</p>
           <p>Email</p>
           <p>Role</p>
           <p>Created At</p>
@@ -177,7 +177,7 @@ export default {
   width: 80%;
   margin-right: auto;
   margin-left: auto;
-  padding: 40px 0 0 0;
+  padding: 0 0 0 0;
 
   .table {
     display: flex;
@@ -258,7 +258,7 @@ export default {
 
     .grid {
       display: grid;
-      grid-template-columns: 50px auto 100px 150px 20px;
+      grid-template-columns: 60px auto 100px 150px 20px;
       grid-template-rows: 50px;
 
       div {

@@ -108,7 +108,7 @@ export default {
             this.$store.commit("loginSuccess", res);
             this.$router.push({ path: "/home" });
           })
-          .catch((error) => {
+          .catch(error => {
             this.$store.commit("loginFailed", {
               error: error.response.data.error
             });

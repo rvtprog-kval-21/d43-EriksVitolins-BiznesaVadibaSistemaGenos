@@ -265,14 +265,14 @@ export default {
       this.alerts = [];
       const vue = this;
       window.axios
-              .post("/api/auth/user/lock", { id: this.user.id })
-              .then(response => {
-                this.alerts = { message: response.data.message };
-                this.getUser();
-              })
-              .catch(function(errors) {
-                vue.errors = { error: errors.response.data.error };
-              });
+        .post("/api/auth/user/lock", { id: this.user.id })
+        .then(response => {
+          this.alerts = { message: response.data.message };
+          this.getUser();
+        })
+        .catch(function(errors) {
+          vue.errors = { error: errors.response.data.message };
+        });
     },
     getName: function() {
       return this.user.userdata.name.length;
@@ -295,7 +295,7 @@ export default {
           this.user = res.data.data;
         })
         .catch(function(rej) {
-          vue.errors = { error: rej.response.data.error };
+          vue.errors = { error: rej.response.data.message };
         });
     },
     getImgUrl() {
