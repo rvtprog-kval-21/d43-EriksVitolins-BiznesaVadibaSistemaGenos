@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,9 +34,10 @@ Route::middleware(['auth:api','isAdmin'])->group(function (){
     Route::post('users', 'App\Http\Controllers\UsersController@index');
     Route::post('auth/user/passreset','App\Http\Controllers\AuthController@reset');
     Route::post('auth/user/lock','App\Http\Controllers\AuthController@lock');
+    Route::post('locationAdd',[LocationController::class,'new']);
 });
 
 Route::middleware(['auth:api'])->group(function (){
     Route::get('user/{id}','App\Http\Controllers\UsersController@user');
+    Route::get('locations',[LocationController::class,'index']);
 });
-

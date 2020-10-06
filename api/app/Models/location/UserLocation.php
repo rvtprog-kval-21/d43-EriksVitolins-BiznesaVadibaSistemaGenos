@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Models\tags;
+namespace App\Models\location;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model
+class UserLocation extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'name'
-    ];
 }

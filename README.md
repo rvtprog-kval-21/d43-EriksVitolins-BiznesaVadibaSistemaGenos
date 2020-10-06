@@ -48,6 +48,7 @@ Projektā tiek izmantots:
   
     [Youtube](https://www.youtube.com/watch?v=ojGbaJuQXe8&t=294s) - Uzlikt gmail kā sūtītāju
     
+    [Medium](https://medium.com/modulr/api-rest-with-laravel-5-6-passport-authentication-generate-avatar-part-3-d92ec7935eff) - Kā izveidot avatar izmantojot laravolt package
   - Vuejs
     
     [Vuejs Docs](https://vuejs.org/v2/guide/installation.html) - Izmantots example kods
@@ -58,7 +59,7 @@ Projektā tiek izmantots:
 
   - Vuejs un Laravel
   
-    [Pagination](https://github.com/gilbitron/laravel-vue-pagination) - Izmantots example kods 
+    [Pagination](https://github.com/gilbitron/laravel-vue-pagination) - Izmantots example kods, lai izveidotu pagnāciju 
     
     [youtube](https://www.youtube.com/watch?v=zMk52OlK2Aw&t=146s) - lapu pagnācija
     
