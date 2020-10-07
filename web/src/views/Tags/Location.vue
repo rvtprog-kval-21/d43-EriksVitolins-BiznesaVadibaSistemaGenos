@@ -1,7 +1,7 @@
 <template>
   <div class="init-screen">
     <alertComponent v-if="this.errors.error" class="alert-danger">
-      <p v-for="(iter,index) in errors" :key="index">{{iter.name}}</p>
+      <p v-for="(iter, index) in errors" :key="index">{{ iter.name }}</p>
     </alertComponent>
     <alertComponent v-if="this.alerts.message" class="alert-success">
       <p>{{ this.alerts.message }}</p>
@@ -10,9 +10,12 @@
       v-if="addIsOpened === false && editIsOpened === false"
       class="container"
     >
-      <div class="top-btns">
+      <div class="top-btns" v-if="currentUser.role === 'admin'">
         <div @click="addIsOpened = !addIsOpened" class="add-btn btn">
           <p>Add</p>
+        </div>
+        <div @click="deleteLocations" class="delete-btn btn">
+          <p>Delete</p>
         </div>
         <div @click="editIsOpened = !editIsOpened" class="edit-btn btn">
           <p>Edit</p>
@@ -20,8 +23,12 @@
       </div>
 
       <div class="top-info">
-        <div class="selectAll">
-          <input type="checkbox" />
+        <div class="selectAll" v-if="currentUser.role === 'admin'">
+          <input
+            @click="selecteAllLocations"
+            v-model="allLocationsSelected"
+            type="checkbox"
+          />
         </div>
         <div class="nr">
           <p>Nr</p>
@@ -35,10 +42,18 @@
       </div>
       <div class="hr"></div>
 
-      <div class="table-row grid-table" v-for="(iter,index) in locations" :key="index">
-        <input type="checkbox">
-        <p>{{iter.id}}</p>
-        <p>{{iter.Name}}</p>
+      <div
+        class="table-row grid-table"
+        v-for="(iter, index) in locations"
+        :key="index"
+      >
+        <input
+          type="checkbox"
+          v-model="iter.isChecked"
+          v-if="currentUser.role === 'admin'"
+        />
+        <p>{{ iter.id }}</p>
+        <p>{{ iter.Name }}</p>
         <p>0</p>
       </div>
     </div>
@@ -97,6 +112,16 @@
           <line x1="5" y1="12" x2="11" y2="6" />
         </svg>
       </div>
+
+      <div class="edit-box" v-for="(iter, index) in locations" :key="index">
+        <div v-if="iter.isChecked" class="holder">
+          <p>{{ index }}:</p>
+          <input v-model="iter.Name" :placeholder="iter.Name" type="text" />
+        </div>
+      </div>
+      <div class="btn btn-save" @click="saveEditedLocations">
+        <p>Save</p>
+      </div>
     </div>
   </div>
 </template>
@@ -115,26 +140,33 @@ export default {
       newLocation: "",
       errors: {},
       alerts: {},
-      locations: []
+      locations: [],
+      allLocationsSelected: false,
+      locationsSelected: []
     };
   },
   mounted() {
     this.loadLocations();
   },
   methods: {
+    selecteAllLocations: function() {
+      this.locations.forEach(
+        iter => (iter.isChecked = !this.allLocationsSelected)
+      );
+    },
     addNewLocation: function() {
       this.errors = {};
       this.alerts = {};
       const vue = this;
       window.axios
-        .post("/api/locationAdd", {name: this.newLocation})
+        .post("/api/locationAdd", { name: this.newLocation })
         .then(res => {
           this.alerts = { message: res.data.message };
-          this.newLocation = ""
-          this.addIsOpened = false
+          this.newLocation = "";
+          this.addIsOpened = false;
         })
         .catch(function(rej) {
-          if (rej.response.data.errors){
+          if (rej.response.data.errors) {
             vue.errors = { error: rej.response.data.errors };
           } else {
             vue.errors = { error: rej.response.data.message };
@@ -145,14 +177,60 @@ export default {
       this.errors = [];
       const vue = this;
       window.axios
-              .get("/api/locations")
-              .then(response => {
-                this.locations = response.data.data;
-              })
-              .catch(function(errors) {
-                vue.errors = { error: errors.response.data.message };
-              });
+        .get("/api/locations")
+        .then(response => {
+          this.locations = response.data.data;
+        })
+        .catch(function(errors) {
+          vue.errors = { error: errors.response.data.message };
+        });
     },
+    saveEditedLocations() {
+      this.alerts = [];
+      this.errors = [];
+      const vue = this;
+      for (let i = 0; i < this.locations.length; i++) {
+        if (this.locations[i].isChecked) {
+          window.axios
+            .post("/api/locations/edit", {
+              name: this.locations[i].Name,
+              id: this.locations[i].id
+            })
+            .then(() => {
+              this.alerts = { message: "Changes made successfully" };
+              this.locations[i].isChecked = false;
+              this.editIsOpened = false;
+            })
+            .catch(function(errors) {
+              vue.errors = { error: errors.response.data.errors };
+            });
+        }
+      }
+      this.loadLocations();
+    },
+    deleteLocations() {
+      this.alerts = [];
+      this.errors = [];
+      const vue = this;
+      for (let i = 0; i < this.locations.length; i++) {
+        if (this.locations[i].isChecked) {
+          window.axios
+            .post("/api/locations/delete", { id: this.locations[i].id })
+            .then(() => {
+              this.alerts = { message: "Changes made successfully" };
+            })
+            .catch(function(errors) {
+              vue.errors = { error: errors.response.data.errors };
+            });
+        }
+      }
+      this.loadLocations();
+    }
+  },
+  computed: {
+    currentUser() {
+      return this.$store.getters.currentUser;
+    }
   }
 };
 </script>
@@ -192,12 +270,13 @@ export default {
     }
   }
 
-  .top-info, .grid-table {
+  .top-info,
+  .grid-table {
     display: grid;
     grid-template-columns: 50px 50px auto 100px;
   }
 
-  .table-row{
+  .table-row {
     margin-top: 5px;
   }
 
@@ -217,6 +296,18 @@ export default {
       align-items: center;
       height: 120px;
       justify-content: space-between;
+    }
+  }
+
+  .Edit-container {
+    .edit-box {
+      margin-bottom: 20px;
+      .holder {
+        display: flex;
+        p {
+          margin-right: 5px;
+        }
+      }
     }
   }
 }

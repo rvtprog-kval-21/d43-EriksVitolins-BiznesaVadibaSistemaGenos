@@ -35,6 +35,8 @@ Route::middleware(['auth:api','isAdmin'])->group(function (){
     Route::post('auth/user/passreset','App\Http\Controllers\AuthController@reset');
     Route::post('auth/user/lock','App\Http\Controllers\AuthController@lock');
     Route::post('locationAdd',[LocationController::class,'new']);
+    Route::post('locations/edit',[LocationController::class,'update']);
+    Route::post('locations/delete',[LocationController::class,'delete']);
 });
 
 Route::middleware(['auth:api'])->group(function (){

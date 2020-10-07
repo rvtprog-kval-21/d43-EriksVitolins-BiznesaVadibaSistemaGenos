@@ -24,4 +24,20 @@ class LocationController extends Controller
             'data' => Location::all(),
         ], 201);
     }
+
+    public function update(LocationNew $request){
+        $location = Location::find($request->id);
+        $location->Name = $request->name;
+        $location->save();
+        return response()->json([
+            'message' => 'Location Saved',
+        ], 201);
+    }
+
+    public function delete(Request $request){
+        Location::destroy($request->id);
+        return response()->json([
+            'message' => 'Location Saved',
+        ], 201);
+    }
 }
