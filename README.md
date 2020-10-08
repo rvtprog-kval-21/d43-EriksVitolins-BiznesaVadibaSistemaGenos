@@ -49,6 +49,8 @@ Projektā tiek izmantots:
     [Youtube](https://www.youtube.com/watch?v=ojGbaJuQXe8&t=294s) - Uzlikt gmail kā sūtītāju
     
     [Medium](https://medium.com/modulr/api-rest-with-laravel-5-6-passport-authentication-generate-avatar-part-3-d92ec7935eff) - Kā izveidot avatar izmantojot laravolt package
+  
+    [Youtube](https://www.youtube.com/watch?v=V5xINbA-z9o) - Daudz pret daudz attiecības laravel
   - Vuejs
     
     [Vuejs Docs](https://vuejs.org/v2/guide/installation.html) - Izmantots example kods

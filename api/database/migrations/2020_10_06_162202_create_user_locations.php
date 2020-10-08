@@ -13,8 +13,7 @@ class CreateUserLocations extends Migration
      */
     public function up()
     {
-        Schema::create('user_locations', function (Blueprint $table) {
-            $table->id();
+        Schema::create('location_user', function (Blueprint $table) {
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('location_id')->references('id')->on('locations');
         });
@@ -27,6 +26,6 @@ class CreateUserLocations extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_locations');
+        Schema::dropIfExists('location_user');
     }
 }

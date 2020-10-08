@@ -53,7 +53,7 @@
           v-if="currentUser.role === 'admin'"
         />
         <p>{{ iter.id }}</p>
-        <p>{{ iter.Name }}</p>
+        <p class="link" @click="goToLocation(iter.id)">{{ iter.Name }}</p>
         <p>0</p>
       </div>
     </div>
@@ -149,6 +149,9 @@ export default {
     this.loadLocations();
   },
   methods: {
+    goToLocation: function(id) {
+      this.$router.push("/location/" + id);
+    },
     selecteAllLocations: function() {
       this.locations.forEach(
         iter => (iter.isChecked = !this.allLocationsSelected)
@@ -164,6 +167,7 @@ export default {
           this.alerts = { message: res.data.message };
           this.newLocation = "";
           this.addIsOpened = false;
+          this.loadLocations()
         })
         .catch(function(rej) {
           if (rej.response.data.errors) {
@@ -251,6 +255,15 @@ export default {
     margin-bottom: 30px;
   }
 
+  .link{
+    cursor: pointer;
+    color: #1976d2;
+
+    &:hover {
+      color: #004ba0;
+      text-decoration: none;
+    }
+  }
   .btn {
     display: flex;
     justify-content: center;

@@ -6,6 +6,7 @@ import AddUsers from "../views/Admin/AddUsers";
 import UserList from "../views/Admin/UserList";
 import ProfileComponent from "../views/Profile/ProfileComponent";
 import Location from "../views/Tags/Location";
+import LocationList from "../views/Tags/LocationList";
 
 Vue.use(VueRouter);
 
@@ -42,6 +43,10 @@ const routes = [
   {
     path: "/locations",
     component: Location
+  },
+  {
+    path: "/location/:id",
+    component: LocationList
   }
 ];
 

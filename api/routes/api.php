@@ -42,4 +42,7 @@ Route::middleware(['auth:api','isAdmin'])->group(function (){
 Route::middleware(['auth:api'])->group(function (){
     Route::get('user/{id}','App\Http\Controllers\UsersController@user');
     Route::get('locations',[LocationController::class,'index']);
+    Route::post('location/join',[LocationController::class,'join']);
+    Route::get('location/{id}/users',[LocationController::class,'users']);
+    Route::post('location/leave',[LocationController::class,'leave']);
 });

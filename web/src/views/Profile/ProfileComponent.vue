@@ -14,7 +14,7 @@
         <div class="card">
           <div class="name">
             <p v-if="getName && getLastName">
-              {{ this.user.userdata.name + " " + this.user.userdata.lastname }}
+              {{ this.user.name + " " + this.user.lastname }}
             </p>
             <p v-else>...</p>
           </div>
@@ -28,7 +28,7 @@
                 <div class="holder">
                   <p class="title">About:</p>
                   <p v-if="getAbout" class="result">
-                    {{ this.user.userdata.about }}
+                    {{ this.user.about }}
                   </p>
                   <p v-else class="result">Nan</p>
                 </div>
@@ -36,21 +36,21 @@
                 <div class="holder">
                   <p class="title">Phone:</p>
                   <p v-if="getAbout" class="result">
-                    {{ this.user.userdata.about }}
+                    {{ this.user.about }}
                   </p>
                   <p v-else class="result">Nan</p>
                 </div>
                 <div class="holder">
                   <p class="title">Birthday:</p>
                   <p v-if="getAbout" class="result">
-                    {{ this.user.userdata.about }}
+                    {{ this.user.about }}
                   </p>
                   <p v-else class="result">Nan</p>
                 </div>
                 <div class="holder">
                   <p class="title">Nameday:</p>
                   <p v-if="getAbout" class="result">
-                    {{ this.user.userdata.about }}
+                    {{ this.user.about }}
                   </p>
                   <p v-else class="result">Nan</p>
                 </div>
@@ -69,7 +69,7 @@
                 <div class="holder">
                   <p class="title">Title:</p>
                   <p v-if="getTitle" class="result">
-                    {{ this.user.userdata.title }}
+                    {{ this.user.title }}
                   </p>
                   <p v-else class="result">Nan</p>
                 </div>
@@ -116,7 +116,7 @@
       <div class="admin" v-if="showAdminSettings">
         <div class="header-admin">
           <p v-if="getName && getLastName">
-            {{ user.userdata.name + " " + user.userdata.lastname }}
+            {{ user.name + " " + user.lastname }}
           </p>
           <svg
             @click="showAdminSettings = !showAdminSettings"
@@ -275,16 +275,16 @@ export default {
         });
     },
     getName: function() {
-      return this.user.userdata.name.length;
+      return this.user.name.length;
     },
     getLastName: function() {
-      return this.user.userdata.lastname.length;
+      return this.user.lastname.length;
     },
     getTitle: function() {
-      return this.user.userdata.title.length;
+      return this.user.title.length;
     },
     getAbout: function() {
-      return this.user.userdata.about.length;
+      return this.user.about.length;
     },
     getUser: function() {
       this.errors = {};
