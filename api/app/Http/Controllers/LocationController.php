@@ -71,7 +71,7 @@ class LocationController extends Controller
     }
 
     public function leave(LocationUser $locationUser) {
-        DB::table('location_user')->where('user_id', $locationUser->user)->delete();
+        DB::table('location_user')->where('user_id', $locationUser->user)->where('location_id',$locationUser->location)->delete();
         return response()->json([
             'message' => 'User left location',
         ], 201);
