@@ -21,6 +21,10 @@ class CreateUsersTable extends Migration
             $table->enum('role',['admin','regular'])->default('regular');
             $table->boolean('locked')->default(0);
             $table->string('avatar')->default('avatar.png');
+            $table->string('name')->default('Janis');
+            $table->string('title')->nullable();
+            $table->string('lastname')->default('Voris');
+            $table->text('about')->nullable();
             $table->timestamps();
         });
     }

@@ -26,7 +26,8 @@ services:
             - webNet
     mysql:
         image: mysql
-        command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-authentication-plugin=mysql_native_password']
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
         environment:
             MYSQL_DATABASE: genos
             MYSQL_USER: genos

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\location;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LocationNew extends FormRequest
+class LocationUser extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,16 +24,8 @@ class LocationNew extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:locations|min:2'
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'name.required' => 'A name is required',
-            'name.unique' => 'The name isn\'t unique',
-            'name.min' => 'The name need to be atleast one character'
+            'user' => 'required',
+            'location' =>'required|'
         ];
     }
 }

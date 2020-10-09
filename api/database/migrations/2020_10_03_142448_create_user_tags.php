@@ -13,8 +13,7 @@ class CreateUserTags extends Migration
      */
     public function up()
     {
-        Schema::create('user_tags', function (Blueprint $table) {
-            $table->id();
+        Schema::create('tag_user', function (Blueprint $table) {
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('tag_id')->references('id')->on('tags');
         });
@@ -27,6 +26,6 @@ class CreateUserTags extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_tags');
+        Schema::dropIfExists('tag_user');
     }
 }

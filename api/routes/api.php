@@ -35,9 +35,14 @@ Route::middleware(['auth:api','isAdmin'])->group(function (){
     Route::post('auth/user/passreset','App\Http\Controllers\AuthController@reset');
     Route::post('auth/user/lock','App\Http\Controllers\AuthController@lock');
     Route::post('locationAdd',[LocationController::class,'new']);
+    Route::post('locations/edit',[LocationController::class,'update']);
+    Route::post('locations/delete',[LocationController::class,'delete']);
 });
 
 Route::middleware(['auth:api'])->group(function (){
     Route::get('user/{id}','App\Http\Controllers\UsersController@user');
     Route::get('locations',[LocationController::class,'index']);
+    Route::post('location/join',[LocationController::class,'join']);
+    Route::get('location/{id}/users',[LocationController::class,'users']);
+    Route::post('location/leave',[LocationController::class,'leave']);
 });

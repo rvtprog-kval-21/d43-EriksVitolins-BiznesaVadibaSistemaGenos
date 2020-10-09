@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Location;
 use App\Models\Users\UserData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 'password','role','temp_password', 'avatar', 'locked'
+        'email', 'password','role','temp_password', 'avatar', 'locked','name','lastname','about','title'
     ];
 
     /**
@@ -42,5 +43,10 @@ class User extends Authenticatable
 
     public function userdata() {
         return $this->hasOne(UserData::class,'user_id','id');
+    }
+
+    public function locations()
+    {
+        return $this->belongsToMany(Location::class, 'user_locations');
     }
 }
