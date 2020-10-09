@@ -54,7 +54,7 @@
         />
         <p>{{ iter.id }}</p>
         <p class="link" @click="goToLocation(iter.id)">{{ iter.Name }}</p>
-        <p>0</p>
+        <p>{{ iter.count}}</p>
       </div>
     </div>
     <div v-if="addIsOpened" class="Add-container">

@@ -26,8 +26,12 @@ class LocationController extends Controller
 
     public function index()
     {
+        $locations = Location::all();
+        foreach( $locations as $iter){
+            $iter->count = DB::table('location_user')->where('location_id', $iter->id)->count();
+        }
         return response()->json([
-            'data' => Location::all(),
+            'data' => $locations
         ], 201);
     }
 

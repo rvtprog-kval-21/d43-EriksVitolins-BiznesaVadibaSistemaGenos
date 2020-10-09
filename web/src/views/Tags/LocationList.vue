@@ -9,9 +9,11 @@
         <div class="container">
             <div class="btns">
                 <div class="top-btns">
-                    <div class="add-btn btn">
-                        <p v-if="!isPartOfLocation" @click="joinLocation">Join</p>
-                        <p @click="leave" v-else>Leave</p>
+                    <div v-if="!isPartOfLocation" class="add-btn btn" @click="joinLocation">
+                        <p>Join</p>
+                    </div>
+                    <div v-else class="add-btn btn" @click="leave">
+                        <p>Leave</p>
                     </div>
                     <div class="add-btn btn" v-if="currentUser.role === 'admin'">
                         <p>Add</p>
