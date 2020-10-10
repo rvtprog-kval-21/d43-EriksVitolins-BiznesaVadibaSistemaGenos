@@ -31,7 +31,7 @@
             <b-button v-b-tooltip.hover title="Profile" class="button-burger">
                 <b-icon icon="person" variant="white"></b-icon>
             </b-button>
-            <b-button v-b-tooltip.hover title="Logout" class="button-burger">
+            <b-button v-b-tooltip.hover title="Logout" @click="logout" class="button-burger">
                 <b-icon icon="chevron-bar-right" variant="white"></b-icon>
             </b-button>
         </b-navbar>
@@ -40,9 +40,24 @@
 
 <script>
     import SidebarContent from "./SidebarContent";
+    import {setAuthorization} from "../../helpers/middleware";
     export default {
         components: { SidebarContent },
-        name: "HeaderTest"
+        name: "HeaderTest",
+        methods: {
+            logout() {
+                window.axios
+                    .get(process.env.VUE_APP_API + "/api/auth/logout")
+                    .then(response => {
+                        setAuthorization(response.data.access_token);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                this.$store.commit("logout");
+                this.$router.push("/");
+            },
+        }
     }
 </script>
 
