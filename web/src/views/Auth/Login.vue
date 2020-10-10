@@ -188,9 +188,9 @@ form {
 }
 
 .login-btn input {
-  background-color: #9575cd;
+  background-color: #007c91;
   border-radius: 12px;
-  border: 1px solid #9575cd;
+  border: 1px solid #007c91;
   display: inline-block;
   cursor: pointer;
   color: #ffffff;
@@ -202,7 +202,7 @@ form {
 }
 
 .login-btn input:hover {
-  background-color: #65499c;
+  background-color: #00acc1;
 }
 
 .login-btn input:active {
