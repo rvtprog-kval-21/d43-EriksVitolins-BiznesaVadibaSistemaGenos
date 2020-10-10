@@ -88,22 +88,18 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($password),
                 'temp_password' => $password,
-                'role' => $request->role
-            ]);
-            $user->save();
-            $userData = new UserData([
-                'user_id' => $user->id,
+                'role' => $request->role,
                 'name' => $request->name,
                 'lastname' => $request->lastname,
             ]);
-            $userData->save();
+            $user->save();
         } catch (\Exception $error){
             return response()->json([
                 'message' => 'User email ' . $request->email . ' already taken!'
             ], 422);
         }
         $user->notify(new SignupActivate($user));
-        $avatar = (new Avatar)->create($userData->name . " " . $userData->lastname)->getImageObject()->encode('png');
+        $avatar = (new Avatar)->create($user->name . " " . $user->lastname)->getImageObject()->encode('png');
         Storage::put('public/avatars/'.$user->id.'/avatar.png', (string) $avatar);
         return response()->json([
             'message' => 'User ' . $request->email . ' Created!',

@@ -49,6 +49,10 @@ Projektā tiek izmantots:
     [Youtube](https://www.youtube.com/watch?v=ojGbaJuQXe8&t=294s) - Uzlikt gmail kā sūtītāju
     
     [Medium](https://medium.com/modulr/api-rest-with-laravel-5-6-passport-authentication-generate-avatar-part-3-d92ec7935eff) - Kā izveidot avatar izmantojot laravolt package
+  
+    [Youtube](https://www.youtube.com/watch?v=V5xINbA-z9o) - Daudz pret daudz attiecības laravel
+
+    [StackOverflow](https://stackoverflow.com/questions/30507849/counting-a-many-to-many-relationship) - kā iegūt many to many attiecību skaitu
   - Vuejs
     
     [Vuejs Docs](https://vuejs.org/v2/guide/installation.html) - Izmantots example kods
@@ -86,16 +90,3 @@ Projektā tiek izmantots:
 :information_source: :exclamation: *Obligāti jānorāda visi avoti, kas ir izmantoti, kas ir skatīts, kāds kods ir kopēts, ja tas netiks norādīts un tiks identificēts, ka kods ir kopēts darbs netiks ieskaitīts.* :exclamation:
 
 ## Uzstādīšanas instrukcijas
-1. Lai lietotu git lejupielādējam [Git for windows](https://git-scm.com/download/win)
-2. Instalējam git.
-3. [Lejupielādējam WAMP](http://www.wampserver.com/en/), lai varētu izveidot webserveri.
-4. Instalējam WAMP.
-5. Pārliecinamies par WAMP darbību atverot adresi http://127.0.0.1
-6. Dodamies uz WAMP atrašanās vietu parasti c:\wamp\www un izdzēšam tā saturu.
-7. Veicam labo klikšķi un izvēlamies opciju "git bash here" un izpildam zemāk raksīto komandu.
-```
-git clone https://github.com/rvtprog-kvalifikacija-20/d43-MarisDanne-paraugaProjekts.git
-```
-8. Atveram adresi http://127.0.0.1/d43-MarisDanne-paraugaProjekts/ 
-  
-:information_source: *Norādām veidu, kā izmantojot repozitoriju var tikt pie strādājoša projekta uz citas ierīces, ja nepieciešams pievieno arī datubāzes dump file un arī default user/password*

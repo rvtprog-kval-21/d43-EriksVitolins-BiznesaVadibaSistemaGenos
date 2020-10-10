@@ -40,7 +40,6 @@ class UsersController extends Controller
 
     public function user($id = null) {
         $user = User::find($id);
-        $test = $user->userdata;
         return response()->json([
             'data' => $user,
         ], 201);
