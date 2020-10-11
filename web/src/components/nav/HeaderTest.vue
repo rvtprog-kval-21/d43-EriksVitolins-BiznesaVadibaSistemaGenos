@@ -1,11 +1,12 @@
 <template>
     <div>
         <b-navbar toggleable="lg" type="dark" variant="info">
+            <b-navbar-brand href="/home">Genos</b-navbar-brand>
             <b-button class="button-burger" v-b-toggle.sidebar-left>
                 <b-icon icon="justify" variant="white"></b-icon>
             </b-button>
             <b-sidebar id="sidebar-left" bg-variant="dark" text-variant="light" title="Genos" left>
-                <div class="px-3 py-2">
+                <div class="py-2">
                     <SidebarContent></SidebarContent>
                 </div>
             </b-sidebar>
@@ -25,10 +26,10 @@
                     </b-nav-form>
                 </b-navbar-nav>
             </b-collapse>
-            <b-button v-b-tooltip.hover title="Settings" class="button-burger">
+            <b-button v-b-tooltip.hover title="Settings" @click="settings" class="button-burger">
                 <b-icon icon="gear" variant="white"></b-icon>
             </b-button>
-            <b-button v-b-tooltip.hover title="Profile" class="button-burger">
+            <b-button v-b-tooltip.hover title="Profile" @click="profile" class="button-burger">
                 <b-icon icon="person" variant="white"></b-icon>
             </b-button>
             <b-button v-b-tooltip.hover title="Logout" @click="logout" class="button-burger">
@@ -57,7 +58,18 @@
                 this.$store.commit("logout");
                 this.$router.push("/");
             },
-        }
+            profile() {
+                this.$router.push("/user/" + this.currentUser.id + "/profile");
+            },
+            settings() {
+                this.$router.push("/user/" + this.currentUser.id + "/settings");
+            }
+        },
+        computed: {
+            currentUser() {
+                return this.$store.getters.currentUser;
+            }
+        },
     }
 </script>
 

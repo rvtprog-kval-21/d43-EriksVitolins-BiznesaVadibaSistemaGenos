@@ -60,7 +60,6 @@ hr {
   background-size: cover;
   background-repeat: repeat;
   background-position: center center;
-  display: flex;
   height: 100%;
   background-color:#eceff1;
 }
