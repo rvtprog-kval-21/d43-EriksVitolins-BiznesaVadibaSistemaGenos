@@ -3,7 +3,7 @@
         <div class="">
             <b-alert v-if="this.errors.error" variant="danger" show="">{{this.errors.error}}</b-alert>
         </div>
-        <b-row>
+        <b-row class="filter">
             <b-col>
                 <b-form-group
                         label="Filter"
@@ -41,7 +41,7 @@
                 </div>
             </template>
             <template v-slot:cell(name)="data">
-                {{ data.item.name }} {{ data.item.lastname }}
+                <p class="profile-link" @click="toProfile(data.item.id)">{{ data.item.name }} {{ data.item.lastname }}</p>
             </template>
         </b-table>
     </div>
@@ -90,7 +90,7 @@ export default {
                 });
         },
         toProfile(id) {
-            this.$router.push("/user/" + id);
+            this.$router.push("/user/" + id+ "/profile");
         },
         toggleBusy() {
             this.isBusy = !this.isBusy
@@ -99,11 +99,22 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
     .form-row{
         margin-right: 0;
     }
     .row{
         margin-right: 0;
+    }
+    .profile-link {
+        color: #00acc1;
+        cursor: pointer;
+        &:hover{
+        color: #af4448;
+         }
+    }
+
+    .filter{
+        margin-bottom: 20px;
     }
 </style>
