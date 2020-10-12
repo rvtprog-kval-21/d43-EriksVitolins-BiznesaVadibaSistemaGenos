@@ -3,10 +3,11 @@ import VueRouter from "vue-router";
 import Login from "../views/Auth/Login";
 import Home from "../views/Home";
 import AddUsers from "../views/Admin/AddUsers";
-import UserList from "../views/Admin/UserList";
+//import UserList from "../views/Admin/UserList";
 import ProfileComponent from "../views/Profile/ProfileComponent";
 import Location from "../views/Tags/Location";
 import LocationList from "../views/Tags/LocationList";
+import UserListTest from "../views/Admin/UserListTest";
 
 Vue.use(VueRouter);
 
@@ -31,7 +32,7 @@ const routes = [
   },
   {
     path: "/admin/users",
-    component: UserList,
+    component: UserListTest,
     meta: {
       requireAdmin: true
     }

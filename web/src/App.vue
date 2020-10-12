@@ -5,18 +5,17 @@
       rel="stylesheet"
     />
     <div id="nav" v-if="currentUser">
-      <HeaderTest></HeaderTest>
+      <HeaderMain></HeaderMain>
     </div>
     <router-view />
   </div>
 </template>
 
 <script>
-//import HeaderMain from "./components/nav/HeaderMain";
-import HeaderTest from "./components/nav/HeaderTest";
+import HeaderMain from "./components/nav/HeaderMain";
 export default {
   name: "App",
-  components: { HeaderTest },
+  components: { HeaderMain },
   computed: {
     currentUser() {
       return this.$store.getters.currentUser;
@@ -61,7 +60,7 @@ hr {
   background-repeat: repeat;
   background-position: center center;
   height: 100%;
-  background-color:#eceff1;
+  background-color: #eceff1;
 }
 
 #nav {

@@ -11,12 +11,9 @@ class UsersController extends Controller
 {
     public function index(Request $request)
     {
-        $data = $request->sort_by;
-        $data = explode(' ',$data);
-        $users = DB::table('users')->select('id','avatar','email','role','created_at')->orderBy($data[0],$data[1])->paginate(10);
+        $users = DB::table('users')->select('id','name', 'lastname','email','role','created_at',)->get();
         return response()->json([
-            'data' => $users,
-            'test' => $data
+            'data' => $users
         ], 201);
     }
 

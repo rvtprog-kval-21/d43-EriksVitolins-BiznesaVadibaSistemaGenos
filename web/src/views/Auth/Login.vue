@@ -10,7 +10,9 @@
         <div class="content right-side">
           <div class="screen right">
             <h1>Login</h1>
-            <b-alert v-if="authError" show variant="danger"><p>{{ authError }}</p></b-alert>
+            <b-alert v-if="authError" show variant="danger"
+              ><p>{{ authError }}</p></b-alert
+            >
             <form @submit.prevent="authenticate">
               <div class="login-email">
                 <svg
