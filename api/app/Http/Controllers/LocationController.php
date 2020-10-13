@@ -49,7 +49,7 @@ class LocationController extends Controller
     {
         Location::destroy($request->id);
         return response()->json([
-            'message' => 'Location Saved',
+            'message' => 'Location deleted',
         ], 201);
     }
 

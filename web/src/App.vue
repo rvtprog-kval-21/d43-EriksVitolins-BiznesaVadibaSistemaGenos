@@ -29,6 +29,12 @@ html,
 body {
   margin: 0;
   height: 100%;
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: repeat;
+  background-position: center center;
+  background-color: #eceff1;
+  height: 100%;
 }
 
 p {
@@ -55,27 +61,13 @@ hr {
 }
 
 #app {
-  background-attachment: fixed;
-  background-size: cover;
-  background-repeat: repeat;
-  background-position: center center;
-  height: 100%;
   background-color: #eceff1;
+  height: 100%;
 }
 
 #nav {
   width: 100%;
   height: 70px;
-}
-@media screen and (min-width: 1000px) {
-  #app {
-    height: 100%;
-  }
-}
-@media screen and (max-width: 750px) {
-  #app {
-    flex-direction: column;
-  }
 }
 
 html,
