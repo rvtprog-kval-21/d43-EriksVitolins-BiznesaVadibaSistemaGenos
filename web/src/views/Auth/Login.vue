@@ -10,9 +10,9 @@
         <div class="content right-side">
           <div class="screen right">
             <h1>Login</h1>
-            <alertComponent v-if="authError" class="alert-danger">
-              <p>{{ authError }}</p>
-            </alertComponent>
+            <b-alert v-if="authError" show variant="danger"
+              ><p>{{ authError }}</p></b-alert
+            >
             <form @submit.prevent="authenticate">
               <div class="login-email">
                 <svg
@@ -76,11 +76,9 @@
 
 <script>
 import { login } from "../../helpers/auth";
-import alertComponent from "../../components/alerts/alert-component";
 
 export default {
   name: "Login",
-  components: { alertComponent },
   data() {
     return {
       form: {
@@ -192,9 +190,9 @@ form {
 }
 
 .login-btn input {
-  background-color: #9575cd;
+  background-color: #007c91;
   border-radius: 12px;
-  border: 1px solid #9575cd;
+  border: 1px solid #007c91;
   display: inline-block;
   cursor: pointer;
   color: #ffffff;
@@ -206,7 +204,7 @@ form {
 }
 
 .login-btn input:hover {
-  background-color: #65499c;
+  background-color: #00acc1;
 }
 
 .login-btn input:active {

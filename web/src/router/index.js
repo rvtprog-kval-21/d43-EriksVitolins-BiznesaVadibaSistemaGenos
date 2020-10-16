@@ -3,10 +3,11 @@ import VueRouter from "vue-router";
 import Login from "../views/Auth/Login";
 import Home from "../views/Home";
 import AddUsers from "../views/Admin/AddUsers";
-import UserList from "../views/Admin/UserList";
 import ProfileComponent from "../views/Profile/ProfileComponent";
-import Location from "../views/Tags/Location";
+//import Location from "../views/Tags/Location";
 import LocationList from "../views/Tags/LocationList";
+import UserList from "../views/Admin/UserList";
+import LocationsTest from "../views/Tags/LocationsTest";
 
 Vue.use(VueRouter);
 
@@ -37,12 +38,12 @@ const routes = [
     }
   },
   {
-    path: "/user/:id",
+    path: "/user/:id/profile",
     component: ProfileComponent
   },
   {
     path: "/locations",
-    component: Location
+    component: LocationsTest
   },
   {
     path: "/location/:id",

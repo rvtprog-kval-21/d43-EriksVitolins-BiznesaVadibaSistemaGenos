@@ -54,7 +54,7 @@
         />
         <p>{{ iter.id }}</p>
         <p class="link" @click="goToLocation(iter.id)">{{ iter.Name }}</p>
-        <p>{{ iter.count}}</p>
+        <p>{{ iter.count }}</p>
       </div>
     </div>
     <div v-if="addIsOpened" class="Add-container">
@@ -167,7 +167,7 @@ export default {
           this.alerts = { message: res.data.message };
           this.newLocation = "";
           this.addIsOpened = false;
-          this.loadLocations()
+          this.loadLocations();
         })
         .catch(function(rej) {
           if (rej.response.data.errors) {
@@ -255,7 +255,7 @@ export default {
     margin-bottom: 30px;
   }
 
-  .link{
+  .link {
     cursor: pointer;
     color: #1976d2;
 

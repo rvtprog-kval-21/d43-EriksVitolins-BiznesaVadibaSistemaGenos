@@ -13,7 +13,6 @@
 
 <script>
 import HeaderMain from "./components/nav/HeaderMain";
-
 export default {
   name: "App",
   components: { HeaderMain },
@@ -29,6 +28,12 @@ export default {
 html,
 body {
   margin: 0;
+  height: 100%;
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: repeat;
+  background-position: center center;
+  background-color: #eceff1;
   height: 100%;
 }
 
@@ -56,25 +61,13 @@ hr {
 }
 
 #app {
-  background-attachment: fixed;
-  background-size: cover;
-  background-repeat: repeat;
-  background-position: center center;
-  display: flex;
+  background-color: #eceff1;
+  height: 100%;
 }
 
 #nav {
-  height: 100%;
-}
-@media screen and (min-width: 1000px) {
-  #app {
-    height: 100%;
-  }
-}
-@media screen and (max-width: 750px) {
-  #app {
-    flex-direction: column;
-  }
+  width: 100%;
+  height: 70px;
 }
 
 html,

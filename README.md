@@ -17,6 +17,7 @@ Projektā tiek izmantots:
   - Vuejs
     - Vuex
     - Vue Router 
+    - BootstrapVue
   - SCSS
   - Biblotēkas
     - validatejs - (https://validatejs.org/)
@@ -61,6 +62,7 @@ Projektā tiek izmantots:
     
     [stackoverflow](https://stackoverflow.com/questions/48402747/nuxt-js-vue-js-setting-axios-auth-token-in-vuex-store-resets-after-refresh) - axios request intercept
 
+    [BootstrapVue](https://bootstrap-vue.org/) - izmantots exmaple kods 
   - Vuejs un Laravel
   
     [Pagination](https://github.com/gilbitron/laravel-vue-pagination) - Izmantots example kods, lai izveidotu pagnāciju 
