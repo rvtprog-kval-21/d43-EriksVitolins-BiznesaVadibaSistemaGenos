@@ -22,6 +22,18 @@ type User struct {
 // FindByEmail find user by their email address
 func FindByEmail(email string) (*User, error) {
 	var user User
-	response := database.DBConn.Where("email = ?", email).First(&user)
+	response := database.DBConn.Select("email", "password", "id", "Role", "avatar", "name", "last_name").Where("email = ?", email).First(&user)
+	return &user, response.Error
+}
+
+func GetAllUsers() []User {
+	var users []User
+	database.DBConn.Select("email", "id", "Role", "avatar", "name", "last_name", "created_at").Find(&users)
+	return users
+}
+
+func GetUserById(id string) (*User, error) {
+	var user User
+	response := database.DBConn.Where("id = ?", id).First(&user)
 	return &user, response.Error
 }

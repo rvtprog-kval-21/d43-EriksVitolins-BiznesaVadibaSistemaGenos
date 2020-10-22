@@ -19,14 +19,25 @@ type loginError struct {
 	Error string `json:"error"`
 }
 
+type userLogin struct {
+	ID          *uint      `json:"id"`
+	Email       *string    `json:"email"`
+	Role        *string    `json:"role"`
+	Avatar      *string    `json:"avatar"`
+	Name        *string    `json:"name"`
+	Lastname    *string    `json:"lastname"`
+	AccessToken *string    `json:"access_token"`
+	About       *string    `json:"about"`
+	CreatedAt   *time.Time `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
+}
+
 type responseLogin struct {
-	ID          uint   `json:"id"`
-	Email       string `json:"email"`
-	Role        string `json:"role"`
-	Avatar      string `json:"avatar"`
-	Name        string `json:"name"`
-	Lastname    string `json:"lastname"`
-	AccessToken string `json:"access_token"`
+	Data userLogin `json:"data"`
+}
+
+type responseIndex struct {
+	Data *[]user_model.User `json:"data"`
 }
 
 func Login(context *fiber.Ctx) error {
@@ -53,22 +64,54 @@ func Login(context *fiber.Ctx) error {
 	if err != nil {
 		return context.SendStatus(fiber.StatusInternalServerError)
 	}
-	endResponse := responseLogin{
-		ID:          user.ID,
-		Email:       user.Email,
-		Role:        user.Role,
-		Avatar:      user.Avatar,
-		Name:        user.Name,
-		Lastname:    user.LastName,
-		AccessToken: realToken,
+	endResponse := userLogin{
+		ID:          &user.ID,
+		Email:       &user.Email,
+		Role:        &user.Role,
+		Avatar:      &user.Avatar,
+		Name:        &user.Name,
+		Lastname:    &user.LastName,
+		AccessToken: &realToken,
 	}
 	database.Close()
-	return context.JSON(endResponse)
+	return context.JSON(responseLogin{Data: endResponse})
 }
 
-func Index(c *fiber.Ctx) error {
-	return c.SendString("Hello, World 1!")
+func Index(context *fiber.Ctx) error {
+	database.Open()
+	users := user_model.GetAllUsers()
+	database.Close()
+	return context.JSON(responseIndex{Data: &users})
 }
-func User(c *fiber.Ctx) error {
-	return c.SendString("Hello, World 2!")
+func User(context *fiber.Ctx) error {
+	database.Open()
+	user, err := user_model.GetUserById(context.Params("id"))
+	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).JSON(loginError{Error: "Profile doesn't exist"})
+	}
+	endResponse := userLogin{
+		ID:        &user.ID,
+		Email:     &user.Email,
+		Role:      &user.Role,
+		Avatar:    &user.Avatar,
+		Name:      &user.Name,
+		Lastname:  &user.LastName,
+		About:     &user.About,
+		CreatedAt: &user.CreatedAt,
+		UpdatedAt: &user.UpdatedAt,
+	}
+	database.Close()
+	return context.JSON(responseLogin{Data: endResponse})
+}
+
+func LockUser(context *fiber.Ctx) error {
+	return context.JSON("Tetis")
+}
+
+func EmailExists(context *fiber.Ctx) error {
+	return context.JSON("Tetis")
+}
+
+func GetPassword(context *fiber.Ctx) error {
+	return context.JSON("Tetis")
 }
