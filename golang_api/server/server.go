@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"golang-api/controllers/user_controller"
 	"golang-api/helpers/middleware"
 )
@@ -20,6 +21,8 @@ func setupRoutes(app *fiber.App) {
 		AllowMethods:     "GET, POST, OPTIONS",
 		AllowCredentials: true,
 	}))
+	app.Use(logger.New())
+
 	app.Post("/auth/login", user_controller.Login)
 
 	api := app.Group("/api", middleware.Protected())
