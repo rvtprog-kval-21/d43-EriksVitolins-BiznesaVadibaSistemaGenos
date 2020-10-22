@@ -1,29 +1,6 @@
 version: '3.2'
 
 services:
-    php:
-        build:
-            context: .
-            dockerfile: ./ops/Dockerfile-php
-        environment:
-            APP_ENV: dev
-            DATABASE_URL: mysql://root:mua3Rgadasdadasdasdasasagas2a41aASeXK8XMUPvMN@mysql:3306/genos?serverVersion=5.7
-        volumes:
-            - ./api/:/var/www/api/
-        networks:
-            - webNet
-        depends_on:
-            - mysql
-    nginx:
-        build:
-            context: .
-            dockerfile: ./ops/Dockerfile-nginx
-        volumes:
-            - ./api/:/var/www/api/
-        ports:
-            - 8000:8000
-        networks:
-            - webNet
     mysql:
         image: mysql
         command: --default-authentication-plugin=mysql_native_password

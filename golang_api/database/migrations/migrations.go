@@ -13,8 +13,8 @@ func Migrate() {
 	database.Close()
 }
 func userMigrate() {
-	err := database.DBConn.AutoMigrate(&model.User{})
-	user := model.User{Email: "test@test.com", Password: password.HashAndSalt([]byte("test")), Role: "admin"}
+	err := database.DBConn.AutoMigrate(&user_model.User{})
+	user := user_model.User{Email: "test@test.com", Password: password.HashAndSalt([]byte("test")), Role: "admin"}
 	database.DBConn.Select("Email", "Password", "Role").Create(&user)
 	if err != nil {
 		panic("Migration failed")

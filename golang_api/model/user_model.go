@@ -1,6 +1,7 @@
-package model
+package user_model
 
 import (
+	"golang-api/database"
 	"gorm.io/gorm"
 	"time"
 )
@@ -16,4 +17,11 @@ type User struct {
 	About     string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+// FindByEmail find user by their email address
+func FindByEmail(email string) (*User, error) {
+	var user User
+	response := database.DBConn.Where("email = ?", email).First(&user)
+	return &user, response.Error
 }

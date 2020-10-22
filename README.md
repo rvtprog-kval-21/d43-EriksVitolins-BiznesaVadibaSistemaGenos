@@ -8,8 +8,7 @@ iekšējo sistēmu priekš kompānijas, kurā es strādāju, tagad plānotās ie
 
 ## Izmantotās tehnoloģijas
 Projektā tiek izmantots:
-  - PHP
-  - Laravel
+  - Golang
   - Docker
   - Docker-compose
   - Composer
@@ -20,9 +19,6 @@ Projektā tiek izmantots:
     - BootstrapVue
   - SCSS
   - Biblotēkas
-    - validatejs - (https://validatejs.org/)
-    - pagination laravel vuejs(https://github.com/gilbitron/laravel-vue-pagination)
-    - vue tags input(https://github.com/JohMun/vue-tags-input)
     - axios (https://github.com/axios/axios)
     - 
 

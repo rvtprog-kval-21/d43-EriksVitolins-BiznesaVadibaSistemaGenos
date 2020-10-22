@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"golang-api/config"
 	"golang-api/database"
+	user_model "golang-api/model"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -15,7 +16,7 @@ type login struct {
 }
 
 type loginError struct {
-	Error string
+	Error string `json:"error"`
 }
 
 type responseLogin struct {
@@ -34,7 +35,7 @@ func Login(context *fiber.Ctx) error {
 		return context.Status(500).JSON(loginError{Error: "Coudn't unmarshal json"})
 	}
 	database.Open()
-	user, err := FindByEmail(request.Email)
+	user, err := user_model.FindByEmail(request.Email)
 	if err != nil {
 		return context.Status(401).JSON(loginError{Error: "Email or Password is wrong"})
 	}
@@ -46,7 +47,8 @@ func Login(context *fiber.Ctx) error {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["email"] = user.Email
 	claims["id"] = user.ID
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	claims["role"] = user.Role
+	claims["exp"] = time.Now().Add(time.Hour * 9).Unix()
 	realToken, err := token.SignedString([]byte(config.SECRET))
 	if err != nil {
 		return context.SendStatus(fiber.StatusInternalServerError)
@@ -63,9 +65,10 @@ func Login(context *fiber.Ctx) error {
 	database.Close()
 	return context.JSON(endResponse)
 }
-func Signup(c *fiber.Ctx) error {
+
+func Index(c *fiber.Ctx) error {
 	return c.SendString("Hello, World 1!")
 }
-func Logout(c *fiber.Ctx) error {
+func User(c *fiber.Ctx) error {
 	return c.SendString("Hello, World 2!")
 }
