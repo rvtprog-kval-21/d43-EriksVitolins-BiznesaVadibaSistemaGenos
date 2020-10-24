@@ -8,8 +8,7 @@ iekšējo sistēmu priekš kompānijas, kurā es strādāju, tagad plānotās ie
 
 ## Izmantotās tehnoloģijas
 Projektā tiek izmantots:
-  - PHP
-  - Laravel
+  - Golang
   - Docker
   - Docker-compose
   - Composer
@@ -20,9 +19,6 @@ Projektā tiek izmantots:
     - BootstrapVue
   - SCSS
   - Biblotēkas
-    - validatejs - (https://validatejs.org/)
-    - pagination laravel vuejs(https://github.com/gilbitron/laravel-vue-pagination)
-    - vue tags input(https://github.com/JohMun/vue-tags-input)
     - axios (https://github.com/axios/axios)
     - 
 
@@ -31,6 +27,23 @@ Projektā tiek izmantots:
 
 [The 2019 Frontend Developer Crash Course - HTML & CSS Tutorial for Beginners](https://www.youtube.com/watch?v=8gNrZ4lAnAw) - kā pamats HTML, CSS apguvei skatījos videoklipu un apguvu kā pievienot CSS pie HTML.
   
+  - Golang
+  
+    [codementor](https://www.codementor.io/@tamizhvendan/managing-data-in-golang-using-gorm-part-1-a9cdjb8nb) - kā izveidot login controller
+    
+    [Medium](https://medium.com/@jcox250/password-hash-salt-using-golang-b041dc94cb72) - kā hash paroles golang(izmantoju doto kodu)
+    
+    [Youtube](https://www.youtube.com/watch?v=Iq2qT0fRhAA) kā veidot api izmantojot fiber un gorm biblotēkas 
+    
+    [GoByExample](https://gobyexample.com/command-line-arguments) - Cli (izmantoju doto kodu)
+    
+    [github](https://github.com/gofiber/jwt) - jwt web tokens izmantot priekš auth(izmantoju doto kodu)
+    
+    [Gorm](https://gorm.io/docs/index.html) - izmantoju docs priekš Gorm ORM lietošanas (izmantots exmaple kods)
+    
+    [Fiber](https://docs.gofiber.io/) - izmantoju docs priekš servera taisīšanas(izmantots exmaple kods)
+    
+    [Github](https://github.com/gofiber/recipes/tree/master/auth-jwt) - kā izveidot auth api ar golang izmantojot jwt(izmantoju doto kodu)
   - Docker
   
      [Dev.to](https://dev.to/aschmelyun/the-beauty-of-docker-for-local-laravel-development-13c0) - Kā izveidot docker-compose un vajadzīgās datnes priekš esošā projekts

@@ -10,7 +10,6 @@ export function initialize(store, router) {
       next();
     }
   });
-
   window.axios.defaults.baseURL = process.env.VUE_APP_API;
 
   window.axios.interceptors.request.use(request => {
@@ -19,9 +18,7 @@ export function initialize(store, router) {
       if (token) {
         request.headers.common["Authorization"] = "Bearer " + token;
       }
-      //window.axios.headers.append('Access-Control-Allow-Origin', process.env.VUE_APP_API);
-      // window.axios.headers.append('Access-Control-Allow-Credentials', 'true');
-    }
+      }
     return request;
   });
   window.axios.interceptors.response.use(null, error => {
@@ -37,5 +34,4 @@ export function initialize(store, router) {
 
 export function setAuthorization(token) {
   window.axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-  window.axios.defaults.headers.common.Accept = "application/json";
 }

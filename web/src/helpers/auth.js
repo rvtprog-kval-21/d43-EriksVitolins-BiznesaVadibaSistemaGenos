@@ -3,7 +3,7 @@ import { setAuthorization } from "./middleware";
 export function login(credentials) {
   return new Promise((resolve, reject) => {
     window.axios
-      .post("/api/auth/login", credentials)
+      .post("/auth/login", credentials)
       .then(response => {
         setAuthorization(response.data.access_token);
         resolve(response.data);
