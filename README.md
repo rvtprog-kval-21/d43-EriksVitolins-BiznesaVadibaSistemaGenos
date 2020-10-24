@@ -9,6 +9,8 @@ iekšējo sistēmu priekš kompānijas, kurā es strādāju, tagad plānotās ie
 ## Izmantotās tehnoloģijas
 Projektā tiek izmantots:
   - Golang
+    - Fiber
+    - Gorm
   - Docker
   - Docker-compose
   - Composer
@@ -18,15 +20,8 @@ Projektā tiek izmantots:
     - Vue Router 
     - BootstrapVue
   - SCSS
-  - Biblotēkas
-    - axios (https://github.com/axios/axios)
-    - 
 
 ## Izmantotie avoti
-[W3School](https://www.w3schools.com/html/default.asp) - tika ņemts example html kods.
-
-[The 2019 Frontend Developer Crash Course - HTML & CSS Tutorial for Beginners](https://www.youtube.com/watch?v=8gNrZ4lAnAw) - kā pamats HTML, CSS apguvei skatījos videoklipu un apguvu kā pievienot CSS pie HTML.
-  
   - Golang
   
     [codementor](https://www.codementor.io/@tamizhvendan/managing-data-in-golang-using-gorm-part-1-a9cdjb8nb) - kā izveidot login controller
@@ -52,21 +47,6 @@ Projektā tiek izmantots:
      
      [Digitalocean](https://www.digitalocean.com/community/tutorials/how-to-set-up-laravel-nginx-and-mysql-with-docker-compose) - Kā izveidot docker-compose un vajadzīgās datnes priekš esošā projekts
   
-  - Laravel
-  
-    [Laravel Docs](https://laravel.com/docs/8.x) - izmantots example kods
-    
-    [Medium](https://medium.com/modulr/create-api-authentication-with-passport-of-laravel-5-6-1dc2d400a7f) - kā uzstādīt backend auth sistēmu izmantojot oauth2
-  
-    [Medium](https://medium.com/modulr/create-api-authentication-passport-in-laravel-5-6-confirm-account-notifications-part-2-5e221b021f07) - jaunu lietotāju reģistrēšanas ziņa uz epastu  
-  
-    [Youtube](https://www.youtube.com/watch?v=ojGbaJuQXe8&t=294s) - Uzlikt gmail kā sūtītāju
-    
-    [Medium](https://medium.com/modulr/api-rest-with-laravel-5-6-passport-authentication-generate-avatar-part-3-d92ec7935eff) - Kā izveidot avatar izmantojot laravolt package
-  
-    [Youtube](https://www.youtube.com/watch?v=V5xINbA-z9o) - Daudz pret daudz attiecības laravel
-
-    [StackOverflow](https://stackoverflow.com/questions/30507849/counting-a-many-to-many-relationship) - kā iegūt many to many attiecību skaitu
   - Vuejs
     
     [Vuejs Docs](https://vuejs.org/v2/guide/installation.html) - Izmantots example kods
@@ -76,15 +56,13 @@ Projektā tiek izmantots:
     [stackoverflow](https://stackoverflow.com/questions/48402747/nuxt-js-vue-js-setting-axios-auth-token-in-vuex-store-resets-after-refresh) - axios request intercept
 
     [BootstrapVue](https://bootstrap-vue.org/) - izmantots exmaple kods 
+    
+    [stackoverflow](https://stackoverflow.com/questions/49414697/how-to-change-vue-js-data-value-when-screen-size-changes) - mainīt mainīgo vuejs ,kad mainās ekrāna izmērs  
+  
   - Vuejs un Laravel
   
-    [Pagination](https://github.com/gilbitron/laravel-vue-pagination) - Izmantots example kods, lai izveidotu pagnāciju 
-    
-    [youtube](https://www.youtube.com/watch?v=zMk52OlK2Aw&t=146s) - lapu pagnācija
-    
-    [youtube](https://www.youtube.com/watch?v=C1r85Q3BFqQ&list=PLJpBh2VJhy5wPhAmjDB42pkHUnqolqxxq&index=5 ) - vuejs spa autorazācija ar tokens  izmantojot laravel backend
-    
-    [stackoverflow](https://stackoverflow.com/questions/49414697/how-to-change-vue-js-data-value-when-screen-size-changes) - mainīt mainīgo vuejs ,kad mainās ekrāna izmērs    
+    [youtube](https://www.youtube.com/watch?v=C1r85Q3BFqQ&list=PLJpBh2VJhy5wPhAmjDB42pkHUnqolqxxq&index=5 ) - vuejs spa autorazācija ar tokens
+      
  
   - CSS
   
@@ -102,6 +80,24 @@ Projektā tiek izmantots:
   
     [Icons](https://tablericons.com/) - svg ikonas
   
-:information_source: :exclamation: *Obligāti jānorāda visi avoti, kas ir izmantoti, kas ir skatīts, kāds kods ir kopēts, ja tas netiks norādīts un tiks identificēts, ka kods ir kopēts darbs netiks ieskaitīts.* :exclamation:
 
 ## Uzstādīšanas instrukcijas
+Vajadzīgais software: docker-compose, Go, npm 
+
+1. git clone https://github.com/rvtprog-kval-21/d43-EriksVitolins-BiznesaVadibaSistemaGenos
+
+2. cd d43-EriksVitolins-BiznesaVadibaSistemaGenos
+
+3. dokcer-compose up -d --build
+
+4. cd golang_api
+
+5. go run main.go migrate
+
+6. go run main.go server
+
+7. cd ..
+
+8. cd web
+
+9. npm run serve
