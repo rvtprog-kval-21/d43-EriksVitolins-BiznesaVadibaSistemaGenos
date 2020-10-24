@@ -28,12 +28,24 @@ func FindByEmail(email string) (*User, error) {
 
 func GetAllUsers() []User {
 	var users []User
-	database.DBConn.Select("email", "id", "Role", "avatar", "name", "last_name", "created_at").Find(&users)
+	database.DBConn.Unscoped().Find(&users)
 	return users
 }
 
 func GetUserById(id string) (*User, error) {
 	var user User
-	response := database.DBConn.Where("id = ?", id).First(&user)
+	response := database.DBConn.Unscoped().Where("id = ?", id).First(&user)
 	return &user, response.Error
+}
+
+func SoftDeleteUser(id string) error {
+	response := database.DBConn.Where("id = ?", id).Delete(&User{})
+	return response.Error
+}
+
+func UnlockUser(id string) error {
+	var user User
+	response := database.DBConn.Unscoped().Where("id = ?", id).First(&user)
+	response = database.DBConn.Model(&user).Update("deleted_at", nil)
+	return response.Error
 }

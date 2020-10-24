@@ -40,6 +40,14 @@ type responseIndex struct {
 	Data *[]user_model.User `json:"data"`
 }
 
+type responseUser struct {
+	Data *user_model.User `json:"data"`
+}
+
+type responseLocked struct {
+	Data string `json:"data"`
+}
+
 func Login(context *fiber.Ctx) error {
 	request := new(login)
 	if err := context.BodyParser(request); err != nil {
@@ -89,29 +97,26 @@ func User(context *fiber.Ctx) error {
 	if err != nil {
 		return context.Status(fiber.StatusInternalServerError).JSON(loginError{Error: "Profile doesn't exist"})
 	}
-	endResponse := userLogin{
-		ID:        &user.ID,
-		Email:     &user.Email,
-		Role:      &user.Role,
-		Avatar:    &user.Avatar,
-		Name:      &user.Name,
-		Lastname:  &user.LastName,
-		About:     &user.About,
-		CreatedAt: &user.CreatedAt,
-		UpdatedAt: &user.UpdatedAt,
-	}
 	database.Close()
-	return context.JSON(responseLogin{Data: endResponse})
+	return context.JSON(responseUser{Data: user})
 }
 
 func LockUser(context *fiber.Ctx) error {
-	return context.JSON("Tetis")
+	database.Open()
+	err := user_model.SoftDeleteUser(context.Params("id"))
+	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).JSON(loginError{Error: "There was an error"})
+	}
+	database.Close()
+	return context.JSON(responseLocked{Data: "User is locked"})
 }
 
-func EmailExists(context *fiber.Ctx) error {
-	return context.JSON("Tetis")
-}
-
-func GetPassword(context *fiber.Ctx) error {
-	return context.JSON("Tetis")
+func UnlockUser(context *fiber.Ctx) error {
+	database.Open()
+	err := user_model.UnlockUser(context.Params("id"))
+	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).JSON(loginError{Error: "There was an error"})
+	}
+	database.Close()
+	return context.JSON(responseLocked{Data: "User is unlocked"})
 }

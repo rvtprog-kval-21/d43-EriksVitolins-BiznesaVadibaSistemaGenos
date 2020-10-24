@@ -33,6 +33,8 @@ func setupRoutes(app *fiber.App) {
 
 	admin.Post("/users", user_controller.Index)
 	api.Get("/user/:id/profile", user_controller.User)
+	admin.Post("/user/:id/lock", user_controller.LockUser)
+	admin.Post("/user/:id/unlock", user_controller.UnlockUser)
 
 	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404) // => 404 "Not Found"
