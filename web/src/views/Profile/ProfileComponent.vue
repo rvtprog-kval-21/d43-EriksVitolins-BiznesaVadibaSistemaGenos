@@ -1,219 +1,86 @@
 <template>
-  <div class="background">
-    <div class="content">
+  <div>
+    <b-container>
       <alertComponent v-if="this.errors.error" class="alert-danger">
         <p>{{ this.errors.error }}</p>
       </alertComponent>
       <alertComponent v-if="this.alerts.message" class="alert-success">
         <p>{{ this.alerts.message }}</p>
       </alertComponent>
-      <div class="user" v-if="!showAdminSettings">
-        <div class="backgroundHeader">
-          <img :src="getImgUrl()" alt="" />
-        </div>
-        <div class="card">
-          <div class="name">
-            <p v-if="getName && getLastName">
-              {{ this.user.name + " " + this.user.lastname }}
-            </p>
-            <p v-else>...</p>
-          </div>
-          <div class="main">
-            <div class="category">
-              <div class="header">
-                <p>Personal info</p>
-                <hr />
-              </div>
-              <div class="info">
-                <div class="holder">
-                  <p class="title">About:</p>
-                  <p v-if="getAbout" class="result">
-                    {{ this.user.about }}
-                  </p>
-                  <p v-else class="result">Nan</p>
-                </div>
-
-                <div class="holder">
-                  <p class="title">Phone:</p>
-                  <p v-if="getAbout" class="result">
-                    {{ this.user.about }}
-                  </p>
-                  <p v-else class="result">Nan</p>
-                </div>
-                <div class="holder">
-                  <p class="title">Birthday:</p>
-                  <p v-if="getAbout" class="result">
-                    {{ this.user.about }}
-                  </p>
-                  <p v-else class="result">Nan</p>
-                </div>
-                <div class="holder">
-                  <p class="title">Nameday:</p>
-                  <p v-if="getAbout" class="result">
-                    {{ this.user.about }}
-                  </p>
-                  <p v-else class="result">Nan</p>
-                </div>
-              </div>
-            </div>
-            <div class="category">
-              <div class="header">
-                <p>Work info</p>
-                <hr />
-              </div>
-              <div class="info">
-                <div class="holder">
-                  <p class="title">Role:</p>
-                  <p class="result">{{ this.user.role }}</p>
-                </div>
-                <div class="holder">
-                  <p class="title">Title:</p>
-                  <p v-if="getTitle" class="result">
-                    {{ this.user.title }}
-                  </p>
-                  <p v-else class="result">Nan</p>
-                </div>
-                <div class="holder">
-                  <p class="title">Tags:</p>
-                  <p class="result">{{ this.user.created_at }}</p>
-                </div>
-                <div class="holder">
-                  <p class="title">Location:</p>
-                  <p class="result">{{ this.user.created_at }}</p>
-                </div>
-              </div>
-            </div>
-            <div class="category" v-if="currentUser.role === 'admin'">
-              <div class="header">
-                <p>Admin info</p>
-                <hr />
-              </div>
-              <div class="info">
-                <div class="holder">
-                  <p class="title">Created_at:</p>
-                  <p class="result">{{ this.user.created_at }}</p>
-                </div>
-                <div class="holder">
-                  <p class="title">Updated_at:</p>
-                  <p class="result">{{ this.user.updated_at }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="button-holder">
-            <div class="buttons">
-              <button v-if="currentUser.id === user.id">Change settings</button>
-              <button
-                @click="showAdminSettings = !showAdminSettings"
-                v-if="currentUser.role === 'admin'"
-              >
-                Admin settings
-              </button>
-            </div>
+    </b-container>
+    <template v-if="user.Email">
+      <div class="header d-flex align-items-center">
+        <div class="container-fluid">
+          <span class="mask bg-gradient opacity-8"></span>
+          <div class="d-flex align-items-center container-fluid">
+            <b-row class="w-75">
+              <b-col cols="8">
+                <h1 class="mb-4">Welcome to <span class="title">{{user.Name + " " + user.LastName}}</span> profile! :)</h1>
+                <p class="mb-5 mt-4">{{user.About}}</p>
+              </b-col>
+            </b-row>
           </div>
         </div>
       </div>
-      <div class="admin" v-if="showAdminSettings">
-        <div class="header-admin">
-          <p v-if="getName && getLastName">
-            {{ user.name + " " + user.lastname }}
-          </p>
-          <svg
-            @click="showAdminSettings = !showAdminSettings"
-            xmlns="http://www.w3.org/2000/svg"
-            class="icon icon-tabler icon-tabler-arrow-left"
-            width="36"
-            height="36"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="#3F51B5"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <line x1="5" y1="12" x2="11" y2="18" />
-            <line x1="5" y1="12" x2="11" y2="6" />
-          </svg>
-        </div>
-
-        <div class="card">
-          <div class="holder">
-            <div class="title">
-              <p>Lock Account!</p>
-            </div>
-            <button @click="lock" v-if="this.user.locked === 0">Lock</button>
-            <button v-else @click="lock">Unlock</button>
+      <div class="body flex-wrap container-fluid d-flex justify-content-between">
+        <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5>User profile</h5>
+            <b-button>Settings</b-button>
           </div>
-        </div>
-
-        <div class="card">
-          <div class="holder">
-            <div class="title">
-              <p>Init password reset!</p>
-            </div>
-            <button @click="resetPassword">Reset</button>
+          <hr>
+          <h6 class="category-title">User info:</h6>
+          <div class="p-4">
+            <p>About: {{user.About}}</p>
           </div>
-        </div>
-
-        <div class="card" v-if="user.temp_password">
-          <div class="holder">
-            <div class="title">
-              <p>Temp password!</p>
-            </div>
-            <p v-if="showPassword">{{ user.temp_password }}</p>
-            <p v-if="!showPassword">************</p>
-            <button v-if="!showPassword" @click="showPassword = !showPassword">
-              Show
-            </button>
-            <button v-if="showPassword" @click="showPassword = !showPassword">
-              Hide
-            </button>
+          <div class="p-4 d-flex">
+            <p class="mr-5"><span class="mr-2">Birthday:</span> {{user.Birthday}}</p>
+            <p class="ml-5"><span class="mr-2">NameDay:</span> {{user.NameDay}}</p>
           </div>
-        </div>
-        <div class="card big">
-          <div class="holder">
-            <div class="title">
-              <p>Add tags!</p>
-            </div>
-            <div class="input">
-              <vue-tags-input
-                v-model="tag"
-                :tags="tags"
-                @tags-changed="newTags => (tags = newTags)"
-                :add-only-from-autocomplete="true"
-                :autocomplete-items="filteredTags"
-              />
-            </div>
-            <button>Save</button>
+          <div class="p-4">Tags placeholder</div>
+          <hr>
+          <template v-if="this.currentUser.role == 'admin'">
+            <h6 class="category-title">Admin section:</h6>
+            <b-row>
+              <b-col cols="6" class="pl-5 pr-5 pt-5">Created on:  {{ user.CreatedAt}}</b-col>
+              <b-col cols="6" class="pl-5 pr-5 pt-5">Updated on:  {{ user.UpdatedAt}}</b-col>
+              <b-col cols="6" class="pl-5 pr-5 pt-5"><b-button>Reset password</b-button></b-col>
+              <b-col cols="6" class="pl-5 pr-5 pt-5">
+                <b-button v-if="user.DeletedAt == '0001-01-01T00:00:00Z'">Lock Account</b-button>
+                <b-button v-else>Unlock Account</b-button>
+              </b-col>
+              <b-col cols="6" class="pl-5 pr-5 pt-5">
+                <p>New Email:</p>
+                <b-form-input type="email"></b-form-input>
+                <b-button class="mt-3">Save</b-button>
+              </b-col>
+            </b-row>
+          </template>
+        </b-col>
+        <b-col class="bg-white p-0 profile col-md-12 col-lg-4 mt-5">
+          <div class="bg-dark h-50 d-flex align-items-end justify-content-center">
+            <b-avatar class="avatar" variant="primary" size="8rem" text="EV"></b-avatar>
           </div>
-        </div>
-
-        <div class="card big last">
-          <div class="holder">
-            <div class="title">
-              <p>Add Location!</p>
-            </div>
-            <div class="input">
-              <vue-tags-input
-                v-model="location"
-                :tags="locations"
-                @tags-changed="newTags => (locations = newTags)"
-                :add-only-from-autocomplete="true"
-                :autocomplete-items="filteredLocations"
-              />
-            </div>
-            <button>Save</button>
+          <div class="d-flex p-4 justify-content-between">
+            <b-button>Follow</b-button>
+            <b-button>Message</b-button>
           </div>
-        </div>
+          <div class="d-flex justify-content-center mt-3">
+            <h4>{{user.Name + " " + user.LastName}}</h4>
+          </div>
+          <div class="d-flex grey justify-content-center mt-1">
+            <h6> {{user.Title}}</h6>
+          </div>
+          <div class="d-flex grey justify-content-center mt-1">
+            <h5> {{user.Email}} | {{user.PhoneNumber}}</h5>
+          </div>
+        </b-col>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script>
-import VueTagsInput from "@johmun/vue-tags-input";
 import alertComponent from "../../components/alerts/alert-component";
 
 export default {
@@ -224,7 +91,6 @@ export default {
     }
   },
   components: {
-    VueTagsInput,
     alertComponent
   },
   data() {
@@ -271,31 +137,19 @@ export default {
           this.getUser();
         })
         .catch(function(errors) {
-          vue.errors = { error: errors.response.data.message };
+          vue.errors = { error: errors.response.data.error };
         });
-    },
-    getName: function() {
-      return this.user.name.length;
-    },
-    getLastName: function() {
-      return this.user.lastname.length;
-    },
-    getTitle: function() {
-      return this.user.title.length;
-    },
-    getAbout: function() {
-      return this.user.about.length;
     },
     getUser: function() {
       this.errors = {};
       const vue = this;
       window.axios
-        .get("/api/user/" + this.$route.params.id)
+        .get("/api/user/" + this.$route.params.id + "/profile")
         .then(res => {
           this.user = res.data.data;
         })
         .catch(function(rej) {
-          vue.errors = { error: rej.response.data.message };
+          vue.errors = { error: rej.response.data.error };
         });
     },
     getImgUrl() {
@@ -325,155 +179,39 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.background {
-  background-color: #f5f5f5;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  overflow: auto;
-}
+  .header{
+    min-height: 500px;
+    background-size: cover;
+    background: #49599a;
+    color: white;
+    .about{
+      font-size: larger;
+    }
+    .title{
+      color: #fce4ec;
+    }
+  }
+  .body{
+    width: 90%;
+    position: relative;
+    top: -100px;
+    .card-universal{
+      border-radius: 5px;
+      .category-title{
+        color: #b0bec5;
+        font-weight: lighter;
+      }
+    }
+    .profile{
+      min-height: 400px;
+      .avatar{
+        position: relative;
+        bottom: -75px;
+      }
+      .grey{
+        color: #b0bec5;
+      }
+    }
+  }
 
-.content {
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .user {
-    width: 100%;
-  }
-  .backgroundHeader {
-    width: 100%;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  img {
-    width: 150px;
-    height: 130px;
-  }
-  .card {
-    width: 100%;
-    background: white;
-    overflow: auto;
-    .name {
-      display: flex;
-      justify-content: center;
-      margin-top: 10px;
-      p {
-        font-size: 28px;
-        font-weight: bolder;
-      }
-    }
-    .main {
-      margin-top: 15px;
-      .header {
-        width: 80%;
-        display: flex;
-        flex-direction: column;
-        margin-left: auto;
-        align-items: center;
-        margin-right: auto;
-        margin-bottom: 20px;
-        hr {
-          border: 0;
-          clear: both;
-          display: block;
-          width: 44%;
-          background-color: grey;
-          height: 1px;
-          margin-bottom: 10px;
-        }
-      }
-      .category {
-        .info {
-          display: grid;
-          grid-template-columns: auto auto;
-          .holder {
-            margin-left: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            .title {
-              font-weight: bolder;
-            }
-            p {
-              font-size: 18px;
-            }
-            .result {
-              margin-left: 10px;
-            }
-          }
-        }
-      }
-    }
-    .button-holder {
-      display: flex;
-      justify-content: center;
-      .buttons {
-        width: 90%;
-        display: grid;
-        grid-template-columns: auto;
-        grid-template-rows: 50px;
-        grid-gap: 40px;
-        margin-bottom: 40px;
-        margin-top: 10px;
-        button {
-          background-color: #e57373;
-          border: none;
-          color: white;
-          cursor: pointer;
-          &:hover {
-            background-color: #af4448;
-          }
-        }
-      }
-    }
-  }
-  .admin {
-    width: 100%;
-    .header-admin {
-      display: flex;
-      justify-content: space-between;
-      p {
-        color: #636b6f;
-      }
-
-      svg:hover {
-        stroke: red;
-        cursor: pointer;
-      }
-    }
-
-    .card {
-      margin-top: 30px;
-      min-height: 100px;
-      &.big {
-        min-height: 200px;
-      }
-      &.last {
-        margin-bottom: 40px;
-      }
-      .holder {
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        p {
-          color: #636b6f;
-        }
-        button {
-          background-color: #e57373;
-          border: none;
-          color: white;
-          cursor: pointer;
-          padding: 15px 30px 15px 30px;
-          &:hover {
-            background-color: #af4448;
-          }
-        }
-      }
-    }
-  }
-}
 </style>

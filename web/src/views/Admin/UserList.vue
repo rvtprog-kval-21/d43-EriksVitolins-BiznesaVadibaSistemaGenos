@@ -56,8 +56,8 @@
           </div>
         </template>
         <template v-slot:cell(name)="data">
-          <p class="profile-link" @click="toProfile(data.item.id)">
-            {{ data.item.name }} {{ data.item.lastname }}
+          <p class="profile-link" @click="toProfile(data.item.ID)">
+            {{ data.item.Name }} {{ data.item.LastName }}
           </p>
         </template>
       </b-table>
@@ -80,11 +80,11 @@ export default {
       filter: null,
       filterOn: [],
       fields: [
-        { key: "id", sortable: true },
-        { key: "name", sortable: true },
-        { key: "email", sortable: true },
-        { key: "role", sortable: true },
-        { key: "created_at", sortable: true }
+        { key: "ID", sortable: true },
+        { key: "Name", sortable: true },
+        { key: "Email", sortable: true },
+        { key: "Role", sortable: true },
+        { key: "CreatedAt", sortable: true }
       ]
     };
   },
@@ -97,14 +97,13 @@ export default {
       this.errors = [];
       const vue = this;
       window.axios
-        .post("/api/users", { sort_by: this.sort_by })
+        .post("/api/admin/users")
         .then(response => {
           this.users = response.data.data;
-          this.page = this.users.current_page;
           this.toggleBusy();
         })
         .catch(function(errors) {
-          vue.errors = { error: errors.response.data.message };
+          vue.errors = { error: errors.response.data.error };
         });
     },
     toProfile(id) {

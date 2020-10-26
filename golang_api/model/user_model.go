@@ -15,6 +15,10 @@ type User struct {
 	Name      string
 	LastName  string
 	About     string
+	Title     string
+	PhoneNumber     string
+	Birthday time.Time
+	NameDay time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

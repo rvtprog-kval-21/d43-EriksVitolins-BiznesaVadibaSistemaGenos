@@ -67,7 +67,6 @@ hr {
 
 #nav {
   width: 100%;
-  height: 70px;
 }
 
 html,

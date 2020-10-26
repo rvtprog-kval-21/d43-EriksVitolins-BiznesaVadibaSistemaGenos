@@ -5,8 +5,8 @@ export function login(credentials) {
     window.axios
       .post("/auth/login", credentials)
       .then(response => {
-        setAuthorization(response.data.access_token);
-        resolve(response.data);
+        setAuthorization(response.data.data.access_token);
+        resolve(response.data.data);
       })
       .catch(error => {
         reject(error);
