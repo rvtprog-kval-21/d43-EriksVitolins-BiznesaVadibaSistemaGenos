@@ -8,19 +8,20 @@ import (
 
 type User struct {
 	gorm.Model
-	Email     string `gorm:"unique;not null"`
-	Password  string `gorm:"not null"`
-	Role      string `gorm:"not null"`
-	Avatar    string
-	Name      string
-	LastName  string
-	About     string
-	Title     string
-	PhoneNumber     string
-	Birthday time.Time
-	NameDay time.Time
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Email       string `gorm:"unique;not null"`
+	Password    string `gorm:"not null"`
+	Role        string `gorm:"not null"`
+	Avatar      string
+	Background  string
+	Name        string
+	LastName    string
+	About       string
+	Title       string
+	PhoneNumber string
+	Birthday    time.Time
+	NameDay     time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 // FindByEmail find user by their email address

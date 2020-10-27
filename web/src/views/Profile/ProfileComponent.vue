@@ -59,7 +59,7 @@
         </b-col>
         <b-col class="bg-white p-0 profile col-md-12 col-lg-4 mt-5">
           <div class="bg-dark h-50 d-flex align-items-end justify-content-center">
-            <b-avatar class="avatar" variant="primary" size="8rem" text="EV"></b-avatar>
+            <b-avatar class="avatar"  :src="getImgUrl()" variant="primary" size="8rem" text="EV"></b-avatar>
           </div>
           <div class="d-flex p-4 justify-content-between">
             <b-button>Follow</b-button>
@@ -72,7 +72,7 @@
             <h6> {{user.Title}}</h6>
           </div>
           <div class="d-flex grey justify-content-center mt-1">
-            <h5> {{user.Email}} | {{user.PhoneNumber}}</h5>
+            <h5> {{user.Email}} | {{user.PhoneNumber }}</h5>
           </div>
         </b-col>
       </div>
@@ -155,9 +155,7 @@ export default {
     getImgUrl() {
       let images =
         process.env.VUE_APP_API +
-        "/storage/avatars/" +
-        this.user.id +
-        "/avatar.png";
+        this.user.Avatar
       return images;
     },
     resetPassword() {

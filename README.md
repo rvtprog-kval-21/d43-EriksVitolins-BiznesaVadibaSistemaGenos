@@ -76,6 +76,8 @@ Projektā tiek izmantots:
     
     [W3school](https://www.w3schools.com/css/default.asp) - css stila lietas
     
+    [link](https://demos.creative-tim.com/bootstrap-vue-argon-dashboard-pro/#/!) - dizains
+    
   - HTML
   
     [Icons](https://tablericons.com/) - svg ikonas
