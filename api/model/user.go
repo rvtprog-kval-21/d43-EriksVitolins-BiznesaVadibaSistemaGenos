@@ -1,7 +1,7 @@
 package user_model
 
 import (
-	"golang-api/database"
+	"api/database"
 	"gorm.io/gorm"
 	"time"
 )

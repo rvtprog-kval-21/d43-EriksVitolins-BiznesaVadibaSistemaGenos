@@ -1,12 +1,12 @@
-package server
+package router
 
 import (
+	"api/controllers/user"
+	"api/helpers/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"golang-api/controllers/user_controller"
-	"golang-api/helpers/middleware"
 	"net/http"
 )
 
@@ -25,16 +25,16 @@ func setupRoutes(app *fiber.App) {
 	}))
 	app.Use(logger.New())
 
-	app.Post("/auth/login", user_controller.Login)
+	app.Post("/auth/login", user.Login)
 
 	api := app.Group("/api", middleware.Protected())
 	admin := api.Group("/admin", func(context *fiber.Ctx) error {
 		return middleware.IsAdmin(context)
 	})
-	admin.Post("/users", user_controller.Index)
-	api.Get("/user/:id/profile", user_controller.User)
-	admin.Post("/user/:id/lock", user_controller.LockUser)
-	admin.Post("/user/:id/unlock", user_controller.UnlockUser)
+	admin.Post("/users", user.Index)
+	api.Get("/user/:id/profile", user.User)
+	admin.Post("/user/:id/lock", user.LockUser)
+	admin.Post("/user/:id/unlock", user.UnlockUser)
 
 	app.Use(filesystem.New(filesystem.Config{
 		Root: http.Dir("golang_api/storage"),

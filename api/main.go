@@ -1,15 +1,15 @@
 package main
 
 import (
-	"golang-api/database/migrations"
-	"golang-api/server"
+	"api/database/migrations"
+	"api/router"
 	"os"
 )
 
 func main() {
 	argsWithoutProg := os.Args[1:]
 	if argsWithoutProg[0] == "server" {
-		server.Init()
+		router.Init()
 	} else if argsWithoutProg[0] == "migrate" {
 		migrations.Migrate()
 	}

@@ -1,10 +1,10 @@
 package migrations
 
 import (
+	"api/database"
+	user "api/model"
+	"api/utlis/password"
 	"fmt"
-	"golang-api/database"
-	"golang-api/helpers/password"
-	"golang-api/model"
 )
 
 func Migrate() {
@@ -13,8 +13,8 @@ func Migrate() {
 	database.Close()
 }
 func userMigrate() {
-	err := database.DBConn.AutoMigrate(&user_model.User{})
-	user := user_model.User{Email: "test@test.com", Password: password.HashAndSalt([]byte("test")), Role: "admin"}
+	err := database.DBConn.AutoMigrate(&user.User{})
+	user := user.User{Email: "test@test.com", Password: password.HashAndSalt([]byte("test")), Role: "admin"}
 	database.DBConn.Select("Email", "Password", "Role").Create(&user)
 	if err != nil {
 		panic("Migration failed")

@@ -1,10 +1,10 @@
 package middleware
 
 import (
+	"api/config"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v2"
-	"golang-api/config"
 )
 
 type errorResponse struct {
@@ -13,7 +13,7 @@ type errorResponse struct {
 
 func Protected() fiber.Handler {
 	return jwtware.New(jwtware.Config{
-		SigningKey:   []byte(config.SECRET),
+		SigningKey:   []byte(config.Secret),
 		ErrorHandler: jwtError,
 	})
 }
