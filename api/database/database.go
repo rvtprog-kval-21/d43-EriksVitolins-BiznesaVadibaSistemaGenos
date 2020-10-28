@@ -7,8 +7,10 @@ import (
 	"gorm.io/gorm"
 )
 
+// DBConn database connection
 var DBConn *gorm.DB
 
+// Open Opens database connection
 func Open() {
 	var err error
 	dbAddress := config.DbUser + ":" + config.DbPassword + "@tcp(" + config.DbHost + ")/" + config.DbName + "?charset=utf8mb4&parseTime=True&loc=Local"
@@ -18,6 +20,8 @@ func Open() {
 		fmt.Println(DBConn)
 	}
 }
+
+// Close Closes database connection
 func Close() {
 	db, err := DBConn.DB()
 	if err != nil {
