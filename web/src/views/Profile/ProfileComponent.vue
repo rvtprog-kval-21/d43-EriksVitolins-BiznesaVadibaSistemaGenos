@@ -1,13 +1,5 @@
 <template>
   <div>
-    <b-container>
-      <alertComponent v-if="this.errors.error" class="alert-danger">
-        <p>{{ this.errors.error }}</p>
-      </alertComponent>
-      <alertComponent v-if="this.alerts.message" class="alert-success">
-        <p>{{ this.alerts.message }}</p>
-      </alertComponent>
-    </b-container>
     <template v-if="user.Email">
       <div class="header d-flex align-items-center">
         <div class="container-fluid">
@@ -24,6 +16,14 @@
       </div>
       <div class="body flex-wrap container-fluid d-flex justify-content-between">
         <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
+          <div class="d-flex justify-content-center">
+            <alertComponent v-if="this.errors.error" class="alert-danger">
+              <p>{{ this.errors.error }}</p>
+            </alertComponent>
+            <alertComponent v-if="this.alerts.message" class="alert-success">
+              <p>{{ this.alerts.message }}</p>
+            </alertComponent>
+          </div>
           <div class="d-flex justify-content-between align-items-center">
             <h5>User profile</h5>
             <b-button>Settings</b-button>
@@ -46,8 +46,8 @@
               <b-col cols="6" class="pl-5 pr-5 pt-5">Updated on:  {{ user.UpdatedAt}}</b-col>
               <b-col cols="6" class="pl-5 pr-5 pt-5"><b-button>Reset password</b-button></b-col>
               <b-col cols="6" class="pl-5 pr-5 pt-5">
-                <b-button v-if="user.DeletedAt == '0001-01-01T00:00:00Z'">Lock Account</b-button>
-                <b-button v-else>Unlock Account</b-button>
+                <b-button v-if="user.DeletedAt == '0001-01-01T00:00:00Z'" variant="danger" @click="lock()" >Lock Account</b-button>
+                <b-button v-else variant="danger" @click="unlock()">Unlock Account</b-button>
               </b-col>
               <b-col cols="6" class="pl-5 pr-5 pt-5">
                 <p>New Email:</p>
@@ -58,7 +58,7 @@
           </template>
         </b-col>
         <b-col class="bg-white p-0 profile col-md-12 col-lg-4 mt-5">
-          <div class="bg-dark h-50 d-flex align-items-end justify-content-center">
+          <div class="bg-dark h-50 d-flex align-items-end background justify-content-center" v-bind:style="{ backgroundImage: 'url(' + geBackgroundUrl() + ')' }">
             <b-avatar class="avatar"  :src="getImgUrl()" variant="primary" size="8rem" text="EV"></b-avatar>
           </div>
           <div class="d-flex p-4 justify-content-between">
@@ -131,14 +131,28 @@ export default {
       this.alerts = [];
       const vue = this;
       window.axios
-        .post("/api/auth/user/lock", { id: this.user.id })
+        .post("/api/admin/user/" + this.user.ID + "/lock")
         .then(response => {
-          this.alerts = { message: response.data.message };
+          this.alerts = { message: response.data.data };
           this.getUser();
         })
         .catch(function(errors) {
           vue.errors = { error: errors.response.data.error };
         });
+    },
+    unlock: function() {
+      this.errors = [];
+      this.alerts = [];
+      const vue = this;
+      window.axios
+              .post("/api/admin/user/" + this.user.ID + "/unlock")
+              .then(response => {
+                this.alerts = { message: response.data.data };
+                this.getUser();
+              })
+              .catch(function(errors) {
+                vue.errors = { error: errors.response.data.error };
+              });
     },
     getUser: function() {
       this.errors = {};
@@ -156,6 +170,12 @@ export default {
       let images =
         process.env.VUE_APP_API +
         this.user.Avatar
+      return images;
+    },
+    geBackgroundUrl() {
+      let images =
+              process.env.VUE_APP_API +
+              this.user.Background
       return images;
     },
     resetPassword() {
@@ -209,6 +229,9 @@ export default {
       .grey{
         color: #b0bec5;
       }
+    }
+    .background {
+      background-size: cover;
     }
   }
 
