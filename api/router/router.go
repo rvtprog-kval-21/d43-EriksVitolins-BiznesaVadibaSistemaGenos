@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"net/http"
 )
 
@@ -53,6 +54,7 @@ func routeMiddlewareStart(app *fiber.App) {
 		AllowMethods:     "GET, POST, OPTIONS",
 		AllowCredentials: true,
 	}))
+	app.Use(recover.New())
 	app.Use(favicon.New())
 	app.Use(logger.New())
 
