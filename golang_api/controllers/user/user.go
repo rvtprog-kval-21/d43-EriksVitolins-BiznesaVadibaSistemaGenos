@@ -1,13 +1,14 @@
 package user_controller
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gofiber/fiber/v2"
 	"golang-api/config"
 	"golang-api/database"
 	user_model "golang-api/model"
-	"golang.org/x/crypto/bcrypt"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type login struct {
@@ -68,7 +69,7 @@ func Login(context *fiber.Ctx) error {
 	claims["id"] = user.ID
 	claims["role"] = user.Role
 	claims["exp"] = time.Now().Add(time.Hour * 9).Unix()
-	realToken, err := token.SignedString([]byte(config.SECRET))
+	realToken, err := token.SignedString([]byte(config.Secret))
 	if err != nil {
 		return context.SendStatus(fiber.StatusInternalServerError)
 	}
