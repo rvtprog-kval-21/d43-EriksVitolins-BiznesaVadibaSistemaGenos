@@ -1,6 +1,6 @@
 /mysql/
 /.idea/workspace.xml
 /.idea/
-/golang_api/storage
-/golang_api/storage/
+/api/storage
+/api/storage/
 avatar.jpg
