@@ -168,13 +168,13 @@ export default {
     },
     getImgUrl() {
       let images =
-        process.env.VUE_APP_API +
+        process.env.VUE_APP_API+ "/static" +
         this.user.Avatar
       return images;
     },
     geBackgroundUrl() {
       let images =
-              process.env.VUE_APP_API +
+              process.env.VUE_APP_API + "/static" +
               this.user.Background
       return images;
     },

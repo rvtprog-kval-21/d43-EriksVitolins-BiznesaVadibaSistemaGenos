@@ -19,33 +19,32 @@ func Init() {
 	}
 }
 
-func setupCors(router *gin.Engine) {
+func setupCors(router *gin.Engine)  {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.AllowCredentials = true
-	config.AddAllowHeaders("authorization")
+	config.AddAllowHeaders("authorization", "x-requested-with")
 	router.Use(cors.New(config))
 }
 
-func setupRoutes(router *gin.Engine) {
+func setupRoutes(router *gin.Engine)  {
 	router.POST("/auth/login", user.Login)
+	router.Static("/static","./storage")
 
 	api := router.Group("/api")
 	api.Use(jwt.Auth(config.Secret))
-
 	admin := api.Group("/admin", IsAdmin)
 
 	adminRoutes(admin)
 	apiRoutes(api)
 }
 
-func adminRoutes(admin *gin.RouterGroup) {
+func adminRoutes(admin  *gin.RouterGroup) {
 	admin.POST("/users", user.Index)
 	admin.POST("/user/:id/lock", user.LockUser)
 	admin.POST("/user/:id/unlock", user.UnlockUser)
 }
 
-func apiRoutes(api *gin.RouterGroup) {
+func apiRoutes(api  *gin.RouterGroup) {
 	api.GET("/user/:id/profile", user.User)
-	api.Static("/static", "./storage")
 }

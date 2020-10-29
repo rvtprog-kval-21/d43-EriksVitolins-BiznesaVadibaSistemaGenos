@@ -45,6 +45,8 @@ Projektā tiek izmantots:
     [Github](https://github.com/gin-gonic/contrib) middleware izmantošana ar tonic, piemēram jwt auth 
  
     [Gin](https://gin-gonic.com/docs/examples) Gin Ietvera example kods 
+ 
+    [stackoverflow](https://stackoverflow.com/questions/59249418/how-to-get-the-claims-from-the-token) - how to parse jwt
   - Docker
   
      [Dev.to](https://dev.to/aschmelyun/the-beauty-of-docker-for-local-laravel-development-13c0) - Kā izveidot docker-compose un vajadzīgās datnes priekš esošā projekts
