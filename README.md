@@ -36,9 +36,15 @@ Projektā tiek izmantots:
     
     [Gorm](https://gorm.io/docs/index.html) - izmantoju docs priekš Gorm ORM lietošanas (izmantots exmaple kods)
     
-    [Fiber](https://docs.gofiber.io/) - izmantoju docs priekš servera taisīšanas(izmantots exmaple kods)
+    [Gin](https://github.com/gin-gonic/gin) - izmantoju docs priekš servera taisīšanas(izmantots exmaple kods)
     
     [Github](https://github.com/gofiber/recipes/tree/master/auth-jwt) - kā izveidot auth api ar golang izmantojot jwt(izmantoju doto kodu)
+  
+    [Stackoverflow](https://stackoverflow.com/questions/54665442/cors-doesnt-work-on-gin-and-golang-group-routes) - kods saistībā ar cors
+    
+    [Github](https://github.com/gin-gonic/contrib) middleware izmantošana ar tonic, piemēram jwt auth 
+ 
+    [Gin](https://gin-gonic.com/docs/examples) Gin Ietvera example kods 
   - Docker
   
      [Dev.to](https://dev.to/aschmelyun/the-beauty-of-docker-for-local-laravel-development-13c0) - Kā izveidot docker-compose un vajadzīgās datnes priekš esošā projekts

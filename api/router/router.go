@@ -1,71 +1,51 @@
 package router
 
 import (
+	"api/config"
 	"api/controllers/user"
-	"api/helpers/middleware"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/favicon"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/recover"
-	"net/http"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/contrib/jwt"
+	"github.com/gin-gonic/gin"
 )
 
 func Init() {
-	app := fiber.New()
-	setupRoutes(app)
-	app.Listen(":8000")
+	gin.ForceConsoleColor()
+	router := gin.Default()
+	setupCors(router)
+	setupRoutes(router)
+	err := router.Run(":8000")
+	if err != nil {
+		panic(err)
+	}
 }
 
-func setupRoutes(app *fiber.App) {
-	routeMiddlewareStart(app)
+func setupCors(router *gin.Engine) {
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowCredentials = true
+	config.AddAllowHeaders("authorization")
+	router.Use(cors.New(config))
+}
 
-	authRoutes(app)
+func setupRoutes(router *gin.Engine) {
+	router.POST("/auth/login", user.Login)
 
-	api := app.Group("/api", middleware.Protected())
-	admin := api.Group("/admin", func(context *fiber.Ctx) error {
-		return middleware.IsAdmin(context)
-	})
+	api := router.Group("/api")
+	api.Use(jwt.Auth(config.Secret))
+
+	admin := api.Group("/admin", IsAdmin)
 
 	adminRoutes(admin)
 	apiRoutes(api)
-
-	routeMiddlewareAfter(app)
 }
 
-func authRoutes(app *fiber.App) {
-	app.Post("/auth/login", user.Login)
+func adminRoutes(admin *gin.RouterGroup) {
+	admin.POST("/users", user.Index)
+	admin.POST("/user/:id/lock", user.LockUser)
+	admin.POST("/user/:id/unlock", user.UnlockUser)
 }
 
-func adminRoutes(admin fiber.Router) {
-	admin.Post("/users", user.Index)
-	admin.Post("/user/:id/lock", user.LockUser)
-	admin.Post("/user/:id/unlock", user.UnlockUser)
-}
-
-func apiRoutes(api fiber.Router) {
-	api.Get("/user/:id/profile", user.User)
-}
-func routeMiddlewareStart(app *fiber.App) {
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "*",
-		AllowHeaders:     "Content-Type, Authorization, Content-Length, X-Requested-With, Accept",
-		AllowMethods:     "GET, POST, OPTIONS",
-		AllowCredentials: true,
-	}))
-	app.Use(recover.New())
-	app.Use(favicon.New())
-	app.Use(logger.New())
-
-}
-
-func routeMiddlewareAfter(app *fiber.App) {
-	app.Use(filesystem.New(filesystem.Config{
-		Root: http.Dir("api/storage"),
-	}))
-	app.Use(func(c *fiber.Ctx) error {
-		return c.SendStatus(404) // => 404 "Not Found"
-	})
-
+func apiRoutes(api *gin.RouterGroup) {
+	api.GET("/user/:id/profile", user.User)
+	api.Static("/static", "./storage")
 }
