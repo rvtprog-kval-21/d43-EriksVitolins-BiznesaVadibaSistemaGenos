@@ -181,7 +181,7 @@ export default {
       return images;
     },
     sameUser() {
-      return this.$route.params.id === this.user.ID
+      return this.$route.params.id == this.user.ID
     },
     geBackgroundUrl() {
       let images =
