@@ -15,55 +15,14 @@
         </div>
       </div>
       <div class="body flex-wrap container-fluid d-flex justify-content-between">
-        <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
-          <div class="d-flex justify-content-center">
-            <alertComponent v-if="this.errors.error" class="alert-danger">
-              <p>{{ this.errors.error }}</p>
-            </alertComponent>
-            <alertComponent v-if="this.alerts.message" class="alert-success">
-              <p>{{ this.alerts.message }}</p>
-            </alertComponent>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <h5>User profile</h5>
-            <b-button>Settings</b-button>
-          </div>
-          <hr>
-          <h6 class="category-title">User info:</h6>
-          <div class="p-4">
-            <p>About: {{user.About}}</p>
-          </div>
-          <div class="p-4 d-flex">
-            <p class="mr-5"><span class="mr-2">Birthday:</span> {{user.Birthday}}</p>
-            <p class="ml-5"><span class="mr-2">NameDay:</span> {{user.NameDay}}</p>
-          </div>
-          <div class="p-4">Tags placeholder</div>
-          <hr>
-          <template v-if="this.currentUser.role == 'admin'">
-            <h6 class="category-title">Admin section:</h6>
-            <b-row>
-              <b-col cols="6" class="pl-5 pr-5 pt-5">Created on:  {{ user.CreatedAt}}</b-col>
-              <b-col cols="6" class="pl-5 pr-5 pt-5">Updated on:  {{ user.UpdatedAt}}</b-col>
-              <b-col cols="6" class="pl-5 pr-5 pt-5"><b-button>Reset password</b-button></b-col>
-              <b-col cols="6" class="pl-5 pr-5 pt-5">
-                <b-button v-if="user.DeletedAt == '0001-01-01T00:00:00Z'" variant="danger" @click="lock()" >Lock Account</b-button>
-                <b-button v-else variant="danger" @click="unlock()">Unlock Account</b-button>
-              </b-col>
-              <b-col cols="6" class="pl-5 pr-5 pt-5">
-                <p>New Email:</p>
-                <b-form-input type="email"></b-form-input>
-                <b-button class="mt-3">Save</b-button>
-              </b-col>
-            </b-row>
-          </template>
-        </b-col>
         <b-col class="bg-white p-0 profile col-md-12 col-lg-4 mt-5">
           <div class="bg-dark h-50 d-flex align-items-end background justify-content-center" v-bind:style="{ backgroundImage: 'url(' + geBackgroundUrl() + ')' }">
             <b-avatar class="avatar"  :src="getImgUrl()" variant="primary" size="8rem" text="EV"></b-avatar>
           </div>
           <div class="d-flex p-4 justify-content-between">
-            <b-button>Follow</b-button>
-            <b-button>Message</b-button>
+            <b-button variant="success" v-if="!sameUser()">Follow</b-button>
+            <b-button variant="success"  v-if="!sameUser()">Message</b-button>
+            <b-button variant="outline-primary" v-if="sameUser()">Settings</b-button>
           </div>
           <div class="d-flex justify-content-center mt-3">
             <h4>{{user.Name + " " + user.LastName}}</h4>
@@ -74,6 +33,48 @@
           <div class="d-flex grey justify-content-center mt-1">
             <h5> {{user.Email}} | {{user.PhoneNumber }}</h5>
           </div>
+          <div class="p-4 d-flex justify-content-between">
+            <h6 class=""><span class="mr-2">Birthday:</span> {{ getDate(user.Birthday )}}</h6>
+            <h6 class=""><span class="mr-2">NameDay:</span> {{getDate(user.NameDay)}}</h6>
+          </div>
+        </b-col>
+        <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
+          <div class="d-flex justify-content-center">
+            <alertComponent v-if="this.errors.error" class="alert-danger">
+              <p>{{ this.errors.error }}</p>
+            </alertComponent>
+            <alertComponent v-if="this.alerts.message" class="alert-success">
+              <p>{{ this.alerts.message }}</p>
+            </alertComponent>
+          </div>
+          <div v-if="this.currentUser.role == 'admin'" class="d-flex justify-content-between align-items-center">
+            <h5>User profile</h5>
+            <b-button>Settings</b-button>
+          </div>
+          <hr>
+          <h6 class="category-title">User info:</h6>
+          <div class="p-4">
+            <p>About: {{user.About}}</p>
+          </div>
+          <div class="p-4">Tags placeholder</div>
+          <hr>
+          <template v-if="this.currentUser.role == 'admin'">
+            <h6 class="category-title">Admin section:</h6>
+            <b-row>
+              <b-col cols="6" class="pl-5 pr-5 pt-5">Created on:  {{ new Date(user.CreatedAt)}}</b-col>
+              <b-col cols="6" class="pl-5 pr-5 pt-5">Updated on:  {{ new Date(user.UpdatedAt)}}</b-col>
+              <b-col cols="6" class="pl-5 pr-5 pt-5"><b-button>Reset password</b-button></b-col>
+              <b-col cols="6" class="pl-5 pr-5 pt-5">
+                <b-button v-if="user.DeletedAt == '0001-01-01T00:00:00Z'" variant="danger" @click="lock()" >Lock Account</b-button>
+                <b-button v-else variant="danger" @click="unlock()">Unlock Account</b-button>
+              </b-col>
+              <b-col cols="6" class="pl-5 pr-5 pt-5">
+                <p>New Email:</p>
+                <b-form-input v-model="newEmail" type="email"></b-form-input>
+                <b-button @click="setNewEmail()" variant="outline-primary" class="mt-3">Save</b-button>
+              </b-col>
+            </b-row>
+          </template>
         </b-col>
       </div>
     </template>
@@ -112,6 +113,7 @@ export default {
       ],
       location: "",
       locations: [],
+      newEmail: "",
       filteredLocations: [
         "Riga",
         "Ventspils",
@@ -126,6 +128,12 @@ export default {
     this.getUser();
   },
   methods: {
+    getDate(date) {
+      date = new Date(date)
+      const day = date.getDate()
+      const month = date.toLocaleString('default', { month: 'long' });
+      return day + " " + month
+    },
     lock: function() {
       this.errors = [];
       this.alerts = [];
@@ -172,18 +180,21 @@ export default {
         this.user.Avatar
       return images;
     },
+    sameUser() {
+      return this.$route.params.id === this.user.ID
+    },
     geBackgroundUrl() {
       let images =
               process.env.VUE_APP_API + "/static" +
               this.user.Background
       return images;
     },
-    resetPassword() {
+    setNewEmail() {
       this.errors = [];
       this.alerts = [];
       const vue = this;
       window.axios
-        .post("/api/auth/user/passreset", { id: this.user.id })
+        .post("/api/admin/user/" + this.$route.params.id + "/newEmail", { id: this.$route.params.id, email: this.newEmail})
         .then(response => {
           this.alerts = { message: response.data.message };
           this.getUser();
@@ -191,6 +202,20 @@ export default {
         .catch(function(errors) {
           vue.errors = { error: errors.response.data.error };
         });
+    },
+    resetPassword() {
+      this.errors = [];
+      this.alerts = [];
+      const vue = this;
+      window.axios
+              .post("/api/auth/user/passreset", { id: this.user.id })
+              .then(response => {
+                this.alerts = { message: response.data.message };
+                this.getUser();
+              })
+              .catch(function(errors) {
+                vue.errors = { error: errors.response.data.error };
+              });
     }
   }
 };
