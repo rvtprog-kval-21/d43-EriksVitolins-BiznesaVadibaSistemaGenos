@@ -67,11 +67,9 @@ Projektā tiek izmantots:
     
     [stackoverflow](https://stackoverflow.com/questions/49414697/how-to-change-vue-js-data-value-when-screen-size-changes) - mainīt mainīgo vuejs ,kad mainās ekrāna izmērs  
   
-  - Vuejs un Laravel
-  
     [youtube](https://www.youtube.com/watch?v=C1r85Q3BFqQ&list=PLJpBh2VJhy5wPhAmjDB42pkHUnqolqxxq&index=5 ) - vuejs spa autorazācija ar tokens
       
- 
+    [Stackoverflow](https://stackoverflow.com/questions/1643320/get-month-name-from-date/18648314#18648314) - datumu formatēšana
   - CSS
   
     [Material colors](https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=FFCCBC) - krāsu izvēle

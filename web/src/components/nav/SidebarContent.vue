@@ -2,7 +2,7 @@
   <div>
     <b-row class="text-center">
       <b-col>
-        <b-avatar size="6rem" variant="info" :src="this.image"></b-avatar>
+        <b-avatar size="6rem" variant="info" :src="getImgUrl()"></b-avatar>
       </b-col>
       <div class="w-100"></div>
       <b-col class="link" @click="profile"
@@ -129,11 +129,9 @@ export default {
   methods: {
     getImgUrl() {
       let images =
-        process.env.VUE_APP_API +
-        "/storage/avatars/" +
-        this.currentUser.id +
-        "/avatar.png";
-      this.image = images;
+              process.env.VUE_APP_API+ "/static" +
+              this.currentUser.avatar
+      return images;
     },
     profile() {
       this.$router.push("/user/" + this.currentUser.id + "/profile");

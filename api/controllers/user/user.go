@@ -29,6 +29,11 @@ type userLogin struct {
 	UpdatedAt   *time.Time `json:"updated_at"`
 }
 
+type emailRequest struct {
+	Email string `json:"email"`
+	ID    string `json:"id"`
+}
+
 type responseIndex struct {
 	Data *[]user.User `json:"data"`
 }
@@ -120,4 +125,23 @@ func UnlockUser(context *gin.Context) {
 	}
 	database.Close()
 	context.JSON(http.StatusOK, responseLocked{Data: "User is unlocked"})
+}
+
+func NewEmail(context *gin.Context) {
+	var request emailRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	database.Open()
+	newEmailCreated, response := user.NewEmail(&request.ID, &request.Email)
+	database.Close()
+	if newEmailCreated {
+		context.JSON(http.StatusOK, gin.H{"message": "New Email is updated"})
+		return
+	} else {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": response})
+		return
+	}
 }

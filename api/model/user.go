@@ -49,8 +49,21 @@ func SoftDeleteUser(id string) error {
 }
 
 func UnlockUser(id string) error {
-	var user User
-	response := database.DBConn.Unscoped().Where("id = ?", id).First(&user)
-	response = database.DBConn.Model(&user).Update("deleted_at", nil)
+	response := database.DBConn.Model(&User{}).Where("id = ?", id).Update("deleted_at", nil)
 	return response.Error
+}
+
+func NewEmail(id *string, email *string) (bool, string) {
+	user, _ := FindByEmail(*email)
+	if user.Email == "" {
+		response := database.DBConn.Model(&User{}).Where("id = ?", *id).Update("email", *email)
+		if response.Error != nil {
+			return false, "Error with database"
+		} else {
+			return true, ""
+		}
+	} else {
+		return false, "Email already taken"
+	}
+	return false, "Internal error"
 }
