@@ -1,13 +1,12 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Login from "../views/Auth/Login";
-import Home from "../views/Home";
-import AddUsers from "../views/Admin/AddUsers";
-import ProfileComponent from "../views/Profile/ProfileComponent";
-//import Location from "../views/Tags/Location";
-import LocationList from "../views/Tags/LocationList";
-import UserList from "../views/Admin/UserList";
-import LocationsTest from "../views/Tags/LocationsTest";
+
+const ProfileComponent = () => import("../views/Profile/ProfileComponent")
+const AddUsers = () => import("../views/Admin/AddUsers")
+const UserList = () => import("../views/Admin/UserList")
+const Login = () => import("../views/Auth/Login")
+const Home = () => import("../views/Home")
+const NotFound = () => import("../views/404/NotFound")
 
 Vue.use(VueRouter);
 
@@ -42,12 +41,8 @@ const routes = [
     component: ProfileComponent
   },
   {
-    path: "/locations",
-    component: LocationsTest
-  },
-  {
-    path: "/location/:id",
-    component: LocationList
+    path :'*',
+    component:NotFound
   }
 ];
 
