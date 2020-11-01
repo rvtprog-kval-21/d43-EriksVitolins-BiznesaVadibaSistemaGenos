@@ -44,6 +44,7 @@ func adminRoutes(admin *gin.RouterGroup) {
 	admin.POST("/user/:id/lock", user.LockUser)
 	admin.POST("/user/:id/unlock", user.UnlockUser)
 	admin.POST("/user/:id/newEmail", user.NewEmail)
+	admin.GET("/user/:id/passwordReset", user.ResetPassword)
 }
 
 func apiRoutes(api *gin.RouterGroup) {

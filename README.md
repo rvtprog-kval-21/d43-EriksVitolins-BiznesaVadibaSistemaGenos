@@ -45,6 +45,8 @@ Projektā tiek izmantots:
     [Github](https://github.com/gin-gonic/contrib) middleware izmantošana ar tonic, piemēram jwt auth 
  
     [Gin](https://gin-gonic.com/docs/examples) Gin Ietvera example kods 
+    
+    [Medium](https://medium.com/wesionary-team/sending-emails-with-go-golang-using-smtp-gmail-and-oauth2-185ee12ab306) - epastu sūtīšana uz golang
  
     [stackoverflow](https://stackoverflow.com/questions/59249418/how-to-get-the-claims-from-the-token) - how to parse jwt
   - Docker

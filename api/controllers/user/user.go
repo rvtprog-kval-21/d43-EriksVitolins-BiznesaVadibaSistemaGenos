@@ -4,6 +4,7 @@ import (
 	"api/config"
 	"api/database"
 	user "api/model"
+	"api/services/gomail"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -144,4 +145,9 @@ func NewEmail(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": response})
 		return
 	}
+}
+
+func ResetPassword(context *gin.Context) {
+	var temp []string
+	gomail.SendEmailSMTP(append(temp, "vitolinseriks@gmail.com"), "test", "test")
 }
