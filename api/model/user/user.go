@@ -1,4 +1,4 @@
-package user_model
+package user
 
 import (
 	"api/database"
@@ -7,21 +7,22 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	Email       string `gorm:"unique;not null"`
-	Password    string `gorm:"not null"`
-	Role        string `gorm:"not null"`
-	Avatar      string
-	Background  string
-	Name        string
-	LastName    string
-	About       string
-	Title       string
-	PhoneNumber string
-	Birthday    time.Time
-	NameDay     time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID uint	`gorm:"primaryKey;not null" json:"id"`
+	CreatedAt time.Time `json:"created_at" json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+	Email       string `gorm:"unique;not null" json:"email"`
+	Password    string `gorm:"not null" json:"password"`
+	Role        string `gorm:"not null" json:"role"`
+	Avatar      string `json:"avatar"`
+	Background  string `json:"background"`
+	Name        string `json:"name"`
+	LastName    string `json:"last_name"`
+	About       string `json:"about"`
+	Title       string `json:"title"`
+	PhoneNumber string `json:"phone_number"`
+	Birthday    time.Time `json:"birthday"`
+	NameDay     time.Time `json:"name_day"`
 }
 
 // FindByEmail find user by their email address

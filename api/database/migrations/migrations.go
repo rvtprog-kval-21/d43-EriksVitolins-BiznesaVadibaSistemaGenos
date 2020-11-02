@@ -2,7 +2,8 @@ package migrations
 
 import (
 	"api/database"
-	user "api/model"
+	"api/model/tags"
+	user2 "api/model/user"
 	"api/utlis/password"
 	"fmt"
 )
@@ -13,8 +14,9 @@ func Migrate() {
 	database.Close()
 }
 func userMigrate() {
-	err := database.DBConn.AutoMigrate(&user.User{})
-	user := user.User{Email: "test@test.com", Password: password.HashAndSalt([]byte("test")), Role: "admin"}
+	err := database.DBConn.AutoMigrate(&user2.User{})
+	err = database.DBConn.AutoMigrate(&tags.Tags{})
+	user := user2.User{Email: "test@test.com", Password: password.HashAndSalt([]byte("test")), Role: "admin"}
 	database.DBConn.Select("Email", "Password", "Role").Create(&user)
 	if err != nil {
 		panic("Migration failed")

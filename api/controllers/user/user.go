@@ -3,7 +3,7 @@ package user
 import (
 	"api/config"
 	"api/database"
-	user "api/model"
+	user2 "api/model/user"
 	"api/services/gomail"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -36,11 +36,11 @@ type emailRequest struct {
 }
 
 type responseIndex struct {
-	Data *[]user.User `json:"data"`
+	Data *[]user2.User `json:"data"`
 }
 
 type responseUser struct {
-	Data *user.User `json:"data"`
+	Data *user2.User `json:"data"`
 }
 
 type responseLocked struct {
@@ -55,7 +55,7 @@ func Login(context *gin.Context) {
 		return
 	}
 	database.Open()
-	userObject, err := user.FindByEmail(request.Email)
+	userObject, err := user2.FindByEmail(request.Email)
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, gin.H{"error": "Email or Password is wrong"})
 		return
@@ -91,13 +91,13 @@ func Login(context *gin.Context) {
 
 func Index(context *gin.Context) {
 	database.Open()
-	users := user.GetAllUsers()
+	users := user2.GetAllUsers()
 	database.Close()
 	context.JSON(http.StatusOK, responseIndex{Data: &users})
 }
 func User(context *gin.Context) {
 	database.Open()
-	userObject, err := user.GetUserById(context.Param("id"))
+	userObject, err := user2.GetUserById(context.Param("id"))
 	if err != nil {
 		context.JSON(http.StatusNotFound, gin.H{"error": "Profile doesn't exist"})
 		return
@@ -108,7 +108,7 @@ func User(context *gin.Context) {
 
 func LockUser(context *gin.Context) {
 	database.Open()
-	err := user.SoftDeleteUser(context.Param("id"))
+	err := user2.SoftDeleteUser(context.Param("id"))
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error"})
 		return
@@ -119,7 +119,7 @@ func LockUser(context *gin.Context) {
 
 func UnlockUser(context *gin.Context) {
 	database.Open()
-	err := user.UnlockUser(context.Param("id"))
+	err := user2.UnlockUser(context.Param("id"))
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error"})
 		return
@@ -136,7 +136,7 @@ func NewEmail(context *gin.Context) {
 		return
 	}
 	database.Open()
-	newEmailCreated, response := user.NewEmail(&request.ID, &request.Email)
+	newEmailCreated, response := user2.NewEmail(&request.ID, &request.Email)
 	database.Close()
 	if newEmailCreated {
 		context.JSON(http.StatusOK, gin.H{"message": "New Email is updated"})
