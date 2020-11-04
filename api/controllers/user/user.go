@@ -18,7 +18,7 @@ type login struct {
 }
 
 type userLogin struct {
-	ID          *uint      `json:"id"`
+	ID          *int       `json:"id"`
 	Email       *string    `json:"email"`
 	Role        *string    `json:"role"`
 	Avatar      *string    `json:"avatar"`

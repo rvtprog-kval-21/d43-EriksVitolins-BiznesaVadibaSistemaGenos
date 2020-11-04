@@ -2,6 +2,7 @@ package router
 
 import (
 	"api/config"
+	"api/controllers/tags"
 	"api/controllers/user"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/jwt"
@@ -33,10 +34,14 @@ func setupRoutes(router *gin.Engine) {
 
 	api := router.Group("/api")
 	api.Use(jwt.Auth(config.Secret))
+
 	admin := api.Group("/admin", IsAdmin)
+
+	tags := api.Group("/tags")
 
 	adminRoutes(admin)
 	apiRoutes(api)
+	tagRoutes(tags)
 }
 
 func adminRoutes(admin *gin.RouterGroup) {
@@ -49,4 +54,9 @@ func adminRoutes(admin *gin.RouterGroup) {
 
 func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/user/:id/profile", user.User)
+}
+
+func tagRoutes(tag *gin.RouterGroup) {
+	tag.GET("/private", tags.IndexPrivate)
+	tag.GET("/public", tags.IndexPublic)
 }
