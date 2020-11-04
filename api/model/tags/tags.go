@@ -21,7 +21,7 @@ type Tag struct {
 
 type Member struct {
 	TagID   int       `json:"tags_id" gorm:"index"`
-	User    user.User `json:"user"`
+	User    user.User `json:"user" gorm:"foreignKey:UserID"`
 	UserID  int
 	IsAdmin bool `json:"is_admin" gorm:"default:0"`
 	IsOwner bool `json:"is_owner" gorm:"default:0"`
@@ -34,8 +34,18 @@ func GetAllPublicTags() []Tag {
 }
 
 func GetAllMemberTags(id interface{}) []Tag {
-	//	var tags []Tags
-	//	database.DBConn.Where("is_public = ?", id).Find(&tags)
-	//	return tags
-	return nil
+	var members []Member
+	var tags []Tag
+	database.DBConn.Where("user_id = ?", id).Find(&members)
+	data := NameList(members)
+	database.DBConn.Preload("Members").Where("id in ?", data).Find(&tags)
+	return tags
+}
+
+func NameList(u []Member) []int {
+	var list []int
+	for _, iter := range u {
+		list = append(list, iter.TagID)
+	}
+	return list
 }

@@ -31,7 +31,7 @@ func IndexPrivate(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
 		return
 	}
-	//	tagsObject := tags.GetAllMemberTags(claims["id"])
+	tagsObject := tags.GetAllMemberTags(claims["id"])
 	database.Close()
-	//context.JSON(http.StatusOK, ResponseIndex{Tags: &tagsObject})
+	context.JSON(http.StatusOK, gin.H{"data": tagsObject})
 }
