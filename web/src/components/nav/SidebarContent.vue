@@ -58,7 +58,7 @@
               class="nav-row"
               tag="li"
               active-class="active"
-              to="/admin/users"
+              to="/tags"
               exact
             >
               <a>Tags</a>
@@ -129,8 +129,7 @@ export default {
   methods: {
     getImgUrl() {
       let images =
-              process.env.VUE_APP_API+ "/static" +
-              this.currentUser.avatar
+        process.env.VUE_APP_API + "/static" + this.currentUser.avatar;
       return images;
     },
     profile() {

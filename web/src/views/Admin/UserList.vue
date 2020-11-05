@@ -56,7 +56,14 @@
           </div>
         </template>
         <template v-slot:cell(Avatar)="data">
-          <b-avatar class="avatar" @click="toProfile(data.item.ID)" :src="getImgUrl(data.item)" variant="primary" size="2rem" text="EV"></b-avatar>
+          <b-avatar
+            class="avatar"
+            @click="toProfile(data.item.ID)"
+            :src="getImgUrl(data.item)"
+            variant="primary"
+            size="2rem"
+            text="EV"
+          ></b-avatar>
         </template>
         <template v-slot:cell(name)="data">
           <p class="profile-link" @click="toProfile(data.item.ID)">
@@ -83,7 +90,7 @@ export default {
       filter: null,
       filterOn: [],
       fields: [
-        { key: "Avatar"},
+        { key: "Avatar" },
         { key: "ID", sortable: true },
         { key: "Name", sortable: true },
         { key: "Email", sortable: true },
@@ -117,11 +124,9 @@ export default {
       this.isBusy = !this.isBusy;
     },
     getImgUrl(item) {
-      let images =
-              process.env.VUE_APP_API+ "/static" +
-              item.Avatar
+      let images = process.env.VUE_APP_API + "/static" + item.Avatar;
       return images;
-    },
+    }
   }
 };
 </script>
@@ -140,7 +145,7 @@ export default {
     color: #af4448;
   }
 }
-.avatar{
+.avatar {
   cursor: pointer;
 }
 

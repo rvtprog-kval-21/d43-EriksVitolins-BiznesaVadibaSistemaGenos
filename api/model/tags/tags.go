@@ -29,7 +29,7 @@ type Member struct {
 
 func GetAllPublicTags() []Tag {
 	var tags []Tag
-	database.DBConn.Preload("Members").Where("is_public = ?", 1).Find(&tags)
+	database.DBConn.Preload("Members.User").Where("is_public = ?", 1).Find(&tags)
 	return tags
 }
 
@@ -38,7 +38,7 @@ func GetAllMemberTags(id interface{}) []Tag {
 	var tags []Tag
 	database.DBConn.Where("user_id = ?", id).Find(&members)
 	data := NameList(members)
-	database.DBConn.Preload("Members").Where("id in ?", data).Find(&tags)
+	database.DBConn.Preload("Members.User").Where("id in ?", data).Find(&tags)
 	return tags
 }
 
