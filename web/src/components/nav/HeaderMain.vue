@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="info">
+    <b-navbar sticky toggleable="lg" type="dark" variant="info">
       <b-navbar-brand href="/home">Genos</b-navbar-brand>
       <b-button class="button-burger" v-b-toggle.sidebar-left>
         <b-icon icon="justify" variant="white"></b-icon>

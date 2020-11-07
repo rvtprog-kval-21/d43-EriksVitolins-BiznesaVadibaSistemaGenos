@@ -33,12 +33,17 @@ func GetAllPublicTags() []Tag {
 	return tags
 }
 
-func GetAllMemberTags(id interface{}) []Tag {
+func GetAllMemberTags(id interface{}, isPublic bool) []Tag {
 	var members []Member
 	var tags []Tag
 	database.DBConn.Where("user_id = ?", id).Find(&members)
+
 	data := NameList(members)
-	database.DBConn.Preload("Members.User").Where("id in ?", data).Find(&tags)
+	if isPublic {
+		database.DBConn.Preload("Members.User").Where("id in ?", data).Where("is_public = ?", true).Find(&tags)
+	} else {
+		database.DBConn.Preload("Members.User").Where("id in ?", data).Where("is_public = ?", isPublic).Find(&tags)
+	}
 	return tags
 }
 

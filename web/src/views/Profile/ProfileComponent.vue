@@ -25,7 +25,7 @@
       >
         <b-col class="bg-white p-0 profile col-md-12 col-lg-4 mt-5">
           <div
-            class="bg-dark h-50 d-flex align-items-end background justify-content-center"
+            class="bg-dark h-30 d-flex align-items-end background justify-content-center"
             v-bind:style="{ backgroundImage: 'url(' + geBackgroundUrl() + ')' }"
           >
             <b-avatar
@@ -60,6 +60,21 @@
               <span class="mr-2">NameDay:</span> {{ getDate(user.name_day) }}
             </h6>
           </div>
+          <div class="p-4">
+            <div class="d-flex justify-content-center grey">
+              <h5>Tags</h5>
+            </div>
+            <template v-for="(iter,index) in tags">
+              <a :href="'/tags/' + iter.id + '/tag'" :key="index">
+                <b-avatar
+                        variant="info"
+                        size="4rem"
+                        :src="getLogo(iter.avatar)"
+                        class="name mr-3"
+                ></b-avatar>
+              </a>
+            </template>
+          </div>
         </b-col>
         <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
           <div class="d-flex justify-content-center">
@@ -82,7 +97,6 @@
           <div class="p-4">
             <p>About: {{ user.about }}</p>
           </div>
-          <div class="p-4">Tags placeholder</div>
           <hr />
           <template v-if="this.currentUser.role == 'admin'">
             <h6 class="category-title">Admin section:</h6>
@@ -146,7 +160,7 @@ export default {
       alerts: {},
       accountLocked: false,
       tag: "",
-      tags: [],
+      tags: {},
       filteredTags: [
         "Automation",
         "Developer",
@@ -172,6 +186,10 @@ export default {
     this.getUser();
   },
   methods: {
+    getLogo(item) {
+      let images = process.env.VUE_APP_API + "/static" + item;
+      return images;
+    },
     getDate(date) {
       date = new Date(date);
       const day = date.getDate();
@@ -213,20 +231,21 @@ export default {
         .get("/api/user/" + this.$route.params.id + "/profile")
         .then(res => {
           this.user = res.data.data;
+          this.tags = res.data.tags
         })
         .catch(function(rej) {
           vue.errors = { error: rej.response.data.error };
         });
     },
     getImgUrl() {
-      let images = process.env.VUE_APP_API + "/static" + this.user.Avatar;
+      let images = process.env.VUE_APP_API + "/static" + this.user.avatar;
       return images;
     },
     sameUser() {
       return this.$route.params.id == this.user.ID;
     },
     geBackgroundUrl() {
-      let images = process.env.VUE_APP_API + "/static" + this.user.Background;
+      let images = process.env.VUE_APP_API + "/static" + this.user.background;
       return images;
     },
     setNewEmail() {
@@ -266,7 +285,7 @@ export default {
 
 <style scoped lang="scss">
 .header {
-  min-height: 500px;
+  min-height: 400px;
   background-size: cover;
   background: #49599a;
   color: white;
@@ -289,7 +308,7 @@ export default {
     }
   }
   .profile {
-    min-height: 400px;
+    min-height: 500px;
     .avatar {
       position: relative;
       bottom: -75px;
@@ -300,6 +319,9 @@ export default {
   }
   .background {
     background-size: cover;
+  }
+  .h-30 {
+    height: 30% !important;
   }
 }
 </style>

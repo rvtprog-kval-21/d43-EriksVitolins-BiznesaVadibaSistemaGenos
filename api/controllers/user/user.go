@@ -3,6 +3,7 @@ package user
 import (
 	"api/config"
 	"api/database"
+	"api/model/tags"
 	user2 "api/model/user"
 	"api/services/gomail"
 	"github.com/dgrijalva/jwt-go"
@@ -41,6 +42,7 @@ type responseIndex struct {
 
 type responseUser struct {
 	Data *user2.User `json:"data"`
+	Tags []tags.Tag `json:"tags"`
 }
 
 type responseLocked struct {
@@ -102,8 +104,10 @@ func User(context *gin.Context) {
 		context.JSON(http.StatusNotFound, gin.H{"error": "Profile doesn't exist"})
 		return
 	}
+	tagsObject := tags.GetAllMemberTags(context.Param("id"), true)
 	database.Close()
-	context.JSON(http.StatusOK, responseUser{Data: userObject})
+
+	context.JSON(http.StatusOK, responseUser{Data: userObject, Tags: tagsObject})
 }
 
 func LockUser(context *gin.Context) {
