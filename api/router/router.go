@@ -59,4 +59,5 @@ func apiRoutes(api *gin.RouterGroup) {
 func tagRoutes(tag *gin.RouterGroup) {
 	tag.GET("/private", tags.IndexPrivate)
 	tag.GET("/public", tags.IndexPublic)
+	tag.GET("/tag/:id/profile", tags.Profile)
 }

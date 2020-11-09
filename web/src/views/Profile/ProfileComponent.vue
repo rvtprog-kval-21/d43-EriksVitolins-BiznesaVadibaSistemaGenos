@@ -161,25 +161,7 @@ export default {
       accountLocked: false,
       tag: "",
       tags: {},
-      filteredTags: [
-        "Automation",
-        "Developer",
-        "Hr",
-        "Manual",
-        "Finances",
-        "Project Lead"
-      ],
-      location: "",
-      locations: [],
       newEmail: "",
-      filteredLocations: [
-        "Riga",
-        "Ventspils",
-        "Liepaja",
-        "Jelgava",
-        "Daugavpils"
-      ],
-      showPassword: false
     };
   },
   mounted() {
@@ -321,7 +303,7 @@ export default {
     background-size: cover;
   }
   .h-30 {
-    height: 30% !important;
+    height: 35% !important;
   }
 }
 </style>

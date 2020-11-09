@@ -42,7 +42,7 @@ func GetAllMemberTags(id interface{}, isPublic bool) []Tag {
 	if isPublic {
 		database.DBConn.Preload("Members.User").Where("id in ?", data).Where("is_public = ?", true).Find(&tags)
 	} else {
-		database.DBConn.Preload("Members.User").Where("id in ?", data).Where("is_public = ?", isPublic).Find(&tags)
+		database.DBConn.Preload("Members.User").Where("id in ?", data).Find(&tags)
 	}
 	return tags
 }
@@ -53,4 +53,23 @@ func NameList(u []Member) []int {
 		list = append(list, iter.TagID)
 	}
 	return list
+}
+
+func Profile(id string, userID interface{}) (Tag, bool) {
+	var tag Tag
+	var members Member
+	isMember := false
+	database.DBConn.Where("user_id = ?", userID).Where("tag_id = ?", id).Find(&members)
+	database.DBConn.Preload("Members.User").Find(&tag, "id = ?", id)
+	if members.TagID == 0 {
+		if tag.IsPublic == false {
+			return Tag{}, isMember
+		} else {
+
+		}
+	} else {
+		isMember = true
+	}
+
+	return tag, isMember
 }
