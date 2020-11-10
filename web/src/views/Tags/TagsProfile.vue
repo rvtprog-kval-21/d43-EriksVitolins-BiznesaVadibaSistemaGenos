@@ -22,7 +22,7 @@
             <div
                     class="body flex-wrap container-fluid d-flex justify-content-between"
             >
-                <b-col class="bg-white p-0 profile col-md-12 col-lg-4 mt-5">
+                <div class="bg-white p-0 profile col-md-12 col-lg-4 mt-5">
                     <div
                             class="bg-dark h-30 d-flex align-items-end background justify-content-center"
                     >
@@ -36,7 +36,7 @@
                     </div>
                     <div class="d-flex p-4 justify-content-between">
                         <b-button variant="success" v-if="!isMember">Join</b-button>
-                        <b-button variant="outline-primary" v-if="isMember"
+                        <b-button @click="settingsAreOpended = !settingsAreOpended" variant="outline-primary" v-if="isMember"
                         >Settings</b-button
                         >
                     </div>
@@ -49,7 +49,60 @@
                     <div  v-if="isMember" class="d-flex grey justify-content-center mt-1">
                         <h6>User count: {{ getMemberCount() }}</h6>
                     </div>
-                </b-col>
+                </div>
+                <div class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal" v-if="isMember">
+                    <template v-if="settingsAreOpended">
+                        <div class="d-flex justify-content-between">
+                            <h4>Settings:</h4>
+                            <b-button @click="settingsAreOpended = !settingsAreOpended" variant="outline-primary">Feed</b-button>
+                        </div>
+                        <div class="d-flex mt-5">
+                            <div class="w-50">
+                                <h5>Invite User:</h5>
+                            </div>
+                            <div class="w-50">
+                                <h5>User List:</h5>
+                            </div>
+                        </div>
+                        <div class="d-flex mt-5">
+                            <div class="w-50">
+                                <h5>Edit Name:</h5>
+                            </div>
+                            <div class="w-50">
+                                <h5>Edit About:</h5>
+                            </div>
+                        </div>
+                        <div class="d-flex mt-5">
+                           <template v-if="!tag.is_public">
+                               <div class="w-50">
+                                   <h5>Make Public:</h5>
+                               </div>
+                           </template>
+                            <template v-else>
+                                <div class="w-50">
+                                    <h5>Make Private:</h5>
+                                </div>
+                            </template>
+                            <div class="w-50">
+                                <h5>Change Avatar</h5>
+                            </div>
+                        </div>
+                        <div class="d-flex mt-5">
+                            <div class="w-50">
+                                <h5>Leave Group:</h5>
+                            </div>
+                            <div class="w-50">
+                                <h5>Delete Group:</h5>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="d-flex justify-content-between">
+                            <h4>Activity Feed:</h4>
+                            <b-button @click="settingsAreOpended = !settingsAreOpended" variant="outline-primary">Settings</b-button>
+                        </div>
+                    </template>
+                </div>
             </div>
         </template>
     </div>
@@ -65,6 +118,7 @@
                 alerts: {},
                 tag: {},
                 isMember: false,
+                settingsAreOpended: false
             };
         },
         methods: {
@@ -87,6 +141,9 @@
             },
             getMemberCount() {
                 return this.tag.members.length
+            },
+            joinTag() {
+
             }
         },
         mounted() {
