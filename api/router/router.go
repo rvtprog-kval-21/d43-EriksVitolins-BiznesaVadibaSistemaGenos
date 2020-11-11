@@ -60,4 +60,6 @@ func tagRoutes(tag *gin.RouterGroup) {
 	tag.GET("/private", tags.IndexPrivate)
 	tag.GET("/public", tags.IndexPublic)
 	tag.GET("/tag/:id/profile", tags.Profile)
+	tag.POST("/tag/:id/join", tags.JoinTag)
+	tag.POST("/tag/:id/delete", tags.DeleteTag)
 }

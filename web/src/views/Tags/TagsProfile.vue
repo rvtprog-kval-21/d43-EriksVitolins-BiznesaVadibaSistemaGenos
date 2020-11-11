@@ -1,6 +1,7 @@
 <template>
     <div>
-        <b-alert variant="danger" class="text-center" v-if="errors.error" show>{{ errors.error }}</b-alert>
+        <b-alert variant="danger" class="text-center mb-0" v-if="errors.error" show>{{ errors.error }}</b-alert>
+        <b-alert variant="success" class="text-center mb-0" v-if="alerts.alert" show>{{ alerts.alert }}</b-alert>
         <template v-if="tag.name">
             <div class="header d-flex align-items-center">
                 <div class="container-fluid">
@@ -35,7 +36,7 @@
                         ></b-avatar>
                     </div>
                     <div class="d-flex p-4 justify-content-between">
-                        <b-button variant="success" v-if="!isMember">Join</b-button>
+                        <b-button @click="joinTag()" variant="success" v-if="!isMember">Join</b-button>
                         <b-button @click="settingsAreOpended = !settingsAreOpended" variant="outline-primary" v-if="isMember"
                         >Settings</b-button
                         >
@@ -93,6 +94,8 @@
                             </div>
                             <div class="w-50">
                                 <h5>Delete Group:</h5>
+                                <h6 class="mt-1 mb-2">This will delete the tag completely</h6>
+                                <b-button variant="danger" v-b-modal.delete-tag>Delete Tag</b-button>
                             </div>
                         </div>
                     </template>
@@ -105,6 +108,13 @@
                 </div>
             </div>
         </template>
+        <b-modal id="delete-tag" title="Delete this tag?" hide-footer>
+            <p class="my-4">Do you wanna delete this tag?</p>
+            <div class="d-flex justify-content-between">
+                <b-button class="w-40" variant="danger" @click="[$bvModal.hide('delete-tag'), deleteTag()]">Yes</b-button>
+                <b-button class="w-40" variant="primary" @click="$bvModal.hide('delete-tag')">No</b-button>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -143,7 +153,30 @@
                 return this.tag.members.length
             },
             joinTag() {
+                this.errors = {};
+                const vue = this;
+                window.axios
+                    .post("/api/tags/tag/" + this.$route.params.id + "/join")
+                    .then(res => {
+                        this.alerts = { alert: res.data.message}
+                        this.getTag()
+                    })
+                    .catch(function(rej) {
+                        vue.errors = { error: rej.response.data.error };
+                    });
+            },
 
+            deleteTag() {
+                this.errors = {};
+                const vue = this;
+                window.axios
+                    .post("/api/tags/tag/" + this.$route.params.id + "/delete")
+                    .then(() => {
+                        this.$router.push("/tags");
+                    })
+                    .catch(function(rej) {
+                        vue.errors = { error: rej.response.data.error };
+                    });
             }
         },
         mounted() {
@@ -153,6 +186,9 @@
 </script>
 
 <style scoped lang="scss">
+    .w-40{
+        width: 40%;
+    }
     .header {
         min-height: 400px;
         background-size: cover;

@@ -4,6 +4,7 @@ import (
 	"api/database"
 	"api/model/user"
 	"gorm.io/gorm"
+	"strconv"
 	"time"
 )
 
@@ -64,12 +65,53 @@ func Profile(id string, userID interface{}) (Tag, bool) {
 	if members.TagID == 0 {
 		if tag.IsPublic == false {
 			return Tag{}, isMember
-		} else {
-
 		}
 	} else {
 		isMember = true
 	}
 
 	return tag, isMember
+}
+
+func GetTagAndUser(id string, userID interface{}) (Tag, Member) {
+	var tag Tag
+	var members Member
+	database.DBConn.Where("user_id = ?", userID).Where("tag_id = ?", id).Find(&members)
+	database.DBConn.Preload("Members.User").Find(&tag, "id = ?", id)
+
+	return tag, members
+}
+
+func JoinTag(id string, userID interface{}) interface{} {
+	tag, isMember := Profile(id, userID)
+	if isMember {
+		return "Already a member"
+	} else if tag.ID == 0 {
+		return "No such tag available"
+	}
+	intID, _ := strconv.Atoi(id)
+
+	user := Member{
+		IsAdmin: false,
+		IsOwner: false,
+		UserID:  int(userID.(float64)),
+		TagID:   intID,
+	}
+	results := database.DBConn.Create(&user)
+	return results.Error
+}
+
+func DeleteTag(id string, userID interface{}) interface{} {
+	tag, member := GetTagAndUser(id, userID)
+	if tag.ID == 0 {
+		return "Tag doesn't exist"
+	} else if member.IsOwner == false {
+		return "Only the owner of the tag can delete a tag"
+	}
+	results := database.DBConn.Delete(&tag)
+	if results.Error != nil {
+		return results.Error
+	}
+	results = database.DBConn.Where("tag_id = ?", id).Delete(Member{})
+	return results.Error
 }
