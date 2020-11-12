@@ -37,9 +37,11 @@
                     </div>
                     <div class="d-flex p-4 justify-content-between">
                         <b-button @click="joinTag()" variant="success" v-if="!isMember">Join</b-button>
-                        <b-button @click="settingsAreOpended = !settingsAreOpended" variant="outline-primary" v-if="isMember"
+                        <b-button @click="[settingsAreOpended = true, userListOpened = false]" variant="outline-primary" v-if="isMember && !settingsAreOpended"
                         >Settings</b-button
                         >
+                        <b-button @click="[settingsAreOpended = false, userListOpened = true]" v-if="isMember && !userListOpened" variant="outline-primary">Users</b-button>
+                        <b-button @click="[settingsAreOpended = false, userListOpened = false]" v-if="isMember && (settingsAreOpended ||  userListOpened)" variant="outline-primary">Feed</b-button>
                     </div>
                     <div class="d-flex justify-content-center mt-3">
                         <h4>{{ tag.name}}</h4>
@@ -55,33 +57,46 @@
                     <template v-if="settingsAreOpended">
                         <div class="d-flex justify-content-between">
                             <h4>Settings:</h4>
-                            <b-button @click="settingsAreOpended = !settingsAreOpended" variant="outline-primary">Feed</b-button>
+                            <b-button @click="[settingsAreOpended = false, userListOpened = true]" variant="outline-primary">UserList</b-button>
+                            <b-button @click="[settingsAreOpended = false, userListOpened = false]" variant="outline-primary">Feed</b-button>
                         </div>
                         <div class="d-flex mt-5">
                             <div class="w-50">
                                 <h5>Invite User:</h5>
                             </div>
-                            <div class="w-50">
-                                <h5>User List:</h5>
-                            </div>
                         </div>
                         <div class="d-flex mt-5">
                             <div class="w-50">
                                 <h5>Edit Name:</h5>
+                                <b-form-input class="mt-3 mb-3 w-75" v-model="newName" placeholder="Enter your new name"></b-form-input>
+                                <b-button @click="setNewName()" variant="success">Save</b-button>
                             </div>
                             <div class="w-50">
                                 <h5>Edit About:</h5>
+                                <b-form-textarea
+                                        class="mt-3 mb-3"
+                                        id="textarea-auto-height"
+                                        placeholder="New About Text"
+                                        rows="3"
+                                        v-model="newAbout"
+                                        max-rows="4"
+                                ></b-form-textarea>
+                                <b-button @click="setNewAbout()" variant="success">Save</b-button>
                             </div>
                         </div>
                         <div class="d-flex mt-5">
                            <template v-if="!tag.is_public">
                                <div class="w-50">
                                    <h5>Make Public:</h5>
+                                   <p class="mt-3 mb-3">This will let anyone join the Tag</p>
+                                   <b-button @click="makePublic" variant="warning">Change</b-button>
                                </div>
                            </template>
                             <template v-else>
                                 <div class="w-50">
                                     <h5>Make Private:</h5>
+                                    <p class="mt-3 mb-3">This will let someone join the Tag with a invite only</p>
+                                    <b-button @click="makePrivate" variant="warning">Change</b-button>
                                 </div>
                             </template>
                             <div class="w-50">
@@ -94,15 +109,23 @@
                             </div>
                             <div class="w-50">
                                 <h5>Delete Group:</h5>
-                                <h6 class="mt-1 mb-2">This will delete the tag completely</h6>
+                                <h6 class="mt-3 mb-3">This will delete the tag completely</h6>
                                 <b-button variant="danger" v-b-modal.delete-tag>Delete Tag</b-button>
                             </div>
+                        </div>
+                    </template>
+                    <template v-else-if="userListOpened">
+                        <div class="d-flex justify-content-between">
+                            <h4>Users:</h4>
+                            <b-button @click="[settingsAreOpended = false, userListOpened = false]" variant="outline-primary">Feed</b-button>
+                            <b-button @click="[settingsAreOpended = true, userListOpened = false]" variant="outline-primary">Settings</b-button>
                         </div>
                     </template>
                     <template v-else>
                         <div class="d-flex justify-content-between">
                             <h4>Activity Feed:</h4>
-                            <b-button @click="settingsAreOpended = !settingsAreOpended" variant="outline-primary">Settings</b-button>
+                            <b-button @click="[settingsAreOpended = false, userListOpened = true]" variant="outline-primary">Users</b-button>
+                            <b-button @click="[settingsAreOpended = true, userListOpened = false]" variant="outline-primary">Settings</b-button>
                         </div>
                     </template>
                 </div>
@@ -128,7 +151,10 @@
                 alerts: {},
                 tag: {},
                 isMember: false,
-                settingsAreOpended: false
+                settingsAreOpended: false,
+                newName: "",
+                newAbout: "",
+                userListOpened: false
             };
         },
         methods: {
@@ -154,6 +180,7 @@
             },
             joinTag() {
                 this.errors = {};
+                this.alerts = {};
                 const vue = this;
                 window.axios
                     .post("/api/tags/tag/" + this.$route.params.id + "/join")
@@ -168,11 +195,72 @@
 
             deleteTag() {
                 this.errors = {};
+                this.alerts = {};
                 const vue = this;
                 window.axios
                     .post("/api/tags/tag/" + this.$route.params.id + "/delete")
                     .then(() => {
                         this.$router.push("/tags");
+                    })
+                    .catch(function(rej) {
+                        vue.errors = { error: rej.response.data.error };
+                    });
+            },
+            setNewName() {
+                this.errors = {};
+                this.alerts = {};
+                const vue = this;
+                window.axios
+                    .post("/api/tags/tag/" + this.$route.params.id + "/newname", {name: this.newName})
+                    .then(res => {
+                        this.alerts = {alert: res.data.message}
+                        this.newName = ""
+                        this.getTag()
+                    })
+                    .catch(function(rej) {
+                        vue.errors = { error: rej.response.data.error };
+                    });
+            },
+            setNewAbout() {
+                this.errors = {};
+                this.alerts = {};
+                const vue = this;
+                window.axios
+                    .post("/api/tags/tag/" + this.$route.params.id + "/newabout", {about: this.newAbout})
+                    .then(res => {
+                        this.alerts = {alert: res.data.message}
+                        this.newAbout = ""
+                        this.getTag()
+                    })
+                    .catch(function(rej) {
+                        vue.errors = { error: rej.response.data.error };
+                    });
+            },
+
+            makePublic() {
+                this.errors = {};
+                this.alerts = {};
+                const vue = this;
+                window.axios
+                    .get("/api/tags/tag/" + this.$route.params.id + "/makePublic")
+                    .then(res => {
+                        this.alerts = {alert: res.data.message}
+                        this.getTag()
+                    })
+                    .catch(function(rej) {
+                        vue.errors = { error: rej.response.data.error };
+                    });
+            },
+
+            makePrivate() {
+                this.errors = {};
+                this.alerts = {};
+                const vue = this;
+                window.axios
+                    .get("/api/tags/tag/" + this.$route.params.id + "/makePrivate")
+                    .then(res => {
+                        this.alerts = {alert: res.data.message}
+                        this.getTag()
                     })
                     .catch(function(rej) {
                         vue.errors = { error: rej.response.data.error };

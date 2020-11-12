@@ -108,10 +108,50 @@ func DeleteTag(id string, userID interface{}) interface{} {
 	} else if member.IsOwner == false {
 		return "Only the owner of the tag can delete a tag"
 	}
-	results := database.DBConn.Delete(&tag)
+	results := database.DBConn.Unscoped().Delete(&tag)
 	if results.Error != nil {
 		return results.Error
 	}
 	results = database.DBConn.Where("tag_id = ?", id).Delete(Member{})
+	return results.Error
+}
+
+func UpdateName(id string, userID interface{}, data string) interface{} {
+	tag, member := GetTagAndUser(id, userID)
+	var temp Tag
+	if tag.ID == 0 {
+		return "Tag doesn't exist"
+	} else if member.IsAdmin == false {
+		return "Only and admin of the tag can change a tag"
+	}
+	tag.Name = data
+	database.DBConn.Where("name", data).First(&temp)
+	if temp.ID != 0 {
+		return "Tag name already exists"
+	}
+	results := database.DBConn.Model(&Tag{}).Where("id = ?", id).Update("name", data)
+	return results.Error
+}
+
+func UpdateAbout(id string, userID interface{}, data string) interface{} {
+	tag, member := GetTagAndUser(id, userID)
+	if tag.ID == 0 {
+		return "Tag doesn't exist"
+	} else if member.IsAdmin == false {
+		return "Only and admin of the tag can change a tag"
+	}
+	tag.About = data
+	results := database.DBConn.Model(&Tag{}).Where("id = ?", id).Update("about", data)
+	return results.Error
+}
+
+func UpdatePublic(id string, userID interface{}, isPublic bool) interface{} {
+	tag, member := GetTagAndUser(id, userID)
+	if tag.ID == 0 {
+		return "Tag doesn't exist"
+	} else if member.IsAdmin == false {
+		return "Only and admin of the tag can change a tag"
+	}
+	results := database.DBConn.Model(&Tag{}).Where("id = ?", id).Update("is_public", isPublic)
 	return results.Error
 }

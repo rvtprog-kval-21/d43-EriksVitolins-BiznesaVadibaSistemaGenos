@@ -12,6 +12,11 @@ type ResponseIndex struct {
 	Tags *[]tags.Tag `json:"tags"`
 }
 
+type TagRequest struct {
+	Name string `json:"name"`
+	About string `json:"about"`
+}
+
 func IndexPublic(context *gin.Context) {
 	database.Open()
 	claims := jwtParser.GetClaims(context)
@@ -82,4 +87,86 @@ func DeleteTag(context *gin.Context) {
 	}
 	database.Close()
 	context.JSON(201, gin.H{"message": "Congrats you deleted this tag"})
+}
+
+func NewName(context *gin.Context) {
+	var request TagRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"error": "There was an error unparsing the json"})
+		return
+	}
+	database.Open()
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	response := tags.UpdateName(context.Param("id"), claims["id"], request.Name )
+	if response != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": response})
+		return
+	}
+	database.Close()
+	context.JSON(201, gin.H{"message": "You changed the name"})
+}
+
+func NewAbout(context *gin.Context) {
+	var request TagRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"error": "There was an error unparsing the json"})
+		return
+	}
+	database.Open()
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	response := tags.UpdateAbout(context.Param("id"), claims["id"], request.About )
+	if response != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": response})
+		return
+	}
+	database.Close()
+	context.JSON(201, gin.H{"message": "You changed the About"})
+}
+
+func MakePublic(context *gin.Context)  {
+	var request TagRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"error": "There was an error unparsing the json"})
+		return
+	}
+	database.Open()
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	response := tags.UpdatePublic(context.Param("id"), claims["id"], true )
+	if response != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": response})
+		return
+	}
+	database.Close()
+	context.JSON(201, gin.H{"message": "You changed the public setting"})
+}
+
+func MakePrivate(context *gin.Context)  {
+	database.Open()
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	response := tags.UpdatePublic(context.Param("id"), claims["id"], false )
+	if response != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": response})
+		return
+	}
+	database.Close()
+	context.JSON(201, gin.H{"message": "You changed the public setting"})
 }
