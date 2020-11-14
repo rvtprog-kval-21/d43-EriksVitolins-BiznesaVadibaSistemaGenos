@@ -64,8 +64,15 @@
                             <div class="w-50">
                                 <h5>Invite User:</h5>
                             </div>
+                            <div class="w-50">
+                                <h5>Audit:</h5>
+                                <p class="mt-3 mb-3">See the audit of the tag</p>
+                                <a :href="'/tags/' + this.$route.params.id + '/tag/timeline'">
+                                    <b-button variant="outline-info">Audit</b-button>
+                                </a>
+                            </div>
                         </div>
-                        <div class="d-flex mt-5">
+                        <div class="d-flex mt-5" v-if="isAdmin">
                             <div class="w-50">
                                 <h5>Edit Name:</h5>
                                 <b-form-input class="mt-3 mb-3 w-75" v-model="newName" placeholder="Enter your new name"></b-form-input>
@@ -84,7 +91,7 @@
                                 <b-button @click="setNewAbout()" variant="success">Save</b-button>
                             </div>
                         </div>
-                        <div class="d-flex mt-5">
+                        <div class="d-flex mt-5"  v-if="isAdmin">
                            <template v-if="!tag.is_public">
                                <div class="w-50">
                                    <h5>Make Public:</h5>
@@ -99,15 +106,26 @@
                                     <b-button @click="makePrivate" variant="warning">Change</b-button>
                                 </div>
                             </template>
-                            <div class="w-50">
+                            <div class="w-50"  v-if="isAdmin">
                                 <h5>Change Avatar</h5>
+                                <b-form-file
+                                        v-model="newAvatar"
+                                        :state="Boolean(newAvatar)"
+                                        placeholder="Choose a avatar or drop it here..."
+                                        drop-placeholder="Drop file here..."
+                                        accept="image/*"
+                                ></b-form-file>
+                                <div class="mt-3">Selected file: {{ newAvatar ? newAvatar.name : '' }}</div>
+                                <b-button variant="success" @click="setNewAvatar()">Save</b-button>
                             </div>
                         </div>
                         <div class="d-flex mt-5">
-                            <div class="w-50">
+                            <div class="w-50"  v-if="!isOwner">
                                 <h5>Leave Group:</h5>
+                                <p>Will leave this group</p>
+                                <b-button variant="danger" v-b-modal.leave-tag>Leave</b-button>
                             </div>
-                            <div class="w-50">
+                            <div class="w-50" v-if="isOwner">
                                 <h5>Delete Group:</h5>
                                 <h6 class="mt-3 mb-3">This will delete the tag completely</h6>
                                 <b-button variant="danger" v-b-modal.delete-tag>Delete Tag</b-button>
@@ -138,6 +156,13 @@
                 <b-button class="w-40" variant="primary" @click="$bvModal.hide('delete-tag')">No</b-button>
             </div>
         </b-modal>
+        <b-modal id="leave-tag" title="Delete this tag?" hide-footer>
+            <p class="my-4">Do you wanna leave this tag?</p>
+            <div class="d-flex justify-content-between">
+                <b-button class="w-40" variant="danger" @click="[$bvModal.hide('leave-tag'), leaveGroup()]">Yes</b-button>
+                <b-button class="w-40" variant="primary" @click="$bvModal.hide('leave-tag')">No</b-button>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -154,7 +179,10 @@
                 settingsAreOpended: false,
                 newName: "",
                 newAbout: "",
-                userListOpened: false
+                userListOpened: false,
+                isAdmin: false,
+                isOwner: false,
+                newAvatar: null
             };
         },
         methods: {
@@ -170,6 +198,7 @@
                     .then(res => {
                         this.tag = res.data.tag
                         this.isMember = res.data.is_member
+                        this.checkAdminAndOwner()
                     })
                     .catch(function(rej) {
                         vue.errors = { error: rej.response.data.error };
@@ -236,7 +265,27 @@
                         vue.errors = { error: rej.response.data.error };
                     });
             },
-
+            setNewAvatar() {
+                this.errors = {};
+                this.alerts = {};
+                const vue = this;
+                let formData = new FormData();
+                formData.append("file", this.newAvatar);
+                window.axios
+                    .post("/api/tags/tag/" + this.$route.params.id + "/setavatar", formData,{
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    .then(res => {
+                        this.alerts = {alert: res.data.message}
+                        this.newAvatar = null
+                        this.getTag()
+                    })
+                    .catch(function(rej) {
+                        vue.errors = { error: rej.response.data.error };
+                    });
+            },
             makePublic() {
                 this.errors = {};
                 this.alerts = {};
@@ -265,6 +314,28 @@
                     .catch(function(rej) {
                         vue.errors = { error: rej.response.data.error };
                     });
+            },
+            leaveGroup() {
+                this.errors = {};
+                this.alerts = {};
+                const vue = this;
+                window.axios
+                    .post("/api/tags/tag/" + this.$route.params.id + "/leave")
+                    .then(() => {
+                        this.$router.push("/tags");
+                    })
+                    .catch(function(rej) {
+                        vue.errors = { error: rej.response.data.error };
+                    });
+            },
+            checkAdminAndOwner() {
+                for (let iter = 0; iter < this.tag.members.length; iter++ ){
+                    if( this.tag.members[iter].UserID == this.$route.params.id){
+                        this.isAdmin = this.tag.members[iter].is_admin;
+                        this.isOwner = this.tag.members[iter].is_owner;
+                        return
+                    }
+                }
             }
         },
         mounted() {

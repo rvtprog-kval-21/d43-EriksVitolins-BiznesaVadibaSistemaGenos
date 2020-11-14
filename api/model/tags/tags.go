@@ -146,12 +146,48 @@ func UpdateAbout(id string, userID interface{}, data string) interface{} {
 }
 
 func UpdatePublic(id string, userID interface{}, isPublic bool) interface{} {
-	tag, member := GetTagAndUser(id, userID)
-	if tag.ID == 0 {
+	isUser, isAdminB := IsAdmin(id, userID)
+	if isUser != true {
 		return "Tag doesn't exist"
-	} else if member.IsAdmin == false {
-		return "Only and admin of the tag can change a tag"
+	} else {
+		if !isAdminB {
+			return "Only and admin of the tag can change a tag"
+		}
 	}
 	results := database.DBConn.Model(&Tag{}).Where("id = ?", id).Update("is_public", isPublic)
 	return results.Error
+}
+
+func LeaveTag(id string, userID interface{}) interface{} {
+	isUser, isOwnerB := isOwner(id, userID)
+	if isUser != true {
+		return "Not a memeber of the tag"
+	} else {
+		if isOwnerB {
+			return "Owner can't leave the tag"
+		}
+	}
+	results := database.DBConn.Where("tag_id = ?", id).Where("user_id", userID).Delete(Member{})
+	return results.Error
+}
+
+func IsAdmin(id string, userID interface{}) (bool, bool) {
+	tag, member := GetTagAndUser(id, userID)
+
+	if tag.ID == 0 {
+		return false, false
+	} else if member.IsAdmin == false {
+		return true, false
+	}
+	return true, true
+}
+
+func isOwner(id string, userID interface{}) (bool, bool) {
+	tag, member := GetTagAndUser(id, userID)
+	if tag.ID == 0 {
+		return false, false
+	} else if member.IsOwner == false {
+		return true, false
+	}
+	return true, true
 }

@@ -66,4 +66,6 @@ func tagRoutes(tag *gin.RouterGroup) {
 	tag.POST("/tag/:id/newabout", tags.NewAbout)
 	tag.GET("/tag/:id/makePublic", tags.MakePublic)
 	tag.GET("/tag/:id/makePrivate", tags.MakePrivate)
+	tag.POST("/tag/:id/leave", tags.LeaveTag)
+	tag.POST("/tag/:id/setavatar", tags.SetAvatar)
 }
