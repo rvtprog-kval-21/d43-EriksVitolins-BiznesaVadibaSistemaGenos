@@ -2,9 +2,11 @@ package migrations
 
 import (
 	"api/database"
-	user "api/model"
+	"api/model/tags"
+	user2 "api/model/user"
 	"api/utlis/password"
 	"fmt"
+	"time"
 )
 
 func Migrate() {
@@ -13,11 +15,68 @@ func Migrate() {
 	database.Close()
 }
 func userMigrate() {
-	err := database.DBConn.AutoMigrate(&user.User{})
-	user := user.User{Email: "test@test.com", Password: password.HashAndSalt([]byte("test")), Role: "admin"}
-	database.DBConn.Select("Email", "Password", "Role").Create(&user)
+	migrateTables()
+	populateTables()
+}
+
+func migrateTables() {
+	err := database.DBConn.AutoMigrate(&user2.User{})
+	err = database.DBConn.AutoMigrate(&tags.Tag{})
+	err = database.DBConn.AutoMigrate(&tags.Member{})
 	if err != nil {
 		panic("Migration failed")
 	}
 	fmt.Println(" ")
+}
+
+func populateTables() {
+	populateUser()
+}
+
+func populateUser() {
+	user := user2.User{
+		Email:       "test@test.com",
+		Password:    password.HashAndSalt([]byte("test")),
+		Role:        "admin",
+		Avatar:      "/avatar/1/avatar.jpg",
+		Name:        "Eriks",
+		LastName:    "Vitolins",
+		About:       "this is about me lol",
+		Title:       "Ceo",
+		Birthday:    time.Now(),
+		NameDay:     time.Now(),
+		PhoneNumber: "12355512",
+		Background:  "/background/1/back.png",
+	}
+	database.DBConn.Select("Email", "Password", "Role", "Avatar", "Name", "LastName", "About", "Title", "Birthday", "NameDay", "PhoneNumber", "Background").Create(&user)
+	user = user2.User{
+		Email:       "test@test.lv",
+		Password:    password.HashAndSalt([]byte("test")),
+		Role:        "regular",
+		Avatar:      "/avatar/2/avatar.jpg",
+		Name:        "Laura",
+		LastName:    "Vitolins",
+		About:       "this is about me lol",
+		Title:       "Qa",
+		Birthday:    time.Now(),
+		NameDay:     time.Now(),
+		PhoneNumber: "12355512",
+		Background:  "/background/2/back.png",
+	}
+	database.DBConn.Select("Email", "Password", "Role", "Avatar", "Name", "LastName", "About", "Title", "Birthday", "NameDay", "PhoneNumber", "Background").Create(&user)
+	user = user2.User{
+		Email:       "test@test.la",
+		Password:    password.HashAndSalt([]byte("test")),
+		Role:        "regular",
+		Avatar:      "/avatar/3/avatar.jpg",
+		Name:        "Siers",
+		LastName:    "Vitolins",
+		About:       "this is about me lol",
+		Title:       "Automation Dev",
+		Birthday:    time.Now(),
+		NameDay:     time.Now(),
+		PhoneNumber: "12355512",
+		Background:  "/background/3/back.png",
+	}
+	database.DBConn.Select("Email", "Password", "Role", "Avatar", "Name", "LastName", "About", "Title", "Birthday", "NameDay", "PhoneNumber", "Background").Create(&user)
 }

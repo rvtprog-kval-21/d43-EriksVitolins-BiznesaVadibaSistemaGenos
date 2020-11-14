@@ -23,49 +23,17 @@
       </b-col>
     </b-row>
     <b-row class="row-link">
-      <b-col class="nav-menu" v-b-toggle:Tags>
-        <div
-          class="d-flex justify-content-between align-items-center nav-menu-inside"
+      <b-col>
+        <router-link
+                class="nav-row"
+                tag="li"
+                active-class="active"
+                to="/tags"
+                exact
         >
-          <a href="#">Tags</a>
-          <b-icon class="when-closed" icon="plus-circle"></b-icon>
-          <b-icon class="when-open" icon="x"></b-icon>
-        </div>
+          <a>Tags</a>
+        </router-link>
       </b-col>
-    </b-row>
-    <b-row class="row-link child-level">
-      <b-collapse id="Tags" class="collapse-comp">
-        <b-row class="row-link">
-          <b-col>
-            <router-link
-              class="nav-row"
-              tag="li"
-              active-class="active"
-              to="/locations"
-              exact
-            >
-              <a>Location</a>
-            </router-link>
-          </b-col>
-        </b-row>
-      </b-collapse>
-    </b-row>
-    <b-row class="row-link child-level">
-      <b-collapse id="Tags" class="collapse-comp">
-        <b-row class="row-link">
-          <b-col>
-            <router-link
-              class="nav-row"
-              tag="li"
-              active-class="active"
-              to="/admin/users"
-              exact
-            >
-              <a>Tags</a>
-            </router-link>
-          </b-col>
-        </b-row>
-      </b-collapse>
     </b-row>
     <b-row class="row-link" v-if="currentUser.role === 'admin'">
       <b-col class="nav-menu" v-b-toggle:Users>
@@ -129,8 +97,7 @@ export default {
   methods: {
     getImgUrl() {
       let images =
-              process.env.VUE_APP_API+ "/static" +
-              this.currentUser.avatar
+        process.env.VUE_APP_API + "/static" + this.currentUser.avatar;
       return images;
     },
     profile() {

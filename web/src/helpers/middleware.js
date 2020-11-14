@@ -18,7 +18,7 @@ export function initialize(store, router) {
       if (token) {
         request.headers.common["Authorization"] = "Bearer " + token;
       }
-      }
+    }
     return request;
   });
   window.axios.interceptors.response.use(null, error => {
