@@ -37,7 +37,6 @@
             ></b-avatar>
           </div>
           <div class="d-flex p-4 justify-content-between">
-            <b-button variant="success" v-if="!sameUser()">Follow</b-button>
             <b-button variant="success" v-if="!sameUser()">Message</b-button>
             <b-button variant="outline-primary" v-if="sameUser()"
               >Settings</b-button

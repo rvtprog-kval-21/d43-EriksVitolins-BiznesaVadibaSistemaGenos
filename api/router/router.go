@@ -2,6 +2,7 @@ package router
 
 import (
 	"api/config"
+	"api/controllers/online"
 	"api/controllers/tags"
 	"api/controllers/user"
 	"github.com/gin-contrib/cors"
@@ -34,6 +35,7 @@ func setupRoutes(router *gin.Engine) {
 
 	api := router.Group("/api")
 	api.Use(jwt.Auth(config.Secret))
+	api.GET("/ping", online.Ping)
 
 	admin := api.Group("/admin", IsAdmin)
 

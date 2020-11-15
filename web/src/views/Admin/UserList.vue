@@ -58,7 +58,7 @@
         <template v-slot:cell(Avatar)="data">
           <b-avatar
             class="avatar"
-            @click="toProfile(data.item.ID)"
+            @click="toProfile(data.item.id)"
             :src="getImgUrl(data.item)"
             variant="primary"
             size="2rem"
@@ -66,8 +66,8 @@
           ></b-avatar>
         </template>
         <template v-slot:cell(name)="data">
-          <p class="profile-link" @click="toProfile(data.item.ID)">
-            {{ data.item.Name }} {{ data.item.LastName }}
+          <p class="profile-link" @click="toProfile(data.item.id)">
+            {{ data.item.Name }} {{ data.item.last_name }}
           </p>
         </template>
       </b-table>
@@ -91,11 +91,11 @@ export default {
       filterOn: [],
       fields: [
         { key: "Avatar" },
-        { key: "ID", sortable: true },
+        { key: "id", sortable: true },
         { key: "Name", sortable: true },
-        { key: "Email", sortable: true },
-        { key: "Role", sortable: true },
-        { key: "CreatedAt", sortable: true }
+        { key: "email", sortable: true },
+        { key: "role", sortable: true },
+        { key: "created_at", sortable: true }
       ]
     };
   },
@@ -124,7 +124,7 @@ export default {
       this.isBusy = !this.isBusy;
     },
     getImgUrl(item) {
-      let images = process.env.VUE_APP_API + "/static" + item.Avatar;
+      let images = process.env.VUE_APP_API + "/static" + item.avatar;
       return images;
     }
   }
