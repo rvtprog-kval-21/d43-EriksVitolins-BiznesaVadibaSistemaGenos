@@ -35,7 +35,6 @@ func setupRoutes(router *gin.Engine) {
 
 	api := router.Group("/api")
 	api.Use(jwt.Auth(config.Secret))
-	api.GET("/ping", online.Ping)
 
 	admin := api.Group("/admin", IsAdmin)
 
@@ -56,6 +55,9 @@ func adminRoutes(admin *gin.RouterGroup) {
 
 func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/user/:id/profile", user.User)
+	api.GET("/ping", online.Ping)
+	api.GET("/usersonline", online.UsersOnline)
+
 }
 
 func tagRoutes(tag *gin.RouterGroup) {

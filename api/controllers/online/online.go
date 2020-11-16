@@ -1,6 +1,8 @@
 package online
 
 import (
+	"api/database"
+	"api/model/user"
 	"api/services/online"
 	"api/utlis/jwtParser"
 	"github.com/gin-gonic/gin"
@@ -16,4 +18,24 @@ func Ping(context *gin.Context) {
 	online.Ping(claims["id"])
 	context.JSON(200, gin.H{})
 	return
+}
+
+func UsersOnline(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	var keys []interface{}
+	for key, _ := range online.Online {
+		if key == claims["id"] {
+			continue
+		}
+		keys = append(keys, key)
+	}
+	database.Open()
+	users := user.GetUsersIn(keys)
+	database.Close()
+
+	context.JSON(200, gin.H{"users": users})
 }

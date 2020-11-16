@@ -5,25 +5,25 @@ import (
 	"time"
 )
 
-var online map[interface{}]time.Time
+var Online map[interface{}]time.Time
 
 func Ping(id interface{}) {
 	initiate()
-	test := online
+	test := Online
 	fmt.Println(test)
-	online[id] = time.Now()
+	Online[id] = time.Now()
 }
 
 func initiate() {
-	if online == nil {
-		online = make(map[interface{}]time.Time)
+	if Online == nil {
+		Online = make(map[interface{}]time.Time)
 	}
 }
 
 func ClearOldOnes() {
-	for key, date := range online {
+	for key, date := range Online {
 		if time.Since(date) > 1*time.Minute {
-			delete(online, key)
+			delete(Online, key)
 		}
 	}
 

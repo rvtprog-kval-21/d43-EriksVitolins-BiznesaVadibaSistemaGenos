@@ -29,7 +29,7 @@ export default {
         if (currentUser.id) {
           window.axios.get("/api/ping")
         }
-      }, 10 * 1000)
+      }, 40 * 1000)
     }
   },
   mounted() {
