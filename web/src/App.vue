@@ -20,6 +20,20 @@ export default {
     currentUser() {
       return this.$store.getters.currentUser;
     }
+  },
+  methods: {
+    pingServer() {
+      let currentUser = this.currentUser
+      console.log(currentUser)
+      setInterval(function () {
+        if (currentUser.id) {
+          window.axios.get("/api/ping")
+        }
+      }, 40 * 1000)
+    }
+  },
+  mounted() {
+    this.pingServer()
   }
 };
 </script>

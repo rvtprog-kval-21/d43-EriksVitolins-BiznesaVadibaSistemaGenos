@@ -2,6 +2,7 @@ package router
 
 import (
 	"api/config"
+	"api/controllers/online"
 	"api/controllers/tags"
 	"api/controllers/user"
 	"github.com/gin-contrib/cors"
@@ -54,6 +55,9 @@ func adminRoutes(admin *gin.RouterGroup) {
 
 func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/user/:id/profile", user.User)
+	api.GET("/ping", online.Ping)
+	api.GET("/usersonline", online.UsersOnline)
+
 }
 
 func tagRoutes(tag *gin.RouterGroup) {

@@ -35,6 +35,19 @@
         </router-link>
       </b-col>
     </b-row>
+    <b-row class="row-link">
+      <b-col>
+        <router-link
+                class="nav-row"
+                tag="li"
+                active-class="active"
+                to="/timetable"
+                exact
+        >
+          <a>Timetable</a>
+        </router-link>
+      </b-col>
+    </b-row>
     <b-row class="row-link" v-if="currentUser.role === 'admin'">
       <b-col class="nav-menu" v-b-toggle:Users>
         <div

@@ -9,7 +9,7 @@ const Home = () => import("../views/Home");
 const NotFound = () => import("../views/404/NotFound");
 const TagsList = () => import("../views/Tags/TagsList");
 const TagsProfile = () => import("../views/Tags/TagsProfile");
-
+const Timetable = () => import("../views/TimeTable/TimeTables")
 Vue.use(VueRouter);
 
 const routes = [
@@ -55,6 +55,13 @@ const routes = [
   {
     path: "/tags/:id/tag",
     component: TagsProfile,
+    meta: {
+      requireAdmin: true
+    }
+  },
+  {
+    path: "/timetable",
+    component: Timetable,
     meta: {
       requireAdmin: true
     }

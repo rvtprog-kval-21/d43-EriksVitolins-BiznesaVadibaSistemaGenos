@@ -48,6 +48,10 @@ Projektā tiek izmantots:
     
     [Medium](https://medium.com/wesionary-team/sending-emails-with-go-golang-using-smtp-gmail-and-oauth2-185ee12ab306) - epastu sūtīšana uz golang
  
+    [youbasics](https://yourbasic.org/golang/maps-explained/) - maps iekš golang
+    
+    [Go](https://golang.org/doc/) - docs priekš golang
+  
     [stackoverflow](https://stackoverflow.com/questions/59249418/how-to-get-the-claims-from-the-token) - kā parse jwt
   - Docker
   

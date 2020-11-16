@@ -68,3 +68,9 @@ func NewEmail(id *string, email *string) (bool, string) {
 	}
 	return false, "Internal error"
 }
+
+func GetUsersIn(ids []interface{}) []User {
+	var users []User
+	database.DBConn.Select("email", "id", "avatar", "name", "last_name").Where("id in ?", ids).Find(&users)
+	return users
+}
