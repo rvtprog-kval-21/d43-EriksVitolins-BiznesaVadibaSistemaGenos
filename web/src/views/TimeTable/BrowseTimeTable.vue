@@ -1,13 +1,9 @@
-<template>
-    
-</template>
+<template> </template>
 
 <script>
-    export default {
-        name: "BrowseTimeTable"
-    }
+export default {
+  name: "BrowseTimeTable"
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

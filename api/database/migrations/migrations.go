@@ -2,6 +2,7 @@ package migrations
 
 import (
 	"api/database"
+	"api/model/bloggers"
 	"api/model/tags"
 	user2 "api/model/user"
 	"api/utlis/password"
@@ -23,6 +24,7 @@ func migrateTables() {
 	err := database.DBConn.AutoMigrate(&user2.User{})
 	err = database.DBConn.AutoMigrate(&tags.Tag{})
 	err = database.DBConn.AutoMigrate(&tags.Member{})
+	err = database.DBConn.AutoMigrate(&bloggers.Bloggers{})
 	if err != nil {
 		panic("Migration failed")
 	}

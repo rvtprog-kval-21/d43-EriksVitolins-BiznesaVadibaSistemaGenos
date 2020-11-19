@@ -6,14 +6,14 @@
       }}</b-alert>
     </div>
     <div class="d-flex justify-content-between">
-        <template v-if="isPublic">
-            <h4>Public Tags</h4>
-            <b-button @click="loadTags('private')">Private tags</b-button>
-        </template>
-        <template v-else>
-            <h4 >Tags You're a Member of</h4>
-            <b-button @click="loadTags('public')">Public tags</b-button>
-        </template>
+      <template v-if="isPublic">
+        <h4>Public Tags</h4>
+        <b-button @click="loadTags('private')">Private tags</b-button>
+      </template>
+      <template v-else>
+        <h4>Tags You're a Member of</h4>
+        <b-button @click="loadTags('public')">Public tags</b-button>
+      </template>
     </div>
     <div class="holder mt-5">
       <b-row class="grid mb-2">
@@ -38,31 +38,47 @@
             ></b-avatar>
           </div>
           <div class="d-flex align-items-center ml-3">
-            <h5 class="name"><a :href="'/tags/' + iter.id + '/tag'"> {{ iter.name }}</a></h5>
+            <h5 class="name">
+              <a :href="'/tags/' + iter.id + '/tag'"> {{ iter.name }}</a>
+            </h5>
           </div>
           <div class="d-flex align-items-center" v-if="tags">
             <div class="ml-2 d-flex">
               <template v-for="(liter, lindex) in iter.members">
                 <template v-if="lindex < 3">
-                    <a :key="lindex" :href="'/user/' + liter.user.id + '/profile'">
-                        <b-avatar
-                                variant="info"
-                                size="2rem"
-                                :src="getLogo(liter.user.avatar)"
-                                :key="lindex"
-                                class="name mr-3"
-                        ></b-avatar>
-                    </a>
+                  <a
+                    :key="lindex"
+                    :href="'/user/' + liter.user.id + '/profile'"
+                  >
+                    <b-avatar
+                      variant="info"
+                      size="2rem"
+                      :src="getLogo(liter.user.avatar)"
+                      :key="lindex"
+                      class="name mr-3"
+                    ></b-avatar>
+                  </a>
                 </template>
-                <template v-if="lindex == iter.members.length - 1 && plusMembersCount(iter.members.length) != 0">
-                  <p :key="lindex">+{{ plusMembersCount(iter.members.length) }}</p>
+                <template
+                  v-if="
+                    lindex == iter.members.length - 1 &&
+                      plusMembersCount(iter.members.length) != 0
+                  "
+                >
+                  <p :key="lindex">
+                    +{{ plusMembersCount(iter.members.length) }}
+                  </p>
                 </template>
               </template>
             </div>
           </div>
-            <div class="d-flex justify-content-center align-items-center">
-                <b-button :href="'/tags/' + iter.id + '/tag'" variant="outline-primary">Visit</b-button>
-            </div>
+          <div class="d-flex justify-content-center align-items-center">
+            <b-button
+              :href="'/tags/' + iter.id + '/tag'"
+              variant="outline-primary"
+              >Visit</b-button
+            >
+          </div>
         </b-row>
       </template>
     </div>
@@ -83,16 +99,16 @@ export default {
       errors: {},
       isBusy: false,
       tags: null,
-      isPublic: false,
+      isPublic: false
     };
   },
   methods: {
     loadTags(url) {
       this.isBusy = !this.isBusy;
       this.errors = [];
-      this.tags = null
+      this.tags = null;
       const vue = this;
-      this.isPublic = !this.isPublic
+      this.isPublic = !this.isPublic;
       window.axios
         .get("/api/tags/" + url)
         .then(response => {
@@ -107,18 +123,17 @@ export default {
       let images = process.env.VUE_APP_API + "/static" + item;
       return images;
     },
-      goToUrl(url) {
-        console.log(url)
-        this.$router.push(url)
-      },
-    plusMembersCount(items) {
-        if (items < 4) {
-            return 0
-        }
-        else {
-            return items - 3
-        }
+    goToUrl(url) {
+      console.log(url);
+      this.$router.push(url);
     },
+    plusMembersCount(items) {
+      if (items < 4) {
+        return 0;
+      } else {
+        return items - 3;
+      }
+    }
   },
   mounted() {
     this.loadTags("public");

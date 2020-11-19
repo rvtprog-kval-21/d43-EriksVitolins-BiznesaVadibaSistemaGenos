@@ -1,14 +1,8 @@
 export function initialize(store, router) {
   router.beforeEach((to, from, next) => {
-    const requiresAuth = to.matched.some(record => record.meta.requireAuth);
-    const currentUser = store.state.currentUser;
-    if (requiresAuth && !currentUser) {
-      next("/");
-    } else if (to.path === "/" && currentUser) {
-      next("/home");
-    } else {
-      next();
-    }
+    if (to.name !== "Login" && !isAuthed(store)) next({ name: "Login" });
+    if (to.path === "/" && isAuthed(store)) next("/home");
+    else next();
   });
   window.axios.defaults.baseURL = process.env.VUE_APP_API;
 
@@ -34,4 +28,11 @@ export function initialize(store, router) {
 
 export function setAuthorization(token) {
   window.axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+}
+
+function isAuthed(store) {
+  if (store.getters.currentUser) {
+    return true;
+  }
+  return false;
 }
