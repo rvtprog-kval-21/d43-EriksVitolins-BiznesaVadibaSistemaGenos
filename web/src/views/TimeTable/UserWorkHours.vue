@@ -1,13 +1,9 @@
-<template>
-    
-</template>
+<template> </template>
 
 <script>
-    export default {
-        name: "UserWorkHours"
-    }
+export default {
+  name: "UserWorkHours"
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

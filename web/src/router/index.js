@@ -1,28 +1,45 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
+const Login = () => import("../views/general/Login");
+const NotFound = () => import("../views/general/NotFound");
+
+const Blog = () => import("../views/general/Blog/Blog");
+const AdminPanelBlog = () => import("../views/general/Blog/AdminPanelBlog");
+const CreatorPanelBlog = () => import("../views/general/Blog/CreatorPanelBlog");
+
+const Submissions = () => import("../views/general/Submissions");
+
 const ProfileComponent = () => import("../views/Profile/ProfileComponent");
 const AddUsers = () => import("../views/Admin/AddUsers");
 const UserList = () => import("../views/Admin/UserList");
-const Login = () => import("../views/Auth/Login");
 const Home = () => import("../views/Home");
-const NotFound = () => import("../views/404/NotFound");
 const TagsList = () => import("../views/Tags/TagsList");
 const TagsProfile = () => import("../views/Tags/TagsProfile");
-const Timetable = () => import("../views/TimeTable/TimeTables")
+const Timetable = () => import("../views/TimeTable/TimeTables");
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
+    name: "Login",
     component: Login
   },
   {
+    path: "/blog",
+    component: Blog
+  },
+  {
+    path: "/blog/admin",
+    component: AdminPanelBlog
+  },
+  {
+    path: "/blog/creator",
+    component: CreatorPanelBlog
+  },
+  {
     path: "/home",
-    component: Home,
-    meta: {
-      requireAuth: true
-    }
+    component: Home
   },
   {
     path: "/admin/userAdd",
@@ -62,6 +79,13 @@ const routes = [
   {
     path: "/timetable",
     component: Timetable,
+    meta: {
+      requireAdmin: true
+    }
+  },
+  {
+    path: "/submissions",
+    component: Submissions,
     meta: {
       requireAdmin: true
     }

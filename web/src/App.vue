@@ -23,17 +23,16 @@ export default {
   },
   methods: {
     pingServer() {
-      let currentUser = this.currentUser
-      console.log(currentUser)
-      setInterval(function () {
+      let currentUser = this.currentUser;
+      setInterval(function() {
         if (currentUser.id) {
-          window.axios.get("/api/ping")
+          window.axios.get("/api/ping");
         }
-      }, 40 * 1000)
+      }, 40 * 1000);
     }
   },
   mounted() {
-    this.pingServer()
+    this.pingServer();
   }
 };
 </script>

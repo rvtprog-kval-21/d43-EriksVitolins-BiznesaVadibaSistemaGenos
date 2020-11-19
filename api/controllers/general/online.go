@@ -1,4 +1,4 @@
-package online
+package general
 
 import (
 	"api/database"

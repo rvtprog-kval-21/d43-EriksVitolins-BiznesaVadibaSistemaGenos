@@ -2,9 +2,8 @@ package router
 
 import (
 	"api/config"
-	"api/controllers/online"
+	"api/controllers/general"
 	"api/controllers/tags"
-	"api/controllers/user"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/jwt"
 	"github.com/gin-gonic/gin"
@@ -30,7 +29,7 @@ func setupCors(router *gin.Engine) {
 }
 
 func setupRoutes(router *gin.Engine) {
-	router.POST("/auth/login", user.Login)
+	router.POST("/auth/login", general.Login)
 	router.Static("/static", "./storage")
 
 	api := router.Group("/api")
@@ -46,18 +45,23 @@ func setupRoutes(router *gin.Engine) {
 }
 
 func adminRoutes(admin *gin.RouterGroup) {
-	admin.POST("/users", user.Index)
-	admin.POST("/user/:id/lock", user.LockUser)
-	admin.POST("/user/:id/unlock", user.UnlockUser)
-	admin.POST("/user/:id/newEmail", user.NewEmail)
-	admin.GET("/user/:id/passwordReset", user.ResetPassword)
+	admin.POST("/users", general.UserList)
+
+	admin.POST("/user/:id/lock", general.LockUser)
+	admin.POST("/user/:id/unlock", general.UnlockUser)
+	admin.POST("/user/:id/newEmail", general.NewEmail)
+	admin.GET("/user/:id/passwordReset", general.ResetPassword)
+
+	admin.GET("/blog/:id/add", general.AddUserToBlogRole)
+	admin.GET("/blog/:id/delete", general.DeleteUserFromBlogRole)
+	admin.GET("/users/blog", general.GetAllBloggers)
 }
 
 func apiRoutes(api *gin.RouterGroup) {
-	api.GET("/user/:id/profile", user.User)
-	api.GET("/ping", online.Ping)
-	api.GET("/usersonline", online.UsersOnline)
-
+	api.GET("/user/:id/profile", general.User)
+	api.GET("/ping", general.Ping)
+	api.GET("/usersonline", general.UsersOnline)
+	api.GET("/users/search", general.SearchUsers)
 }
 
 func tagRoutes(tag *gin.RouterGroup) {

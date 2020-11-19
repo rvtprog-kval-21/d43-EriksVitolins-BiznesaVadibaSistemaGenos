@@ -76,6 +76,10 @@ Projektā tiek izmantots:
     [youtube](https://www.youtube.com/watch?v=C1r85Q3BFqQ&list=PLJpBh2VJhy5wPhAmjDB42pkHUnqolqxxq&index=5 ) - vuejs spa autorazācija ar tokens
       
     [Stackoverflow](https://stackoverflow.com/questions/1643320/get-month-name-from-date/18648314#18648314) - datumu formatēšana
+    
+    [Vue select](https://vue-select.org/guide/options.html#options-prop) - vue select docs, izmantoju piemērus
+    
+    [Vue table](https://xaksis.github.io/vue-good-table/guide/configuration/#columns) - vue table docs, izmantoju piemērus
   - CSS
   
     [Material colors](https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=FFCCBC) - krāsu izvēle

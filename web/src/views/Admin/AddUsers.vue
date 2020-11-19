@@ -15,20 +15,6 @@
             />
           </div>
         </div>
-        <alertComponent
-          v-for="(item, index) in this.errorArray"
-          :key="index"
-          class="alert-danger"
-        >
-          <p>{{ item }}</p>
-        </alertComponent>
-        <alertComponent
-          v-for="(item, index) in this.alerts"
-          :key="index"
-          class="alert-success"
-        >
-          <p>{{ item }}</p>
-        </alertComponent>
         <div class="input-fields">
           <div class="input-box" v-for="(field, index) in fields" :key="index">
             <div class="top">
@@ -102,11 +88,9 @@
 
 <script>
 import validate from "validate.js";
-import alertComponent from "../../components/alerts/alert-component";
 
 export default {
   name: "AddUsers",
-  components: { alertComponent },
   data() {
     return {
       fields: [{ name: "", lastname: "", email: "", role: "regular" }],

@@ -63,13 +63,13 @@
             <div class="d-flex justify-content-center grey">
               <h5>Tags</h5>
             </div>
-            <template v-for="(iter,index) in tags">
+            <template v-for="(iter, index) in tags">
               <a :href="'/tags/' + iter.id + '/tag'" :key="index">
                 <b-avatar
-                        variant="info"
-                        size="4rem"
-                        :src="getLogo(iter.avatar)"
-                        class="name mr-3"
+                  variant="info"
+                  size="4rem"
+                  :src="getLogo(iter.avatar)"
+                  class="name mr-3"
                 ></b-avatar>
               </a>
             </template>
@@ -77,12 +77,12 @@
         </b-col>
         <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
           <div class="d-flex justify-content-center">
-            <alertComponent v-if="this.errors.error" class="alert-danger">
-              <p>{{ this.errors.error }}</p>
-            </alertComponent>
-            <alertComponent v-if="this.alerts.message" class="alert-success">
-              <p>{{ this.alerts.message }}</p>
-            </alertComponent>
+            <b-alert v-if="this.errors.error" variant="danger" show="">{{
+              this.errors.error
+            }}</b-alert>
+            <b-alert v-if="this.alerts.message" variant="success" show="">{{
+              this.alerts.message
+            }}</b-alert>
           </div>
           <div
             v-if="this.currentUser.role == 'admin'"
@@ -100,10 +100,16 @@
           <template v-if="this.currentUser.role == 'admin'">
             <h6 class="category-title">Admin section:</h6>
             <b-row>
-              <b-col v-if="user.created_at == '0001-01-01T00:00:00Z'" cols="6" class="pl-5 pr-5 pt-5"
+              <b-col
+                v-if="user.created_at == '0001-01-01T00:00:00Z'"
+                cols="6"
+                class="pl-5 pr-5 pt-5"
                 >Created on: {{ new Date(user.created_at) }}</b-col
               >
-              <b-col v-if="user.updated_at == '0001-01-01T00:00:00Z'" cols="6" class="pl-5 pr-5 pt-5"
+              <b-col
+                v-if="user.updated_at == '0001-01-01T00:00:00Z'"
+                cols="6"
+                class="pl-5 pr-5 pt-5"
                 >Updated on: {{ new Date(user.updated_at) }}</b-col
               >
               <b-col cols="6" class="pl-5 pr-5 pt-5"
@@ -139,17 +145,12 @@
 </template>
 
 <script>
-import alertComponent from "../../components/alerts/alert-component";
-
 export default {
   name: "ProfileComponent",
   computed: {
     currentUser() {
       return this.$store.getters.currentUser;
     }
-  },
-  components: {
-    alertComponent
   },
   data() {
     return {
@@ -160,7 +161,7 @@ export default {
       accountLocked: false,
       tag: "",
       tags: {},
-      newEmail: "",
+      newEmail: ""
     };
   },
   mounted() {
@@ -212,7 +213,7 @@ export default {
         .get("/api/user/" + this.$route.params.id + "/profile")
         .then(res => {
           this.user = res.data.data;
-          this.tags = res.data.tags
+          this.tags = res.data.tags;
         })
         .catch(function(rej) {
           vue.errors = { error: rej.response.data.error };

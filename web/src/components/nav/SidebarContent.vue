@@ -25,11 +25,24 @@
     <b-row class="row-link">
       <b-col>
         <router-link
-                class="nav-row"
-                tag="li"
-                active-class="active"
-                to="/tags"
-                exact
+          class="nav-row"
+          tag="li"
+          active-class="active"
+          to="/blog"
+          exact
+        >
+          <a>Blog</a>
+        </router-link>
+      </b-col>
+    </b-row>
+    <b-row class="row-link">
+      <b-col>
+        <router-link
+          class="nav-row"
+          tag="li"
+          active-class="active"
+          to="/tags"
+          exact
         >
           <a>Tags</a>
         </router-link>
@@ -38,11 +51,11 @@
     <b-row class="row-link">
       <b-col>
         <router-link
-                class="nav-row"
-                tag="li"
-                active-class="active"
-                to="/timetable"
-                exact
+          class="nav-row"
+          tag="li"
+          active-class="active"
+          to="/timetable"
+          exact
         >
           <a>Timetable</a>
         </router-link>
