@@ -62,6 +62,9 @@ func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/ping", general.Ping)
 	api.GET("/usersonline", general.UsersOnline)
 	api.GET("/users/search", general.SearchUsers)
+
+	api.GET("/blog/add", general.AddBlog)
+	api.GET("/blog/update/:id", general.UpdateBlog)
 }
 
 func tagRoutes(tag *gin.RouterGroup) {

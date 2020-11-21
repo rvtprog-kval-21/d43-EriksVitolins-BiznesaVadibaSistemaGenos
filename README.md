@@ -80,6 +80,8 @@ Projektā tiek izmantots:
     [Vue select](https://vue-select.org/guide/options.html#options-prop) - vue select docs, izmantoju piemērus
     
     [Vue table](https://xaksis.github.io/vue-good-table/guide/configuration/#columns) - vue table docs, izmantoju piemērus
+    
+    [Vue markdown](https://vue-showdown.js.org/guide/#npm) - vue markdown docs, izmantoju piemērus
   - CSS
   
     [Material colors](https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=FFCCBC) - krāsu izvēle

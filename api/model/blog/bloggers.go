@@ -1,4 +1,4 @@
-package bloggers
+package blog
 
 import (
 	"api/database"
@@ -7,9 +7,9 @@ import (
 )
 
 type Bloggers struct {
-	ID        int            `gorm:"primaryKey;not null" json:"id"`
-	User    user.User `json:"user" gorm:"foreignKey:UserID"`
-	UserID  int `json:"user_id" gorm:"foreignKey:UserID;index"`
+	ID     int       `gorm:"primaryKey;not null" json:"id"`
+	User   user.User `json:"user" gorm:"foreignKey:UserID"`
+	UserID int       `json:"user_id" gorm:"foreignKey:UserID;index"`
 }
 
 func JoinRole(id string) interface{} {
