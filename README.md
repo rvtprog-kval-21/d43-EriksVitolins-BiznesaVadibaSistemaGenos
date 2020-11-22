@@ -53,6 +53,8 @@ Projektā tiek izmantots:
     [Go](https://golang.org/doc/) - docs priekš golang
   
     [stackoverflow](https://stackoverflow.com/questions/59249418/how-to-get-the-claims-from-the-token) - kā parse jwt
+    
+    [stackoverflow](https://stackoverflow.com/questions/37932551/mkdir-if-not-exists-using-golang) - kā izveidot mapes, ja tās neeksistē
   - Docker
   
      [Dev.to](https://dev.to/aschmelyun/the-beauty-of-docker-for-local-laravel-development-13c0) - Kā izveidot docker-compose un vajadzīgās datnes priekš esošā projekts

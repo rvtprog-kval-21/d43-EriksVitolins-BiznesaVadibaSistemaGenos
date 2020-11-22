@@ -32,7 +32,7 @@ func DeleteRole(id string) interface{} {
 	return results.Error
 }
 
-func Profile(id string) Bloggers {
+func Profile(id interface{}) Bloggers {
 	var blogger Bloggers
 	database.DBConn.Where("user_id = ?", id).Find(&blogger)
 
