@@ -18,11 +18,13 @@
       <h3>Bloggers:</h3>
       <b-button variant="danger" @click="deleteUser()">Kick Checked</b-button>
     </div>
-    <vue-good-table :select-options="{ enabled: true }"
-                    :search-options="{ enabled: true }"
-                    @on-selected-rows-change="selectionChanged"
-                    :columns="columns"
-                    :rows="users" />
+    <vue-good-table
+      :select-options="{ enabled: true }"
+      :search-options="{ enabled: true }"
+      @on-selected-rows-change="selectionChanged"
+      :columns="columns"
+      :rows="users"
+    />
   </b-container>
 </template>
 
@@ -47,7 +49,7 @@ export default {
         },
         {
           label: "Email",
-          field: "email",
+          field: "email"
         },
         {
           label: "Name",
@@ -55,15 +57,15 @@ export default {
         },
         {
           label: "Title",
-          field: "title",
+          field: "title"
         }
       ],
-      checkedItems: [],
+      checkedItems: []
     };
   },
   methods: {
     selectionChanged(select) {
-      this.checkedItems = select.selectedRows
+      this.checkedItems = select.selectedRows;
     },
     getUsers() {
       window.axios.post("api/admin/users").then(res => {
@@ -82,7 +84,7 @@ export default {
           this.makeToast(rej.response.data.error, "danger");
         });
     },
-     getBloggers() {
+    getBloggers() {
       window.axios
         .get("api/admin/users/blog")
         .then(res => {
@@ -93,17 +95,17 @@ export default {
         });
     },
     deleteUser() {
-      for ( let iter = 0; iter < this.checkedItems.length; iter++) {
-        const email = this.checkedItems[iter].email
+      for (let iter = 0; iter < this.checkedItems.length; iter++) {
+        const email = this.checkedItems[iter].email;
         window.axios
-                .get("api/admin/blog/" + this.checkedItems[iter].id + "/delete")
-                .then(res => {
-                  this.makeToast(email + " " + res.data.message, "success");
-                  this.getBloggers();
-                })
-                .catch(rej => {
-                  this.makeToast(email + " " + rej.response.data.error, "danger");
-                });
+          .get("api/admin/blog/" + this.checkedItems[iter].id + "/delete")
+          .then(res => {
+            this.makeToast(email + " " + res.data.message, "success");
+            this.getBloggers();
+          })
+          .catch(rej => {
+            this.makeToast(email + " " + rej.response.data.error, "danger");
+          });
       }
     },
     makeToast(text, variant) {

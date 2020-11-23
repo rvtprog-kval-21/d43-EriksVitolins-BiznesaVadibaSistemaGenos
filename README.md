@@ -53,6 +53,8 @@ Projektā tiek izmantots:
     [Go](https://golang.org/doc/) - docs priekš golang
   
     [stackoverflow](https://stackoverflow.com/questions/59249418/how-to-get-the-claims-from-the-token) - kā parse jwt
+    
+    [stackoverflow](https://stackoverflow.com/questions/37932551/mkdir-if-not-exists-using-golang) - kā izveidot mapes, ja tās neeksistē
   - Docker
   
      [Dev.to](https://dev.to/aschmelyun/the-beauty-of-docker-for-local-laravel-development-13c0) - Kā izveidot docker-compose un vajadzīgās datnes priekš esošā projekts
@@ -80,6 +82,8 @@ Projektā tiek izmantots:
     [Vue select](https://vue-select.org/guide/options.html#options-prop) - vue select docs, izmantoju piemērus
     
     [Vue table](https://xaksis.github.io/vue-good-table/guide/configuration/#columns) - vue table docs, izmantoju piemērus
+    
+    [Vue markdown](https://vue-showdown.js.org/guide/#npm) - vue markdown docs, izmantoju piemērus
   - CSS
   
     [Material colors](https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=FFCCBC) - krāsu izvēle
