@@ -92,8 +92,12 @@
     </div>
     <div class="d-flex justify-content-between">
       <b-button @click="clearForm" variant="warning">Reset</b-button>
-      <b-button v-if="!isEdit" @click="addBlog" variant="success">Save edit</b-button>
-        <b-button v-if="isEdit" @click="updateBlog" variant="success">Save</b-button>
+      <b-button v-if="!isEdit" @click="addBlog" variant="success"
+        >Save edit</b-button
+      >
+      <b-button v-if="isEdit" @click="updateBlog" variant="success"
+        >Save</b-button
+      >
     </div>
   </div>
 </template>
@@ -101,7 +105,7 @@
 <script>
 export default {
   name: "CreateBlog",
-  props: ["isEdit", "editForm"],
+  props: ["isEdit", "editID"],
   data() {
     return {
       form: {
@@ -125,14 +129,21 @@ export default {
     },
     init() {
       if (this.isEdit === true) {
-        this.form = this.editForm;
+        window.axios
+          .get("api/blog/get/" + this.editID+"/")
+          .then(res => {
+            this.form = res.data.blog;
+          })
+          .catch(rej => {
+            this.makeToast(rej.response.data.error, "danger");
+          });
       }
     },
     addBlog() {
       let formData = new FormData();
-      formData.append("title",`${this.form.title}`);
+      formData.append("title", `${this.form.title}`);
       formData.append("publish_at", `${this.form.publish_at}`);
-      formData.append("headtext",`${this.form.headtext}`);
+      formData.append("headtext", `${this.form.headtext}`);
       formData.append("photo", this.form.photo);
       formData.append("topic", `${this.form.topic}`);
       formData.append("content", `${this.form.content}`);
@@ -144,15 +155,27 @@ export default {
         })
         .then(res => {
           this.makeToast(res.data.message, "success");
-          this.clearForm()
+          this.clearForm();
+          this.getBlogs();
         })
         .catch(rej => {
           this.makeToast(rej.response.data.error, "danger");
         });
     },
     updateBlog() {
+      let formData = new FormData();
+      formData.append("title", `${this.form.title}`);
+      formData.append("publish_at", `${this.form.publish_at}`);
+      formData.append("headtext", `${this.form.headtext}`);
+      formData.append("photo", this.form.photo);
+      formData.append("topic", `${this.form.topic}`);
+      formData.append("content", `${this.form.content}`);
       window.axios
-        .post("api/blog/update/" + this.selected.id, this.form)
+        .post("api/blog/update/" + this.editID, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
         .then(res => {
           this.makeToast(res.data.message, "success");
         })
