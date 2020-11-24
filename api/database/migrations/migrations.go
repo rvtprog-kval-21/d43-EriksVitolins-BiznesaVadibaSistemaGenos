@@ -13,7 +13,6 @@ import (
 func Migrate() {
 	database.Open()
 	userMigrate()
-	database.Close()
 }
 func userMigrate() {
 	migrateTables()
@@ -26,6 +25,7 @@ func migrateTables() {
 	err = database.DBConn.AutoMigrate(&tags.Member{})
 	err = database.DBConn.AutoMigrate(&blog.Bloggers{})
 	err = database.DBConn.AutoMigrate(&blog.Blogs{})
+	err = database.DBConn.AutoMigrate(&blog.BlogsLog{})
 	if err != nil {
 		panic("Migration failed")
 	}

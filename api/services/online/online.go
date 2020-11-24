@@ -1,7 +1,6 @@
 package online
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -9,8 +8,6 @@ var Online map[interface{}]time.Time
 
 func Ping(id interface{}) {
 	initiate()
-	test := Online
-	fmt.Println(test)
 	Online[id] = time.Now()
 }
 

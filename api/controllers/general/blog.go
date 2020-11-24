@@ -62,8 +62,8 @@ func UpdateBlog(context *gin.Context) {
 		return
 	}
 	var newBlog blog.Blogs
-	realID, _ := strconv.ParseUint(context.Param("id"), 36, 64)
-	newBlog.ID = uint(realID)
+	realID, _ :=  strconv.Atoi(context.Param("id"))
+	newBlog.ID = realID
 	newBlog.UserID = int(claims["id"].(float64))
 	newBlog.Title = context.PostForm("title")
 	newBlog.Topic = context.PostForm("topic")
@@ -77,13 +77,13 @@ func UpdateBlog(context *gin.Context) {
 	}
 	file, _ := context.FormFile("photo")
 	if file != nil {
-		path := "storage/blog/%s"
+		path := "/blog/%s"
 		path = fmt.Sprintf(path, fmt.Sprint(newBlog.ID))
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			os.MkdirAll(path, os.ModeDir)
+		if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
+			os.MkdirAll("storage" + path, os.ModeDir)
 		}
 		path = path + "/banner.png"
-		err := context.SaveUploadedFile(file, path)
+		err := context.SaveUploadedFile(file, "storage" + path)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the banner"})
 			return
@@ -122,10 +122,10 @@ func AddBlog(context *gin.Context) {
 		return
 	}
 	file, _ := context.FormFile("photo")
-	path := "storage/blog/%s"
+	path := "/blog/%s"
 	path = fmt.Sprintf(path, fmt.Sprint(newBlog.ID))
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.MkdirAll(path, os.ModeDir)
+	if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
+		os.MkdirAll("storage" + path, os.ModeDir)
 	}
 	path = path + "/banner.png"
 	err := context.SaveUploadedFile(file, path)
@@ -204,10 +204,30 @@ func GetBlog(context *gin.Context) {
 	}
 	blogs := blog.GetBlogUnscoped(context.Param("id"))
 	if blogs.UserID != int(claims["id"].(float64)) {
-		if 1 != 1 {
+		if blogs.DeletedAt.Valid {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "This article doesn't exist"})
 			return
+		} else {
+			blog.AddItemToLog(int(claims["id"].(float64)),blogs.ID)
 		}
 	}
 	context.JSON(200, gin.H{"blog": blogs})
+}
+
+func GetBlogs(context *gin.Context) {
+	blogs, err := blog.GetBlogs()
+	if err != nil {
+		context.JSON(200, gin.H{"error": err})
+		return
+	}
+	context.JSON(200, gin.H{"blogs": blogs})
+}
+
+func GetBlogCount(context *gin.Context) {
+	count, err := blog.GetCount(context.Param("id"))
+	if err != nil {
+		context.JSON(200, gin.H{"error": err})
+		return
+	}
+	context.JSON(200, gin.H{"count": count})
 }

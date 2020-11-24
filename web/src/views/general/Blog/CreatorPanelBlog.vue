@@ -60,6 +60,10 @@
             >
               <b-button @click="editArticle(props.formattedRow.id)" variant="info">Edit</b-button>
             </div>
+            <div v-else-if="props.column.field === 'count'"
+                    class="d-flex justify-content-center table-row">
+              <p>{{getCount(props.formattedRow.id)}}</p>
+            </div>
             <div
               v-else-if="props.column.field === 'deleted_at'"
               class="table-row d-flex justify-content-center"
@@ -88,6 +92,7 @@ export default {
       isEditing: false,
       idBlog: 0,
       blogs: [],
+      count: {},
       columns: [
         {
           label: "Id",
@@ -113,7 +118,11 @@ export default {
         {
           label: "Delete",
           field: "deleted_at",
-        }
+        },
+        {
+          label: "View",
+          field: "count",
+        },
       ]
     };
   },
@@ -123,10 +132,25 @@ export default {
         .get("api/blog/owner")
         .then(res => {
           this.blogs = res.data.blogs;
+          this.getCounts()
         })
         .catch(rej => {
           this.makeToast(rej.response.data.error, "danger");
         });
+    },
+    getCounts() {
+     for (let iter = 0; iter < this.blogs.length; iter++) {
+       const cond = `id${this.blogs[iter].id}`
+       window.axios
+               .get(`api/blog/get/${this.blogs[iter].id}/count`)
+               .then(res => {
+                 this.count[cond] = res.data.count
+               })
+     }
+    },
+    getCount(id) {
+      const cond = `id${id}`
+      return this.count[cond]
     },
     goToBlog(field) {
       this.$router.push("/blog/" + field + "/view")
