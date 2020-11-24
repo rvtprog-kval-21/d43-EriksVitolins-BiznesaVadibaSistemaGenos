@@ -7,6 +7,7 @@ const NotFound = () => import("../views/general/NotFound");
 const Blog = () => import("../views/general/Blog/Blog");
 const AdminPanelBlog = () => import("../views/general/Blog/AdminPanelBlog");
 const CreatorPanelBlog = () => import("../views/general/Blog/CreatorPanelBlog");
+const IndividualBlog = () => import("../views/general/Blog/IndividualBlog");
 
 const Submissions = () => import("../views/general/Submissions");
 
@@ -36,6 +37,10 @@ const routes = [
   {
     path: "/blog/creator",
     component: CreatorPanelBlog
+  },
+  {
+    path: "/blog/:id/view",
+    component: IndividualBlog
   },
   {
     path: "/home",

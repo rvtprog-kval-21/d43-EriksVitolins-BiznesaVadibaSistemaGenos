@@ -8,7 +8,7 @@ import (
 )
 
 type Blogs struct {
-	ID        uint           `gorm:"primaryKey" json:"id" form:"id"`
+	ID        int           `gorm:"primaryKey" json:"id" form:"id"`
 	PublishAt time.Time      `json:"publish_at" gorm:"index" form:"publish_at"`
 	User      user.User      `json:"user" gorm:"foreignKey:UserID"`
 	UserID    int            `json:"user_id" gorm:"foreignKey:UserID;index"`
@@ -54,6 +54,12 @@ func UnDeleteBlog(id interface{}) interface{} {
 }
 
 func UpdateBlog(blogs *Blogs) interface{} {
-	results := database.DBConn.Model(&Blogs{}).Where("id = ?", blogs.ID).Where("user_id = ?", blogs.UserID).Updates(Blogs{Title: blogs.Title, Topic: blogs.Topic, Content: blogs.Content, Headtext: blogs.Headtext})
+	results := database.DBConn.Model(&Blogs{}).Where("id = ?", blogs.ID).Where("user_id = ?", blogs.UserID).Updates(Blogs{Title: blogs.Title, Topic: blogs.Topic, Content: blogs.Content, Headtext: blogs.Headtext, PublishAt: blogs.PublishAt})
 	return results.Error
+}
+
+func GetBlogs() ([]Blogs, interface{}) {
+	var blogs []Blogs
+	response := database.DBConn.Preload("User").Where("DATE(publish_at) < DATE(?)", time.Now()).Find(&blogs)
+	return blogs, response.Error
 }
