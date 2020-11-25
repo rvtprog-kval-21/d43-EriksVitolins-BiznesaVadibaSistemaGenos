@@ -1,7 +1,6 @@
 package general
 
 import (
-	"api/database"
 	"api/model/user"
 	"api/services/online"
 	"api/utlis/jwtParser"
@@ -33,9 +32,8 @@ func UsersOnline(context *gin.Context) {
 		}
 		keys = append(keys, key)
 	}
-	database.Open()
+
 	users := user.GetUsersIn(keys)
-	database.Close()
 
 	context.JSON(200, gin.H{"users": users})
 }

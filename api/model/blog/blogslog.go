@@ -23,3 +23,15 @@ func GetCount(blogId interface{}) (int64, interface{})  {
 	response := database.DBConn.Where("blog_id = ?", blogId).Find(&blogs).Count(&count)
 	return count, response.Error
 }
+
+func GetIsViewed(userId interface{}, blogId interface{}) bool  {
+	var blog BlogsLog
+	response := database.DBConn.Where("user_id = ?", userId).Where("blog_id = ?", blogId).First(&blog)
+	if response.Error != nil{
+		return false
+	}
+	if blogId == 0 {
+		return false
+	}
+	return true
+}
