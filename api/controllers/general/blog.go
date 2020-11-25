@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+type BlogsHomeResponse struct {
+	Blog blog.Blogs `json:"blog"`
+	Viewed bool `json:"viewed"`
+}
 func AddUserToBlogRole(context *gin.Context) {
 	claims := jwtParser.GetClaims(context)
 	if claims == nil {
@@ -210,6 +214,8 @@ func GetBlog(context *gin.Context) {
 		} else {
 			blog.AddItemToLog(int(claims["id"].(float64)),blogs.ID)
 		}
+	} else {
+		blog.AddItemToLog(int(claims["id"].(float64)),blogs.ID)
 	}
 	context.JSON(200, gin.H{"blog": blogs})
 }
@@ -230,4 +236,18 @@ func GetBlogCount(context *gin.Context) {
 		return
 	}
 	context.JSON(200, gin.H{"count": count})
+}
+
+func GetHomeBlogs(context *gin.Context)  {
+	blogs, err := blog.GetBlogsLimitedToFour()
+	if err != nil {
+		context.JSON(200, gin.H{"error": err})
+		return
+	}
+	var response []BlogsHomeResponse
+	for _, iter := range blogs{
+		response = append(response, BlogsHomeResponse{Blog: iter, Viewed: blog.GetIsViewed(iter.UserID, iter.ID)})
+	}
+
+	context.JSON(200, gin.H{"blogs": response})
 }

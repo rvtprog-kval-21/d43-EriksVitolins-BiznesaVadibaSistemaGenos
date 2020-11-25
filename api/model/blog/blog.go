@@ -63,3 +63,9 @@ func GetBlogs() ([]Blogs, interface{}) {
 	response := database.DBConn.Preload("User").Where("DATE(publish_at) < DATE(?)", time.Now()).Find(&blogs)
 	return blogs, response.Error
 }
+
+func GetBlogsLimitedToFour() ([]Blogs, interface{}) {
+	var blogs []Blogs
+	response := database.DBConn.Preload("User").Order("id desc").Where("DATE(publish_at) < DATE(?)", time.Now()).Limit(4).Find(&blogs)
+	return blogs, response.Error
+}

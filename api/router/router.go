@@ -72,6 +72,7 @@ func apiRoutes(api *gin.RouterGroup) {
 	blog.GET("/get/:id/", general.GetBlog)
 	blog.GET("/all/", general.GetBlogs)
 	blog.GET("/get/:id/count",general.GetBlogCount)
+	blog.GET("/home/limited", general.GetHomeBlogs)
 }
 
 func tagRoutes(tag *gin.RouterGroup) {
