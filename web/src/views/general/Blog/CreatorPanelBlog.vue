@@ -34,11 +34,11 @@
           :pagination-options="{
             enabled: true,
             mode: 'records',
-            perPage: 5,
+            perPage: 10,
             position: 'top',
             perPageDropdown: [10, 15, 20],
             dropdownAllowAll: false,
-            setCurrentPage: 2,
+            setCurrentPage: 1,
             nextLabel: 'next',
             prevLabel: 'prev',
             rowsPerPageLabel: 'Rows per page',
