@@ -80,7 +80,7 @@ export default {
   data() {
     return {
       errors: {},
-      isCreator: true,
+      isCreator: false,
       blogs: []
     };
   },
@@ -90,6 +90,17 @@ export default {
               .get("api/blog/all/")
               .then(res => {
                 this.blogs = res.data.blogs;
+              })
+              .catch(rej => {
+                console.log(rej.response.data.error)
+              });
+    },
+    getIsOwner() {
+      window.axios
+              .get("api/blog/check/isowner/")
+              .then(res => {
+                console.log( res.data.isCreator)
+                this.isCreator = res.data.isCreator;
               })
               .catch(rej => {
                 console.log(rej.response.data.error)
@@ -109,6 +120,7 @@ export default {
   },
   created() {
     this.getBlogs()
+    this.getIsOwner()
   }
 };
 </script>

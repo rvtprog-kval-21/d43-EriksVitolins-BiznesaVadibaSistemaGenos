@@ -55,6 +55,10 @@ func adminRoutes(admin *gin.RouterGroup) {
 	admin.GET("/blog/:id/add", general.AddUserToBlogRole)
 	admin.GET("/blog/:id/delete", general.DeleteUserFromBlogRole)
 	admin.GET("/users/blog", general.GetAllBloggers)
+
+	admin.GET("/users/managers", general.GetAllManagers)
+	admin.GET("/manager/:id/add", general.AddUserToManagerRole)
+	admin.GET("/manager/:id/delete", general.DeleteUserFromManagerRole)
 }
 
 func apiRoutes(api *gin.RouterGroup) {
@@ -63,6 +67,11 @@ func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/usersonline", general.UsersOnline)
 	api.GET("/users/search", general.SearchUsers)
 
+	blogRoutes(api)
+	managerRoutes(api)
+}
+
+func blogRoutes(api *gin.RouterGroup){
 	blog := api.Group("/blog")
 	blog.POST("/add", general.AddBlog)
 	blog.POST("/update/:id", general.UpdateBlog)
@@ -73,6 +82,24 @@ func apiRoutes(api *gin.RouterGroup) {
 	blog.GET("/all/", general.GetBlogs)
 	blog.GET("/get/:id/count",general.GetBlogCount)
 	blog.GET("/home/limited", general.GetHomeBlogs)
+	blog.GET("/check/isowner/", general.BlogIsMemeber)
+}
+
+func managerRoutes(api *gin.RouterGroup){
+	manager := api.Group("/manager")
+	/*
+	blog := api.Group("/blog")
+	blog.POST("/add", general.AddBlog)
+	blog.POST("/update/:id", general.UpdateBlog)
+	blog.GET("/owner", general.GetYourBlogs)
+	blog.GET("/owner/get/:id/delete", general.DeleteBlog)
+	blog.GET("/owner/get/:id/undelete", general.UndeleteBlog)
+	blog.GET("/get/:id/", general.GetBlog)
+	blog.GET("/all/", general.GetBlogs)
+	blog.GET("/get/:id/count",general.GetBlogCount)
+	blog.GET("/home/limited", general.GetHomeBlogs)
+	*/
+	manager.GET("/check/isowner/", general.ManagerIsMemeber)
 }
 
 func tagRoutes(tag *gin.RouterGroup) {

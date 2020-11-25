@@ -251,3 +251,17 @@ func GetHomeBlogs(context *gin.Context)  {
 
 	context.JSON(200, gin.H{"blogs": response})
 }
+
+func BlogIsMemeber(context *gin.Context){
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	blogger := blog.Profile(claims["id"])
+	if blogger.ID == 0 {
+		context.JSON(200, gin.H{"isCreator": false})
+		return
+	}
+	context.JSON(200, gin.H{"isCreator": true})
+}
