@@ -60,7 +60,7 @@ func UpdateBlog(blogs *Blogs) interface{} {
 
 func GetBlogs() ([]Blogs, interface{}) {
 	var blogs []Blogs
-	response := database.DBConn.Preload("User").Where("DATE(publish_at) < DATE(?)", time.Now()).Find(&blogs)
+	response := database.DBConn.Preload("User").Order("id desc").Where("DATE(publish_at) < DATE(?)", time.Now()).Find(&blogs)
 	return blogs, response.Error
 }
 

@@ -4,6 +4,7 @@ import (
 	"api/database"
 	"api/model/blog"
 	"api/model/tags"
+	"api/model/tracking"
 	user2 "api/model/user"
 	"api/utlis/password"
 	"fmt"
@@ -26,6 +27,11 @@ func migrateTables() {
 	err = database.DBConn.AutoMigrate(&blog.Bloggers{})
 	err = database.DBConn.AutoMigrate(&blog.Blogs{})
 	err = database.DBConn.AutoMigrate(&blog.BlogsLog{})
+	err = database.DBConn.AutoMigrate(&blog.BlogsLog{})
+	err = database.DBConn.AutoMigrate(&blog.BlogsLog{})
+	err = database.DBConn.AutoMigrate(&tracking.Managers{})
+	err = database.DBConn.AutoMigrate(&tracking.TrackedSubmission{})
+	err = database.DBConn.AutoMigrate(&tracking.TrackedAttachment{})
 	if err != nil {
 		panic("Migration failed")
 	}

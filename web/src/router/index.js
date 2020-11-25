@@ -9,6 +9,10 @@ const AdminPanelBlog = () => import("../views/general/Blog/AdminPanelBlog");
 const CreatorPanelBlog = () => import("../views/general/Blog/CreatorPanelBlog");
 const IndividualBlog = () => import("../views/general/Blog/IndividualBlog");
 
+const Tracking = () => import("../views/Tracking/Tracking");
+const AdminPanelTracking = () => import("../views/Tracking/AdminPanelTracking");
+const ManagerPanelTracking = () => import("../views/Tracking/ManagerPanelTracking");
+
 const Submissions = () => import("../views/general/Submissions");
 
 const ProfileComponent = () => import("../views/Profile/ProfileComponent");
@@ -41,6 +45,18 @@ const routes = [
   {
     path: "/blog/:id/view",
     component: IndividualBlog
+  },
+  {
+    path: "/tracking",
+    component: Tracking
+  },
+  {
+    path: "/tracking/admin",
+    component: AdminPanelTracking
+  },
+  {
+    path: "/tracking/manager",
+    component: ManagerPanelTracking
   },
   {
     path: "/home",
