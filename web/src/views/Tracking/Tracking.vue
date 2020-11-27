@@ -1,5 +1,5 @@
 <template>
-    <b-container class="mt-3">
+    <b-container class="mt-3 container">
         <template v-if="currentUser.role === 'admin' || isManager">
             <div class="d-flex justify-content-end">
                 <a href="/tracking/admin">
@@ -17,6 +17,38 @@
                 >
             </div>
         </template>
+       <div class="mt-4 form">
+           <h3>Submissions:</h3>
+           <div class="mt-4">
+               <h5 class="mb-2">Subject:</h5>
+               <b-form-input class="w-75" v-model="form.subject" placeholder="Enter Subject"></b-form-input>
+           </div>
+
+           <div class="mt-4">
+               <h5 class="mb-2">Description:</h5>
+               <b-form-textarea
+                       v-model="form.description"
+                       placeholder="Enter Description"
+                       rows="3"
+                       max-rows="6"
+               ></b-form-textarea>
+           </div>
+           <div class="mt-4">
+               <h5 class="mb-2">Attachments:</h5>
+               <b-form-file
+                       class="w-75"
+                       multiple
+                       v-model="form.files"
+                       :state="Boolean(form.files)"
+                       placeholder="Choose a file or drop it here..."
+                       drop-placeholder="Drop file here..."
+               ></b-form-file>
+           </div>
+           <div class="d-flex justify-content-between mt-5">
+               <div></div>
+               <b-button @click="goSubmit" variant="success">Submit</b-button>
+           </div>
+       </div>
     </b-container>
 </template>
 
@@ -31,12 +63,17 @@
         data() {
             return {
                 errors: {},
-                isManager: true,
-                blogs: []
+                isManager: false,
+                blogs: [],
+                form: {
+                    subject: "",
+                    description: "",
+                    files: null
+                }
             };
         },
         methods: {
-            getIsOwner() {
+            getIsManager() {
                 window.axios
                     .get("api/manager/check/ismanager/")
                     .then(res => {
@@ -46,59 +83,50 @@
                         console.log(rej.response.data.error)
                     });
             },
-            getBlogs() {
-                window.axios
-                    .get("api/blog/all/")
-                    .then(res => {
-                        this.blogs = res.data.blogs;
-                    })
-                    .catch(rej => {
-                        console.log(rej.response.data.error)
-                    });
+            goSubmit(){
+                if (this.form.subject != '' && this.form.description != '') {
+                    let formData = new FormData();
+                    formData.append("subject", `${this.form.subject}`);
+                    formData.append("description", `${this.form.description}`);
+                    formData.append("files", `${this.form.files}`);
+                    window.axios
+                        .post("api/tracking/add/",formData, {
+                            headers: {
+                                "Content-Type": "multipart/form-data"
+                            }
+                        })
+                        .then(() => {
+                            this.makeToast("Submitted successfully", "success")
+                        })
+                        .catch(rej => {
+                            this.makeToast(rej.response.data.error, "danger")
+                        });
+                } else {
+                    this.makeToast("Subject or description wasn't filled", "danger")
+                }
             },
-            getImgUrl(image) {
-                let images = process.env.VUE_APP_API + "/static" + image;
-                return images;
-            },
-            getDate(date) {
-                date = new Date(date);
-                const day = date.getDate();
-                const month = date.toLocaleString("default", { month: "long" });
-                const year = date.getFullYear()
-                return day + " " + month + " " + year;
-            },
+            makeToast(text, variant) {
+                this.$bvToast.toast(text, {
+                    autoHideDelay: 5000,
+                    variant: variant,
+                    title: "Notification"
+                });
+            }
+
         },
         created() {
+            this.getIsManager()
         }
     }
 </script>
 
 <style scoped lang="scss">
-    .blog{
-        width: 100%;
-        cursor: pointer;
-        height: 400px;
-        margin-bottom: 80px;
-        .image{
-            width: 60%;
-            img{
-                width: 100%;
-                height: 100%;
-            }
+    .form{
+        h5{
+            margin: 0;
         }
-        .content{
-            display: flex;
-            justify-content: space-between;
-            flex-direction: column;
-            padding-left: 10px;
-            .info{
-                display: flex;
-                font-weight: bolder;
-                align-items: center;
-            }
-            p{
-                margin-bottom: 0;
-            }
-        }
+    }
+    .container{
+        height: 100%;
     }
 </style>
