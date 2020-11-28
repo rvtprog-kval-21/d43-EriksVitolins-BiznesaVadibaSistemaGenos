@@ -108,7 +108,7 @@
                     for (let iter = 0; iter < this.form.files.length; iter += 1) {
                         let formData = new FormData();
                         console.log(this.form.files[iter])
-                        formData.append("file", `${this.form.files[iter]}`);
+                        formData.append("file", this.form.files[iter]);
                         formData.append("id", `${this.formID}`);
                         window.axios
                             .post("api/tracking/add/attachment/",formData, {

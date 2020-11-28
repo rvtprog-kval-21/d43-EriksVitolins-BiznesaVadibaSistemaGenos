@@ -96,7 +96,7 @@ func AddAttachments(context *gin.Context) {
 	}
 	file, _ := context.FormFile("file")
 	if file != nil {
-		path := "/tracking/%s"
+		path := "/tracking/%s/"
 		path = fmt.Sprintf(path, context.PostForm("id"))
 		if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
 			os.MkdirAll("storage"+path, os.ModeDir)
