@@ -27,3 +27,8 @@ func AddSubmission(submission *TrackedSubmission) interface{} {
 	results := database.DBConn.Create(&submission)
 	return results.Error
 }
+
+func AddTracking(attachment *TrackedAttachment) interface{} {
+	results := database.DBConn.Create(&attachment)
+	return results.Error
+}

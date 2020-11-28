@@ -65,6 +65,7 @@
                 errors: {},
                 isManager: false,
                 blogs: [],
+                formID: 0,
                 form: {
                     subject: "",
                     description: "",
@@ -88,19 +89,42 @@
                     let formData = new FormData();
                     formData.append("subject", `${this.form.subject}`);
                     formData.append("description", `${this.form.description}`);
-                    formData.append("files", `${this.form.files}`);
                     window.axios
                         .post("api/tracking/add/",formData, {
                             headers: {
                                 "Content-Type": "multipart/form-data"
                             }
                         })
-                        .then(() => {
+                        .then(res => {
+                            this.formID = res.data.id
                             this.makeToast("Submitted successfully", "success")
+                            this.form.subject = ""
+                            this.form.description = ""
                         })
                         .catch(rej => {
                             this.makeToast(rej.response.data.error, "danger")
                         });
+
+                    for (let iter = 0; iter < this.form.files.length; iter += 1) {
+                        let formData = new FormData();
+                        console.log(this.form.files[iter])
+                        formData.append("file", `${this.form.files[iter]}`);
+                        formData.append("id", `${this.formID}`);
+                        window.axios
+                            .post("api/tracking/add/attachment/",formData, {
+                                headers: {
+                                    "Content-Type": "multipart/form-data"
+                                }
+                            })
+                            .then(() => {
+                                console.log("saved")
+                            })
+                            .catch(rej => {
+                                this.makeToast(rej.response.data.error, "danger")
+                            });
+                    }
+                    this.formID = 0
+                    this.form.files = null
                 } else {
                     this.makeToast("Subject or description wasn't filled", "danger")
                 }

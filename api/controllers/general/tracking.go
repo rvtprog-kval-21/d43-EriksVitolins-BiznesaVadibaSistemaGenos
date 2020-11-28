@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -71,8 +72,8 @@ func AddSubmission(context *gin.Context) {
 	}
 	var newSubmission tracking.TrackedSubmission
 	newSubmission.UserID = int(claims["id"].(float64))
-	newSubmission.Subject = context.PostForm("title")
-	newSubmission.Description = context.PostForm("topic")
+	newSubmission.Subject = context.PostForm("subject")
+	newSubmission.Description = context.PostForm("description")
 	newSubmission.SubmitDate = time.Now()
 	newSubmission.IsConfirmed = false
 	response := tracking.AddSubmission(&newSubmission)
@@ -80,22 +81,40 @@ func AddSubmission(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the blog"})
 		return
 	}
-	form, _ := context.MultipartForm()
-	files, _ := form.File["files[]"]
-	path := "/blog/%s"
-	path = fmt.Sprintf(path, fmt.Sprint(newSubmission.ID))
-	if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
-		os.MkdirAll("storage"+path, os.ModeDir)
-	}
-	path = path + "/banner.png"
-	err := context.SaveUploadedFile(files[0], path)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the banner"})
-		return
-	}
-	context.JSON(201, gin.H{"message": "Submission is submitted"})
+	context.JSON(201, gin.H{"message": "Submission is submitted", "id": newSubmission.ID})
 }
 
 func SeePersonalSubmissions(context *gin.Context) {
 
+}
+
+func AddAttachments(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	file, _ := context.FormFile("file")
+	if file != nil {
+		path := "/tracking/%s"
+		path = fmt.Sprintf(path, context.PostForm("id"))
+		if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
+			os.MkdirAll("storage"+path, os.ModeDir)
+		}
+		path = path + file.Filename
+		err := context.SaveUploadedFile(file, "storage"+path)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the banner"})
+			return
+		}
+		var newAttachment tracking.TrackedAttachment
+		newAttachment.Path = path
+		newAttachment.SubmissionID, _ = strconv.Atoi(context.PostForm("id"))
+		response := tracking.AddTracking(&newAttachment)
+		if response != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the blog banner"})
+			return
+		}
+	}
+	context.JSON(201, gin.H{"message": "Article is saved"})
 }

@@ -90,6 +90,7 @@ func blogRoutes(api *gin.RouterGroup) {
 func trackingRoutes(api *gin.RouterGroup) {
 	tracking := api.Group("/tracking")
 	tracking.POST("/add/", general.AddSubmission)
+	tracking.POST("/add/attachment/", general.AddAttachments)
 	tracking.GET("/user/list", general.SeePersonalSubmissions)
 }
 
