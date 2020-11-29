@@ -75,7 +75,6 @@ func AddSubmission(context *gin.Context) {
 	newSubmission.Subject = context.PostForm("subject")
 	newSubmission.Description = context.PostForm("description")
 	newSubmission.SubmitDate = time.Now()
-	newSubmission.IsConfirmed = false
 	response := tracking.AddSubmission(&newSubmission)
 	if response != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the blog"})
@@ -85,7 +84,14 @@ func AddSubmission(context *gin.Context) {
 }
 
 func SeePersonalSubmissions(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	submissions := tracking.GetYourSubmissions(claims["id"])
 
+	context.JSON(200, gin.H{"submissions": submissions})
 }
 
 func AddAttachments(context *gin.Context) {

@@ -14,12 +14,12 @@ type TrackedSubmission struct {
 	Description string    `json:"description"`
 	Subject     string    `json:"subject"`
 	SubmitDate  time.Time `json:"submit_date"`
+	TrackedAttachments []TrackedAttachment `json:"tracked_attachments" gorm:"foreignKey:SubmissionID"`
 }
 
 type TrackedAttachment struct {
 	ID           int               `gorm:"primaryKey;not null" json:"id"`
 	Path         string            `json:"path"`
-	Submission   TrackedSubmission `json:"submission" gorm:"foreignKey:SubmissionID"`
 	SubmissionID int               `json:"submission_id" gorm:"foreignKey:SubmissionID;index"`
 }
 
@@ -31,4 +31,10 @@ func AddSubmission(submission *TrackedSubmission) interface{} {
 func AddTracking(attachment *TrackedAttachment) interface{} {
 	results := database.DBConn.Create(&attachment)
 	return results.Error
+}
+
+func GetYourSubmissions(userId interface{}) []TrackedSubmission{
+	var submissions []TrackedSubmission
+	database.DBConn.Preload("TrackedAttachments").Where("user_id = ?", userId).Find(&submissions)
+	return submissions
 }

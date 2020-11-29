@@ -2,6 +2,8 @@
     <b-container class="mt-3 container">
         <template v-if="currentUser.role === 'admin' || isManager">
             <div class="d-flex justify-content-end">
+                <b-button class="mr-3" variant="outline-info" v-if="!creatorIsOpended" @click="creatorIsOpended = true">Create submissions</b-button>
+                <b-button class="mr-3" variant="outline-info" v-else @click="creatorIsOpended = false">View submissions</b-button>
                 <a href="/tracking/admin">
                     <b-button
                             class="mr-3"
@@ -12,12 +14,12 @@
                 </a>
                 <a href="/tracking/manager"
                 ><b-button v-if="isManager" variant="outline-info"
-                >Creator Panel</b-button
+                >Manager Panel</b-button
                 ></a
                 >
             </div>
         </template>
-       <div class="mt-4 form">
+       <div v-if="creatorIsOpended" class="mt-4 form">
            <h3>Submissions:</h3>
            <div class="mt-4">
                <h5 class="mb-2">Subject:</h5>
@@ -49,6 +51,36 @@
                <b-button @click="goSubmit" variant="success">Submit</b-button>
            </div>
        </div>
+        <div v-else class="mt-4 form">
+            <h3>Submissions:</h3>
+            <vue-good-table
+                    :search-options="{ enabled: true }"
+                    :pagination-options="{enabled: true, mode: 'records',
+                    perPage: 10,  position: 'top',nextLabel: 'next',
+                    prevLabel: 'prev',
+                    rowsPerPageLabel: 'Rows per page',
+                    ofLabel: 'of',
+                    pageLabel: 'page', // for 'pages' mode
+                    allLabel: 'All',}"
+                    :columns="columns"
+                    :rows="submissions"
+            >
+                <template slot="table-row" slot-scope="props">
+                    <div v-if="props.column.field === 'tracked_attachments'"
+                            class="table-row d-flex justify-content-center">
+                        <template v-if="props.formattedRow.tracked_attachments.length > 0">
+                            <b-button @click="downloadFiles(props.formattedRow.tracked_attachments)" variant="outline-info">Download</b-button>
+                        </template>
+                        <template v-else>
+                            <p>No attachments</p>
+                        </template>
+                    </div>
+                    <div v-else class="table-row d-flex justify-content-center">
+                        {{ props.formattedRow[props.column.field] }}
+                    </div>
+                </template>
+            </vue-good-table>>
+        </div>
     </b-container>
 </template>
 
@@ -63,8 +95,47 @@
         data() {
             return {
                 errors: {},
+                columns: [
+                    {
+                        label: "ID",
+                        field: "id",
+                        sortable: true,
+                        type:"number"
+                    },
+                    {
+                        label: "Subject",
+                        field: "subject",
+                    },
+                    {
+                        label: "Description",
+                        field: "description",
+                        sortable: true,
+                    },
+                    {
+                        label: "Date submitted",
+                        field: "submit_date",
+                        sortable: true,
+                    },
+                    {
+                        label: "Accepted",
+                        field: "is_confirmed",
+                        sortable: true,
+                        filterOptions: {
+                            enabled: true, // enable filter for this column
+                            filterValue: 'True', // initial populated value for this filter
+                            filterDropdownItems: ["True", "False"], // dropdown (with selected values) instead of text input
+                        },
+                    },
+                    {
+                        label: "Attachments",
+                        field: "tracked_attachments",
+                        sortable: false,
+                    }
+                ],
                 isManager: false,
                 blogs: [],
+                submissions: [],
+                creatorIsOpended: true,
                 formID: 0,
                 form: {
                     subject: "",
@@ -125,8 +196,32 @@
                     }
                     this.formID = 0
                     this.form.files = null
+                    this.getSubmissions()
                 } else {
                     this.makeToast("Subject or description wasn't filled", "danger")
+                }
+            },
+            downloadFiles(files){
+                for (let iter = 0; iter < files.length; iter += 1) {
+                    window.axios
+                        .get("static" + files[iter].path, { responseType: 'blob' })
+                        .then(res => {
+                            let filename
+                            if (res.data.type == "application/pdf"){
+                                filename = "attachment.pdf"
+                            } else {
+                                filename = "attachment.png"
+                            }
+                            const blob = new Blob([res.data])
+                            const link = document.createElement('a')
+                            link.href = URL.createObjectURL(blob)
+                            link.download = filename
+                            link.click()
+                            URL.revokeObjectURL(link.href)
+                        })
+                        .catch(rej => {
+                            this.makeToast(rej.response.data.error, "danger")
+                        });
                 }
             },
             makeToast(text, variant) {
@@ -135,11 +230,21 @@
                     variant: variant,
                     title: "Notification"
                 });
-            }
-
+            },
+            getSubmissions() {
+                window.axios
+                    .get("api/tracking/user/list")
+                    .then(res => {
+                        this.submissions = res.data.submissions;
+                    })
+                    .catch(() => {
+                        this.makeToast("There was an error getting your submissions", "danger")
+                    });
+            },
         },
         created() {
             this.getIsManager()
+            this.getSubmissions()
         }
     }
 </script>
