@@ -69,9 +69,11 @@ func apiRoutes(api *gin.RouterGroup) {
 
 	blogRoutes(api)
 	managerRoutes(api)
+	trackingRoutes(api)
+
 }
 
-func blogRoutes(api *gin.RouterGroup){
+func blogRoutes(api *gin.RouterGroup) {
 	blog := api.Group("/blog")
 	blog.POST("/add", general.AddBlog)
 	blog.POST("/update/:id", general.UpdateBlog)
@@ -80,26 +82,38 @@ func blogRoutes(api *gin.RouterGroup){
 	blog.GET("/owner/get/:id/undelete", general.UndeleteBlog)
 	blog.GET("/get/:id/", general.GetBlog)
 	blog.GET("/all/", general.GetBlogs)
-	blog.GET("/get/:id/count",general.GetBlogCount)
+	blog.GET("/get/:id/count", general.GetBlogCount)
 	blog.GET("/home/limited", general.GetHomeBlogs)
 	blog.GET("/check/isowner/", general.BlogIsMemeber)
 }
 
-func managerRoutes(api *gin.RouterGroup){
+func trackingRoutes(api *gin.RouterGroup) {
+	tracking := api.Group("/tracking")
+	tracking.POST("/add/", general.AddSubmission)
+	tracking.POST("/add/attachment/", general.AddAttachments)
+	tracking.GET("/user/list", general.SeePersonalSubmissions)
+	tracking.GET("/manager/check/ismanager/", general.ManagerIsMemeber)
+	tracking.GET("/manager/list/", general.SeeSubmissions)
+	tracking.GET("/manager/item/:id/open", general.OpenSubmissions)
+	tracking.GET("/manager/item/:id/close", general.CloseSubmissions)
+}
+
+func managerRoutes(api *gin.RouterGroup) {
 	manager := api.Group("/manager")
 	/*
-	blog := api.Group("/blog")
-	blog.POST("/add", general.AddBlog)
-	blog.POST("/update/:id", general.UpdateBlog)
-	blog.GET("/owner", general.GetYourBlogs)
-	blog.GET("/owner/get/:id/delete", general.DeleteBlog)
-	blog.GET("/owner/get/:id/undelete", general.UndeleteBlog)
-	blog.GET("/get/:id/", general.GetBlog)
-	blog.GET("/all/", general.GetBlogs)
-	blog.GET("/get/:id/count",general.GetBlogCount)
-	blog.GET("/home/limited", general.GetHomeBlogs)
+		blog := api.Group("/blog")
+		blog.POST("/add", general.AddBlog)
+		blog.POST("/update/:id", general.UpdateBlog)
+		blog.GET("/owner", general.GetYourBlogs)
+		blog.GET("/owner/get/:id/delete", general.DeleteBlog)
+		blog.GET("/owner/get/:id/undelete", general.UndeleteBlog)
+		blog.GET("/get/:id/", general.GetBlog)
+		blog.GET("/all/", general.GetBlogs)
+		blog.GET("/get/:id/count",general.GetBlogCount)
+		blog.GET("/home/limited", general.GetHomeBlogs)
 	*/
-	manager.GET("/check/isowner/", general.ManagerIsMemeber)
+	manager.GET("/check/ismanager/", general.ManagerIsMemeber)
+	manager.GET("/list/", general.SeeSubmissions)
 }
 
 func tagRoutes(tag *gin.RouterGroup) {
