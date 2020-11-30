@@ -94,6 +94,22 @@ func SeePersonalSubmissions(context *gin.Context) {
 	context.JSON(200, gin.H{"submissions": submissions})
 }
 
+func SeeSubmissions(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	manager := tracking.Profile(claims["id"])
+	if manager.ID == 0 {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+		return
+	}
+	submissions := tracking.GetSubmissions()
+
+	context.JSON(200, gin.H{"submissions": submissions})
+}
+
 func AddAttachments(context *gin.Context) {
 	claims := jwtParser.GetClaims(context)
 	if claims == nil {
@@ -123,4 +139,40 @@ func AddAttachments(context *gin.Context) {
 		}
 	}
 	context.JSON(201, gin.H{"message": "Article is saved"})
+}
+
+func OpenSubmissions(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	manager := tracking.Profile(claims["id"])
+	if manager.ID == 0 {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+		return
+	}
+	err := tracking.OpenSubmissions(context.Param("id"))
+	if err != nil {
+		context.JSON(500, gin.H{"error": "Had trouble updating submission"})
+	}
+	context.JSON(200, "good")
+}
+
+func CloseSubmissions(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	manager := tracking.Profile(claims["id"])
+	if manager.ID == 0 {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+		return
+	}
+	err := tracking.CloseSubmissions(context.Param("id"))
+	if err != nil {
+		context.JSON(500, gin.H{"error": "Had trouble updating submission"})
+	}
+	context.JSON(200, "good")
 }

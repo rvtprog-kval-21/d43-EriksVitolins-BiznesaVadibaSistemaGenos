@@ -79,7 +79,7 @@
                         {{ props.formattedRow[props.column.field] }}
                     </div>
                 </template>
-            </vue-good-table>>
+            </vue-good-table>
         </div>
     </b-container>
 </template>

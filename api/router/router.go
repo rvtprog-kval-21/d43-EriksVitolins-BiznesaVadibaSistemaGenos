@@ -92,6 +92,10 @@ func trackingRoutes(api *gin.RouterGroup) {
 	tracking.POST("/add/", general.AddSubmission)
 	tracking.POST("/add/attachment/", general.AddAttachments)
 	tracking.GET("/user/list", general.SeePersonalSubmissions)
+	tracking.GET("/manager/check/ismanager/", general.ManagerIsMemeber)
+	tracking.GET("/manager/list/", general.SeeSubmissions)
+	tracking.GET("/manager/item/:id/open", general.OpenSubmissions)
+	tracking.GET("/manager/item/:id/close", general.CloseSubmissions)
 }
 
 func managerRoutes(api *gin.RouterGroup) {
@@ -109,6 +113,7 @@ func managerRoutes(api *gin.RouterGroup) {
 		blog.GET("/home/limited", general.GetHomeBlogs)
 	*/
 	manager.GET("/check/ismanager/", general.ManagerIsMemeber)
+	manager.GET("/list/", general.SeeSubmissions)
 }
 
 func tagRoutes(tag *gin.RouterGroup) {
