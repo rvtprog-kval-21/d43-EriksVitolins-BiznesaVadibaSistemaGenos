@@ -3,6 +3,7 @@ package router
 import (
 	"api/config"
 	"api/controllers/general"
+	"api/controllers/projects"
 	"api/controllers/tags"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/jwt"
@@ -37,11 +38,10 @@ func setupRoutes(router *gin.Engine) {
 
 	admin := api.Group("/admin", IsAdmin)
 
-	tags := api.Group("/tags")
-
 	adminRoutes(admin)
 	apiRoutes(api)
-	tagRoutes(tags)
+	tagRoutes(api)
+	projectRoutes(api)
 }
 
 func adminRoutes(admin *gin.RouterGroup) {
@@ -116,7 +116,8 @@ func managerRoutes(api *gin.RouterGroup) {
 	manager.GET("/list/", general.SeeSubmissions)
 }
 
-func tagRoutes(tag *gin.RouterGroup) {
+func tagRoutes(api *gin.RouterGroup) {
+	tag := api.Group("/tags")
 	tag.GET("/private", tags.IndexPrivate)
 	tag.GET("/public", tags.IndexPublic)
 	tag.GET("/tag/:id/profile", tags.Profile)
@@ -128,4 +129,22 @@ func tagRoutes(tag *gin.RouterGroup) {
 	tag.GET("/tag/:id/makePrivate", tags.MakePrivate)
 	tag.POST("/tag/:id/leave", tags.LeaveTag)
 	tag.POST("/tag/:id/setavatar", tags.SetAvatar)
+}
+
+func projectRoutes(api *gin.RouterGroup) {
+	tag := api.Group("/projects")
+	tag.POST("/add/new", projects.CreateProject)
+	/*
+		tag.GET("/private", tags.IndexPrivate)
+		tag.GET("/public", tags.IndexPublic)
+		tag.GET("/tag/:id/profile", tags.Profile)
+		tag.POST("/tag/:id/join", tags.JoinTag)
+		tag.POST("/tag/:id/delete", tags.DeleteTag)
+		tag.POST("/tag/:id/newname", tags.NewName)
+		tag.POST("/tag/:id/newabout", tags.NewAbout)
+		tag.GET("/tag/:id/makePublic", tags.MakePublic)
+		tag.GET("/tag/:id/makePrivate", tags.MakePrivate)
+		tag.POST("/tag/:id/leave", tags.LeaveTag)
+		tag.POST("/tag/:id/setavatar", tags.SetAvatar)
+	*/
 }

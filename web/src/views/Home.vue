@@ -4,33 +4,47 @@
       <div class="top-row">
         <div class="blog pt-3">
           <div class="blog-top pl-3 d-flex flex-column">
-           <h5>Blogs:</h5>
+            <h5>Blogs:</h5>
           </div>
-          <hr>
+          <hr />
           <div>
-            <div class="blog-row d-flex" v-for="(iter,index) in this.blogs" :key="index">
-             <div class="ml-2 mr-2 d-flex justify-content-center align-items-center">
-                <b-icon v-if="!iter.viewed"  font-scale="2" variant="danger" icon="dot"></b-icon>
-             </div>
-            <div>
-              <div @click="$router.push('/blog/' + iter.blog.id + '/view')" class="d-flex align-items-center">
-                <p class="font-weight-bolder">{{iter.blog.topic}}</p>
-                <b-icon class="mr-2 mb-3 ml-2" icon="dot"></b-icon>
-                <VueShowdown
-                        class="mb-0"
-                        :markdown="iter.blog.title"
-                        flavor="github"
-                        :options="{ emoji: true }"
-                ></VueShowdown>
+            <div
+              class="blog-row d-flex"
+              v-for="(iter, index) in this.blogs"
+              :key="index"
+            >
+              <div
+                class="ml-2 mr-2 d-flex justify-content-center align-items-center"
+              >
+                <b-icon
+                  v-if="!iter.viewed"
+                  font-scale="2"
+                  variant="danger"
+                  icon="dot"
+                ></b-icon>
               </div>
               <div>
-                <VueShowdown
-                        :markdown="iter.blog.headtext"
-                        flavor="github"
-                        :options="{ emoji: true }"
-                ></VueShowdown>
+                <div
+                  @click="$router.push('/blog/' + iter.blog.id + '/view')"
+                  class="d-flex align-items-center"
+                >
+                  <p class="font-weight-bolder">{{ iter.blog.topic }}</p>
+                  <b-icon class="mr-2 mb-3 ml-2" icon="dot"></b-icon>
+                  <VueShowdown
+                    class="mb-0"
+                    :markdown="iter.blog.title"
+                    flavor="github"
+                    :options="{ emoji: true }"
+                  ></VueShowdown>
+                </div>
+                <div>
+                  <VueShowdown
+                    :markdown="iter.blog.headtext"
+                    flavor="github"
+                    :options="{ emoji: true }"
+                  ></VueShowdown>
+                </div>
               </div>
-            </div>
             </div>
           </div>
         </div>
@@ -87,13 +101,13 @@ export default {
     },
     getBlogs() {
       window.axios
-              .get("api/blog/home/limited")
-              .then(res => {
-                this.blogs = res.data.blogs;
-              })
-              .catch(rej => {
-                this.makeToast(rej.response.data.error, "danger");
-              });
+        .get("api/blog/home/limited")
+        .then(res => {
+          this.blogs = res.data.blogs;
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
     },
     makeToast(text, variant) {
       this.$bvToast.toast(text, {
@@ -109,26 +123,26 @@ export default {
     }
   },
   created() {
-    this.getBlogs()
+    this.getBlogs();
   }
 };
 </script>
 
 <style scoped lang="scss">
-  .top-row{
-    height: 500px;
-    .blog{
-      width: 400px;
-      background: white;
-      height: 100%;
-      border-radius: 10px;
-      .blog-row{
-        cursor: pointer;
-        margin-bottom: 20px;
-        &:hover{
-          background-color: #76d275;
-        }
+.top-row {
+  height: 500px;
+  .blog {
+    width: 400px;
+    background: white;
+    height: 100%;
+    border-radius: 10px;
+    .blog-row {
+      cursor: pointer;
+      margin-bottom: 20px;
+      &:hover {
+        background-color: #76d275;
       }
     }
   }
+}
 </style>
