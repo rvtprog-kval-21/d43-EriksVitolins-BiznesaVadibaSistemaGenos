@@ -46,3 +46,9 @@ func GetAll() []Project{
 	database.DBConn.Preload("Members.User").Find(&projects)
 	return projects
 }
+
+func GetProject(id interface{}) (Project, interface{}){
+	var project Project
+	response := database.DBConn.Preload("Members.User").Where("id = ?", id).Find(&project)
+	return project, response.Error
+}

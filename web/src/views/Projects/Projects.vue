@@ -29,7 +29,7 @@
                 </template>
               </div>
               <div>
-                <b-button variant="outline-primary">Visit</b-button>
+                <b-button @click="$router.push(`/projects/${iter.id}/see`)" variant="outline-primary">Visit</b-button>
               </div>
             </div>
           <hr :key="index">

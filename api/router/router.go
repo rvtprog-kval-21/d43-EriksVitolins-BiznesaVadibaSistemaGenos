@@ -135,6 +135,7 @@ func projectRoutes(api *gin.RouterGroup) {
 	project := api.Group("/projects")
 	project.POST("/add/new", projects.CreateProject)
 	project.GET("/all/", projects.GetAll)
+	project.GET("/get/:id/item/", projects.GetProject)
 	/*
 		tag.GET("/private", tags.IndexPrivate)
 		tag.GET("/public", tags.IndexPublic)

@@ -65,3 +65,11 @@ func GetAll(context *gin.Context)  {
 	projectsArray := projects.GetAll()
 	context.JSON(http.StatusOK, gin.H{"projects": projectsArray})
 }
+
+func GetProject(context *gin.Context)  {
+	project, err := projects.GetProject(context.Param("id"))
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"project": "Doesn't exist"})
+	}
+	context.JSON(http.StatusOK, gin.H{"project": project})
+}

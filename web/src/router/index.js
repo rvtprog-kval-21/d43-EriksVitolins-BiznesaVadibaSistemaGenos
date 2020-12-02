@@ -15,6 +15,7 @@ const ManagerPanelTracking = () => import("../views/Tracking/ManagerPanelTrackin
 
 const Projects = () => import("../views/Projects/Projects");
 const CreateProjects = () => import("../views/Projects/CreateProjects");
+const ProjectProfile = () => import("../views/Projects/ProjectProfile");
 
 const Submissions = () => import("../views/general/Submissions");
 
@@ -48,6 +49,10 @@ const routes = [
   {
     path: "/projects/create",
     component: CreateProjects
+  },
+  {
+    path: "/projects/:id/see",
+    component: ProjectProfile
   },
   {
     path: "/blog/creator",
