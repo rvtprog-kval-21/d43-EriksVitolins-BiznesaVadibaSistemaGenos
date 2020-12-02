@@ -60,3 +60,8 @@ func CreateProject(context *gin.Context) {
 	}
 	context.JSON(201, gin.H{"message": "Project is created"})
 }
+
+func GetAll(context *gin.Context)  {
+	projectsArray := projects.GetAll()
+	context.JSON(http.StatusOK, gin.H{"projects": projectsArray})
+}

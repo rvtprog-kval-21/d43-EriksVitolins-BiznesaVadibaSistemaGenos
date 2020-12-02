@@ -1,5 +1,9 @@
 <template>
   <b-container class="container">
+    <div class="d-flex justify-content-between mt-4">
+      <div></div>
+      <b-button variant="outline-primary" @click="$router.push('/projects')">Projects</b-button>
+    </div>
     <div class="">
       <div class="row-blog">
         <h5>Project name:</h5>

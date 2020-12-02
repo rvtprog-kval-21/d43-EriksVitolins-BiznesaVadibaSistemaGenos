@@ -132,8 +132,9 @@ func tagRoutes(api *gin.RouterGroup) {
 }
 
 func projectRoutes(api *gin.RouterGroup) {
-	tag := api.Group("/projects")
-	tag.POST("/add/new", projects.CreateProject)
+	project := api.Group("/projects")
+	project.POST("/add/new", projects.CreateProject)
+	project.GET("/all/", projects.GetAll)
 	/*
 		tag.GET("/private", tags.IndexPrivate)
 		tag.GET("/public", tags.IndexPublic)

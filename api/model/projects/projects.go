@@ -40,3 +40,9 @@ func AddMembers(member *Member) interface{} {
 	results := database.DBConn.Create(&member)
 	return results.Error
 }
+
+func GetAll() []Project{
+	var projects []Project
+	database.DBConn.Preload("Members.User").Find(&projects)
+	return projects
+}
