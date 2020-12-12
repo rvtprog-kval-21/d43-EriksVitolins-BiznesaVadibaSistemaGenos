@@ -4,21 +4,25 @@
 
 Šis ir PIKC "Rīgas Valsts tehnikums" kvalifikācijas darbs biznesa vadības sistēma Genos. Mans mērķis ir izveidot 
 iekšējo sistēmu priekš kompānijas, kurā es strādāju, tagad plānotās iespējas ir: Kalendārs(kur var redzēt jau gatavus events un izveidot pats savus),
- kas tiek ērti attēlots lietotājiem, droša login sistēma, lietotāju pārvaldīšanas sistēma, aptauju funkcionalitāte un  laika pārvaldības sistēma 
+ kas tiek ērti attēlots lietotājiem, droša login sistēma, lietotāju pārvaldīšanas sistēma, aptauju funkcionalitāte un  laika pārvaldības sistēma, blogs, kalendārs, minimāla projektu vadītbas sistēma, kompānijas forums, 
 
 ## Izmantotās tehnoloģijas
 Projektā tiek izmantots:
   - Golang
-    - Fiber
+    - Gin
     - Gorm
   - Docker
   - Docker-compose
-  - Composer
   - MySQL
   - Vuejs
     - Vuex
     - Vue Router 
     - BootstrapVue
+    - vue-tags-input
+    - validate.js
+    - vue-good-table
+    - vue-select
+    - vue-showdown
   - SCSS
 
 ## Izmantotie avoti
