@@ -11,7 +11,8 @@ const IndividualBlog = () => import("../views/general/Blog/IndividualBlog");
 
 const Tracking = () => import("../views/Tracking/Tracking");
 const AdminPanelTracking = () => import("../views/Tracking/AdminPanelTracking");
-const ManagerPanelTracking = () => import("../views/Tracking/ManagerPanelTracking");
+const ManagerPanelTracking = () =>
+  import("../views/Tracking/ManagerPanelTracking");
 
 const Projects = () => import("../views/Projects/Projects");
 const CreateProjects = () => import("../views/Projects/CreateProjects");

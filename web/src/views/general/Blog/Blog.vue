@@ -102,14 +102,14 @@ export default {
     },
     getIsOwner() {
       window.axios
-              .get("api/blog/check/isowner/")
-              .then(res => {
-                console.log( res.data.isCreator)
-                this.isCreator = res.data.isCreator;
-              })
-              .catch(rej => {
-                console.log(rej.response.data.error)
-              });
+        .get("api/blog/check/isowner/")
+        .then(res => {
+          console.log(res.data.isCreator);
+          this.isCreator = res.data.isCreator;
+        })
+        .catch(rej => {
+          console.log(rej.response.data.error);
+        });
     },
     getImgUrl(image) {
       let images = process.env.VUE_APP_API + "/static" + image;
@@ -125,7 +125,7 @@ export default {
   },
   created() {
     this.getBlogs();
-    this.getIsOwner()
+    this.getIsOwner();
   }
 };
 </script>

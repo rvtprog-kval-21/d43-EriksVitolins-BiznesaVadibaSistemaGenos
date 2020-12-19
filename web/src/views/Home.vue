@@ -51,16 +51,26 @@
       </div>
     </div>
     <div class="col-2">
-      <div class="p-5">
+      <div class="users">
         <template v-for="(iter, index) in onlineUsers">
-          <div :key="index" class="profile mb-2 d-flex align-items-center">
-            <b-avatar
-              size="3rem"
-              badge
-              badge-variant="success"
-              :src="getImgUrl(iter.avatar)"
-            ></b-avatar>
-            <h6 class="ml-3">{{ iter.name + " " + iter.last_name }}</h6>
+          <div class="user" :key="index">
+            <b-dropdown variant="outline-none" class="item">
+              <template class="wow" #button-content>
+                <div class="info">
+                  <b-avatar
+                    size="3rem"
+                    badge
+                    badge-variant="success"
+                    :src="getImgUrl(iter.avatar)"
+                  ></b-avatar>
+                  <h6>{{ iter.name + " " + iter.last_name }}</h6>
+                </div>
+              </template>
+              <b-dropdown-item :href="`/user/${iter.id}/profile`"
+                >Profile</b-dropdown-item
+              >
+              <b-dropdown-item href="#">Another item</b-dropdown-item>
+            </b-dropdown>
           </div>
         </template>
       </div>
@@ -141,6 +151,40 @@ export default {
       margin-bottom: 20px;
       &:hover {
         background-color: #76d275;
+      }
+    }
+  }
+}
+.users {
+  padding: 30px;
+  .user {
+    .item {
+      .info {
+        display: flex;
+        margin: 0 0 10px 0;
+        cursor: pointer;
+        align-items: center;
+        h6 {
+          margin-left: 10px;
+        }
+      }
+    }
+    &:hover {
+      border: solid 1px cornflowerblue;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.users {
+  .user {
+    .item {
+      .btn {
+        display: flex;
+        justify-content: space-between;
+        min-width: 400px;
+        align-items: center;
       }
     }
   }

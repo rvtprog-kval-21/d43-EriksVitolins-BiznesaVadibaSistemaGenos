@@ -10,15 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Init() {
+func Init() *gin.Engine {
 	gin.ForceConsoleColor()
 	router := gin.Default()
 	setupCors(router)
 	setupRoutes(router)
-	err := router.Run(":8000")
-	if err != nil {
-		panic(err)
-	}
+	return router
 }
 
 func setupCors(router *gin.Engine) {
