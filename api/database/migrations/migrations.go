@@ -3,7 +3,7 @@ package migrations
 import (
 	"api/database"
 	"api/model/blog"
-	"api/model/tags"
+	"api/model/projects"
 	"api/model/tracking"
 	user2 "api/model/user"
 	"api/utlis/password"
@@ -22,8 +22,8 @@ func userMigrate() {
 
 func migrateTables() {
 	err := database.DBConn.AutoMigrate(&user2.User{})
-	err = database.DBConn.AutoMigrate(&tags.Tag{})
-	err = database.DBConn.AutoMigrate(&tags.Member{})
+	err = database.DBConn.AutoMigrate(&projects.Project{})
+	err = database.DBConn.AutoMigrate(&projects.Member{})
 	err = database.DBConn.AutoMigrate(&blog.Bloggers{})
 	err = database.DBConn.AutoMigrate(&blog.Blogs{})
 	err = database.DBConn.AutoMigrate(&blog.BlogsLog{})

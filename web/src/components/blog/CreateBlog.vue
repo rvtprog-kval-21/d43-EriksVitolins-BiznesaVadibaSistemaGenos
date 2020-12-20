@@ -130,7 +130,7 @@ export default {
     init() {
       if (this.isEdit === true) {
         window.axios
-          .get("api/blog/get/" + this.editID+"/")
+          .get("api/blog/get/" + this.editID + "/")
           .then(res => {
             this.form = res.data.blog;
           })

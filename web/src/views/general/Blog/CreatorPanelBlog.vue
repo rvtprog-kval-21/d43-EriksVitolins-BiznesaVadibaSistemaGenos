@@ -52,24 +52,44 @@
               v-if="props.column.field === 'view'"
               class="table-row d-flex justify-content-center"
             >
-              <b-button @click="goToBlog(props.formattedRow.id)" variant="outline-info">View</b-button>
+              <b-button
+                @click="goToBlog(props.formattedRow.id)"
+                variant="outline-info"
+                >View</b-button
+              >
             </div>
             <div
               v-else-if="props.column.field === 'edit'"
               class="d-flex justify-content-center table-row"
             >
-              <b-button @click="editArticle(props.formattedRow.id)" variant="info">Edit</b-button>
+              <b-button
+                @click="editArticle(props.formattedRow.id)"
+                variant="info"
+                >Edit</b-button
+              >
             </div>
-            <div v-else-if="props.column.field === 'count'"
-                    class="d-flex justify-content-center table-row">
-              <p>{{getCount(props.formattedRow.id)}}</p>
+            <div
+              v-else-if="props.column.field === 'count'"
+              class="d-flex justify-content-center table-row"
+            >
+              <p>{{ getCount(props.formattedRow.id) }}</p>
             </div>
             <div
               v-else-if="props.column.field === 'deleted_at'"
               class="table-row d-flex justify-content-center"
             >
-              <b-button v-if="props.formattedRow.deleted_at === '0001-01-01T00:00:00Z'" @click="deleteBlog(props.formattedRow.id)" variant="danger">Delete</b-button>
-              <b-button @click="unDeleteBlog(props.formattedRow.id)" variant="outline-success" v-else>Undelete</b-button>
+              <b-button
+                v-if="props.formattedRow.deleted_at === '0001-01-01T00:00:00Z'"
+                @click="deleteBlog(props.formattedRow.id)"
+                variant="danger"
+                >Delete</b-button
+              >
+              <b-button
+                @click="unDeleteBlog(props.formattedRow.id)"
+                variant="outline-success"
+                v-else
+                >Undelete</b-button
+              >
             </div>
             <div v-else class="table-row d-flex justify-content-center">
               {{ props.formattedRow[props.column.field] }}
@@ -117,12 +137,12 @@ export default {
         },
         {
           label: "Delete",
-          field: "deleted_at",
+          field: "deleted_at"
         },
         {
           label: "View",
-          field: "count",
-        },
+          field: "count"
+        }
       ]
     };
   },
@@ -132,54 +152,54 @@ export default {
         .get("api/blog/owner")
         .then(res => {
           this.blogs = res.data.blogs;
-          this.getCounts()
+          this.getCounts();
         })
         .catch(rej => {
           this.makeToast(rej.response.data.error, "danger");
         });
     },
     getCounts() {
-     for (let iter = 0; iter < this.blogs.length; iter++) {
-       const cond = `id${this.blogs[iter].id}`
-       window.axios
-               .get(`api/blog/get/${this.blogs[iter].id}/count`)
-               .then(res => {
-                 this.count[cond] = res.data.count
-               })
-     }
+      for (let iter = 0; iter < this.blogs.length; iter++) {
+        const cond = `id${this.blogs[iter].id}`;
+        window.axios
+          .get(`api/blog/get/${this.blogs[iter].id}/count`)
+          .then(res => {
+            this.count[cond] = res.data.count;
+          });
+      }
     },
     getCount(id) {
-      const cond = `id${id}`
-      return this.count[cond]
+      const cond = `id${id}`;
+      return this.count[cond];
     },
     goToBlog(field) {
-      this.$router.push("/blog/" + field + "/view")
+      this.$router.push("/blog/" + field + "/view");
     },
     deleteBlog(field) {
       window.axios
-      .get(`api/blog/owner/get/${field}/delete`)
-              .then(rej => {
-                this.getBlogs()
-                this.makeToast(rej.data.message, "success");
-              })
-              .catch(rej => {
-                this.makeToast(rej.response.data.error, "danger");
-              });
+        .get(`api/blog/owner/get/${field}/delete`)
+        .then(rej => {
+          this.getBlogs();
+          this.makeToast(rej.data.message, "success");
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
     },
     unDeleteBlog(field) {
       window.axios
-              .get(`api/blog/owner/get/${field}/undelete`)
-              .then(rej => {
-                this.getBlogs()
-                this.makeToast(rej.data.message, "success");
-              })
-              .catch(rej => {
-                this.makeToast(rej.response.data.error, "danger");
-              });
+        .get(`api/blog/owner/get/${field}/undelete`)
+        .then(rej => {
+          this.getBlogs();
+          this.makeToast(rej.data.message, "success");
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
     },
-    editArticle(field){
-      this.idBlog = field
-      this.isEditing = true
+    editArticle(field) {
+      this.idBlog = field;
+      this.isEditing = true;
     },
     makeToast(text, variant) {
       this.$bvToast.toast(text, {

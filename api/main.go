@@ -5,7 +5,10 @@ import (
 	"api/database/migrations"
 	"api/router"
 	"api/services/online"
+	"log"
+	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -13,7 +16,15 @@ func main() {
 	if argsWithoutProg[0] == "server" {
 		go online.ClearOldOnes()
 		database.Open()
-		router.Init()
+		app := router.Init()
+		server := &http.Server{
+			Addr:           ":8000",
+			Handler:        app,
+			ReadTimeout:    5 * time.Second,
+			WriteTimeout:   5 * time.Second,
+			MaxHeaderBytes: 1 << 20,
+		}
+		log.Fatal(server.ListenAndServe())
 	} else if argsWithoutProg[0] == "migrate" {
 		migrations.Migrate()
 	}
