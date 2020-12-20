@@ -4,43 +4,52 @@
       <div
         class="header d-flex flex-column align-items-center justify-content-center mt-4 mb-4"
       >
-        <b-avatar size="8rem" :src="getImgUrl(project.avatar)"></b-avatar>
-        <h3 class="mt-2 mb-2">{{ project.name }}</h3>
-        <div v-if="user" class="w-100 p-4">
-          <div @click="aboutIsOpened = !aboutIsOpened" class="d-flex about flex-column align-items-center justify-content-center mb-2">
-            <h5 class="mb-0">About</h5>
-            <b-icon v-if="!aboutIsOpened" icon="arrow-down"></b-icon>
-              <b-icon v-if="aboutIsOpened" icon="arrow-up"></b-icon>
+        <template  v-if="project">
+          <template>
+            <b-avatar size="8rem" :src="getImgUrl(project.avatar)"></b-avatar>
+          </template>
+          <h3 class="mt-2 mb-2">{{ project.name }}</h3>
+          <div v-if="user" class="w-100 p-4">
+            <div @click="aboutIsOpened = !aboutIsOpened" class="d-flex about flex-column align-items-center justify-content-center mb-2">
+              <h5 class="mb-0">About</h5>
+              <b-icon v-if="!aboutIsOpened" icon="arrow-down"></b-icon>
+                <b-icon v-if="aboutIsOpened" icon="arrow-up"></b-icon>
+            </div>
+              <VueShowdown
+                      v-if="aboutIsOpened"
+                      class="border"
+                      :markdown="project.about"
+                      flavor="github"
+                      :options="{ emoji: true }"
+              ></VueShowdown>
           </div>
-            <VueShowdown
-                    v-if="aboutIsOpened"
-                    class="border"
-                    :markdown="project.about"
-                    flavor="github"
-                    :options="{ emoji: true }"
-            ></VueShowdown>
-        </div>
+        </template>
       </div>
     </div>
     <div class="left">
-      <div class="users">
+      <div class="users" v-if="project">
         <template v-for="(iter, index) in project.members">
           <div class="user" :key="index">
-            <b-dropdown variant="outline-none" class="item">
-              <template class="wow" #button-content>
-                <div class="info">
-                  <b-avatar
-                    size="3rem"
-                    :src="getImgUrl(iter.user.avatar)"
-                  ></b-avatar>
-                  <h6>{{ iter.user.name + " " + iter.user.last_name }}</h6>
-                </div>
-              </template>
-              <b-dropdown-item :href="`/user/${iter.user.id}/profile`"
+            <template v-if="iter">
+              <b-dropdown variant="outline-none" class="item">
+                <template class="wow" #button-content>
+                  <div class="info" v-if="iter">
+                    <b-avatar
+                            size="3rem"
+                            :src="getImgUrl(iter.user.avatar)"
+                    ></b-avatar>
+                    <h6 v-if="iter.user.name">{{ iter.user.name + " " + iter.user.last_name }}</h6>
+                  </div>
+                </template>
+                <b-dropdown-item :href="`/user/${iter.user.id}/profile`"
                 >Profile</b-dropdown-item
-              >
-              <b-dropdown-item href="#">Another item</b-dropdown-item>
-            </b-dropdown>
+                >
+                <template v-if="!isLoading">
+                  <b-dropdown-item @click="makeAdmin(iter.user.id)" v-if="user.is_owner && getXUser(iter.user.id).is_admin == false && currentUser.id != iter.user.id" href="#">Make Admin</b-dropdown-item>
+                  <b-dropdown-item @click="unmakeAdmin(iter.user.id)" v-else-if="user.is_owner && getXUser(iter.user.id).is_admin == true &&  currentUser.id != iter.user.id" href="#">Take Away Admin</b-dropdown-item>
+                </template>
+              </b-dropdown>
+            </template>
           </div>
         </template>
       </div>
@@ -55,12 +64,21 @@ export default {
     return {
       project: null,
       user: {},
-        aboutIsOpened: false
+      aboutIsOpened: false,
+      isLoading: false
     };
   },
   computed: {
     currentUser() {
       return this.$store.getters.currentUser;
+    },
+    isTheSameUser(id) {
+      if (this.currentUser) {
+        console.log(this.currentUser.id)
+        return this.currentUser.id == id
+      } else {
+        return false
+      }
     }
   },
   methods: {
@@ -68,25 +86,60 @@ export default {
       const users = this.project.members;
       this.user = users.find(e => e.user.id === this.currentUser.id);
     },
+    getXUser(id) {
+      const users = this.project.members;
+      const user = users.find(e => e.user.id === id);
+      return user
+    },
     getProject() {
+      this.isLoading = true
       window.axios
         .get(`api/projects/get/${this.$route.params.id}/item/`)
         .then(res => {
           this.project = res.data.project;
           this.getUser();
+          this.isLoading = false
         })
         .catch(() => {
           this.$router.push("/projects");
         });
     },
-
+    makeAdmin(id) {
+      window.axios
+              .get(`api/projects/add/${this.$route.params.id}/admin/?id=${id}`)
+              .then(() => {
+                this.getProject()
+                this.makeToast(`${this.getXUser(id).name} ${this.getXUser(id).last_name} was made an admin`, "success");
+              })
+              .catch((rej) => {
+                this.makeToast(rej.response.data.error, "danger");
+              });
+    },
+    unmakeAdmin(id) {
+      window.axios
+              .get(`api/projects/remove/${this.$route.params.id}/admin/?id=${id}`)
+              .then(() => {
+                this.getProject()
+                this.makeToast(`${this.getXUser(id).name} ${this.getXUser(id).last_name} was taken away from the admin role`, "success");
+              })
+              .catch((rej) => {
+                this.makeToast(rej.response.data.error, "danger");
+              });
+    },
+    makeToast(text, variant) {
+      this.$bvToast.toast(text, {
+        autoHideDelay: 5000,
+        variant: variant,
+        title: "Notification"
+      });
+    },
     getImgUrl(image) {
       let images = process.env.VUE_APP_API + "/static" + image;
       return images;
     }
   },
-  created() {
-    this.getProject();
+  async created() {
+    await this.getProject();
   }
 };
 </script>
