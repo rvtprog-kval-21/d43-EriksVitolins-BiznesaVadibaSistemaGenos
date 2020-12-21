@@ -133,6 +133,10 @@ func projectRoutes(api *gin.RouterGroup) {
 	project.POST("/add/new", projects.CreateProject)
 	project.GET("/all/", projects.GetAll)
 	project.GET("/get/:id/item/", projects.GetProject)
+	project.GET("/add/:id/admin/", projects.MakeAdmin)
+	project.GET("/remove/:id/admin/", projects.UnMakeAdmin)
+	project.GET("/kick/:id/member/", projects.KickUser)
+	project.GET("/leave/:id/member/", projects.LeaveProject)
 	/*
 		tag.GET("/private", tags.IndexPrivate)
 		tag.GET("/public", tags.IndexPublic)

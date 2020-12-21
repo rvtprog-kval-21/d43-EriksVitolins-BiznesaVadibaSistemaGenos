@@ -45,8 +45,10 @@
                 >Profile</b-dropdown-item
                 >
                 <template v-if="!isLoading">
-                  <b-dropdown-item @click="makeAdmin(iter.user.id)" v-if="user.is_owner && getXUser(iter.user.id).is_admin == false && currentUser.id != iter.user.id" href="#">Make Admin</b-dropdown-item>
-                  <b-dropdown-item @click="unmakeAdmin(iter.user.id)" v-else-if="user.is_owner && getXUser(iter.user.id).is_admin == true &&  currentUser.id != iter.user.id" href="#">Take Away Admin</b-dropdown-item>
+                  <b-dropdown-item @click="makeAdmin(iter.user.id)" v-if="user.is_owner && getXUser(iter.user.id).is_admin == false && getXUser(iter.user.id).is_owner == false && currentUser.id != iter.user.id" href="#">Make Admin</b-dropdown-item>
+                  <b-dropdown-item @click="unmakeAdmin(iter.user.id)" v-else-if="user.is_owner && getXUser(iter.user.id).is_admin == true && getXUser(iter.user.id).is_owner == false &&  currentUser.id != iter.user.id" href="#">Take Away Admin</b-dropdown-item>
+                  <b-dropdown-item @click="kickUser(iter.user.id)" v-if="(user.is_owner || user.is_admin) && getXUser(iter.user.id).is_admin == false && getXUser(iter.user.id).is_owner == false &&  currentUser.id != iter.user.id" href="#">Kick</b-dropdown-item>
+                  <b-dropdown-item @click="leaveProject()" v-if="currentUser.id == iter.user.id" href="#">Leave</b-dropdown-item>
                 </template>
               </b-dropdown>
             </template>
@@ -109,7 +111,7 @@ export default {
               .get(`api/projects/add/${this.$route.params.id}/admin/?id=${id}`)
               .then(() => {
                 this.getProject()
-                this.makeToast(`${this.getXUser(id).name} ${this.getXUser(id).last_name} was made an admin`, "success");
+                this.makeToast(`User was made an admin`, "success");
               })
               .catch((rej) => {
                 this.makeToast(rej.response.data.error, "danger");
@@ -120,7 +122,28 @@ export default {
               .get(`api/projects/remove/${this.$route.params.id}/admin/?id=${id}`)
               .then(() => {
                 this.getProject()
-                this.makeToast(`${this.getXUser(id).name} ${this.getXUser(id).last_name} was taken away from the admin role`, "success");
+                this.makeToast(`Admin was taken away from the user`, "success");
+              })
+              .catch((rej) => {
+                this.makeToast(rej.response.data.error, "danger");
+              });
+    },
+    kickUser(id) {
+      window.axios
+              .get(`api/projects/kick/${this.$route.params.id}/member/?id=${id}`)
+              .then(() => {
+                this.getProject()
+                this.makeToast(`User was kicked from the project`, "success");
+              })
+              .catch((rej) => {
+                this.makeToast(rej.response.data.error, "danger");
+              });
+    },
+    leaveProject() {
+      window.axios
+              .get(`api/projects/leave/${this.$route.params.id}/member/`)
+              .then(() => {
+                this.$router.push("/projects");
               })
               .catch((rej) => {
                 this.makeToast(rej.response.data.error, "danger");

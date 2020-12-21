@@ -41,14 +41,35 @@ func AddMembers(member *Member) interface{} {
 	return results.Error
 }
 
-func GetAll() []Project{
+func GetAll() []Project {
 	var projects []Project
 	database.DBConn.Preload("Members.User").Find(&projects)
 	return projects
 }
 
-func GetProject(id interface{}) (Project, interface{}){
+func GetProject(id interface{}) (Project, interface{}) {
 	var project Project
 	response := database.DBConn.Preload("Members.User").Where("id = ?", id).Find(&project)
 	return project, response.Error
+}
+
+func GetMember(id interface{}, userID interface{}) (Member, interface{}) {
+	var member Member
+	response := database.DBConn.Where("project_id = ?", id).Where("user_id = ?", userID).Find(&member)
+	return member, response.Error
+}
+
+func UpdateAdmin(id interface{}, userID interface{}, isAdmin bool) interface{} {
+	response := database.DBConn.Model(&Member{}).Where("project_id = ?", id).Where("user_id = ?", userID).Update("is_admin", isAdmin)
+	return response.Error
+}
+
+func DeleteMember(id interface{}, userID interface{}) interface{} {
+	response := database.DBConn.Where("project_id = ?", id).Where("user_id = ?", userID).Delete(Member{})
+	return response.Error
+}
+
+func DeleteProject(id interface{}) interface{} {
+	response := database.DBConn.Where("id = ?", id).Delete(Project{})
+	return response.Error
 }
