@@ -165,3 +165,22 @@ func LeaveProject(context *gin.Context) {
 		}
 	}
 }
+
+func ArchiveProject(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	user, err := projects.GetMember(context.Param("id"), claims["id"])
+	if err != nil && !user.IsOwner {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+	err = projects.DeleteProject(context.Param("id"))
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "Member was deleted"})
+}

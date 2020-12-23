@@ -1,6 +1,7 @@
 <template>
   <div class="body">
     <div class="right">
+      <b-button v-if="this.user.is_admin || this.user.is_owner" class="mt-3 ml-3" variant="outline-primary" @click="goToSettings()">Settings</b-button>
       <div
         class="header d-flex flex-column align-items-center justify-content-center mt-4 mb-4"
       >
@@ -74,14 +75,6 @@ export default {
     currentUser() {
       return this.$store.getters.currentUser;
     },
-    isTheSameUser(id) {
-      if (this.currentUser) {
-        console.log(this.currentUser.id)
-        return this.currentUser.id == id
-      } else {
-        return false
-      }
-    }
   },
   methods: {
     getUser() {
@@ -105,6 +98,9 @@ export default {
         .catch(() => {
           this.$router.push("/projects");
         });
+    },
+    goToSettings() {
+      this.$router.push(`/projects/${this.$route.params.id}/settings`);
     },
     makeAdmin(id) {
       window.axios
