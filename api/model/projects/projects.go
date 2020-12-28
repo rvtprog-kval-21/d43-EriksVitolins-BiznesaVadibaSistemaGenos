@@ -73,3 +73,23 @@ func DeleteProject(id interface{}) interface{} {
 	response := database.DBConn.Where("id = ?", id).Delete(Project{})
 	return response.Error
 }
+
+func UpdateName(article *Project) interface{} {
+	results := database.DBConn.Model(&article).Update("name", article.Name)
+	return results.Error
+}
+
+func UpdateAbout(article *Project) interface{} {
+	results := database.DBConn.Model(&article).Update("about", article.About)
+	return results.Error
+}
+
+func GetNonMembers(id interface{}) ([]user.User, interface{}) {
+	var users []user.User
+	results := database.DBConn.Model(&user.User{}).
+		Select("users.email, users.id").
+		Joins("left join members on members.user_id = users.id").
+		Where("members.user_id is ?", nil).
+		Where("members.project_id").Scan(&users)
+	return users, results
+}

@@ -11,6 +11,11 @@ import (
 	"strings"
 )
 
+type Request struct {
+	Name  string `json:"name"`
+	About string `json:"about"`
+}
+
 func CreateProject(context *gin.Context) {
 	claims := jwtParser.GetClaims(context)
 	if claims == nil {
@@ -183,4 +188,91 @@ func ArchiveProject(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{"message": "Member was deleted"})
+}
+
+func ChangeName(context *gin.Context) {
+	var request Request
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.Name == "" {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Field is empty"})
+		return
+	}
+	var newProject projects.Project
+	integer, err := strconv.Atoi(context.Param("id"))
+	newProject.ID = integer
+	newProject.Name = request.Name
+	response := projects.UpdateName(&newProject)
+	if response != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	context.JSON(200, gin.H{"message": "Name was changed successfully"})
+}
+
+func ChangeAbout(context *gin.Context) {
+	var request Request
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.About == "" {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Field is empty"})
+		return
+	}
+	var newProject projects.Project
+
+	integer, err := strconv.Atoi(context.Param("id"))
+	newProject.ID = integer
+	newProject.About = request.About
+	response := projects.UpdateAbout(&newProject)
+	if response != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": response})
+		return
+	}
+
+	context.JSON(200, gin.H{"message": "Name was changed successfully"})
+}
+
+func ChangeAvatar(context *gin.Context) {
+	var newProject projects.Project
+	file, _ := context.FormFile("avatar")
+	if file != nil {
+		integer, err := strconv.Atoi(context.Param("id"))
+		newProject.ID = integer
+		path := "/projects/%s/"
+		path = fmt.Sprintf(path, fmt.Sprint(newProject.ID))
+		if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
+			os.MkdirAll("storage"+path, os.ModeDir)
+		}
+		path = path + file.Filename
+		err = context.SaveUploadedFile(file, "storage"+path)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the avatar"})
+			return
+		}
+		newProject.Avatar = path
+		response := projects.UpdateAvatar(&newProject)
+		if response != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the Avatar"})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Avatar was changed successfully"})
+	}
+	context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error getting the Avatar"})
+	return
+}
+
+func GetNonMembers(context *gin.Context) {
+	user, err := projects.GetNonMembers(context.Param("id"))
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+	context.JSON(200, gin.H{"data": user})
 }

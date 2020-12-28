@@ -138,6 +138,10 @@ func projectRoutes(api *gin.RouterGroup) {
 	project.GET("/kick/:id/member/", projects.KickUser)
 	project.GET("/leave/:id/member/", projects.LeaveProject)
 	project.GET("/remove/:id/project/", projects.ArchiveProject)
+	project.POST("/change/:id/about/", projects.ChangeAbout)
+	project.POST("/change/:id/name/", projects.ChangeName)
+	project.POST("/change/:id/avatar/", projects.ChangeAvatar)
+	project.GET("/get/:id/nonmembers/", projects.ChangeAvatar)
 	/*
 		tag.GET("/private", tags.IndexPrivate)
 		tag.GET("/public", tags.IndexPublic)
