@@ -29,6 +29,17 @@
                 ></b-form-file>
             <b-button variant="success"  @click="saveAvatar()" v-if="avatar != null">Save</b-button>
         </div>
+        <div  class="borders d-flex justify-content-between mt-5">
+            <h5>Invite to Project:</h5>
+            <vSelect
+                    class="w-75"
+                    multiple
+                    v-model="invitees"
+                    label="email"
+                    :options="options"
+            />
+            <b-button variant="success"  @click="inviteUsers()" v-if="invitees.length > 0">Add</b-button>
+        </div>
         <div class="borders mt-5">
         <div class="d-flex justify-content-between">
                 <h5>Project About:</h5>
@@ -53,8 +64,12 @@
 </template>
 
 <script>
+    import "vue-select/dist/vue-select.css";
+    import vSelect from "vue-select";
+
     export default {
         name: "Settings.vue",
+        components: { vSelect },
         data() {
             return {
                 project: null,
@@ -64,6 +79,8 @@
                 name:"",
                 avatar:null,
                 about:"",
+                options: [],
+                invitees: [],
             };
         },
         methods: {
@@ -108,6 +125,23 @@
                     .get(`api/projects/remove/${this.$route.params.id}/project/`)
                     .then(() => {
                         this.$router.push("/projects");
+                    })
+                    .catch((rej) => {
+                        this.makeToast(rej.response.data.error, "danger");
+                    });
+            },
+            getUsers() {
+                window.axios.get(`api/projects/get/${this.$route.params.id}/nonmembers/`).then(res => {
+                    this.options = res.data;
+                });
+            },
+           inviteUsers() {
+                window.axios.post(`api/projects/invite/${this.$route.params.id}/users/`, {"users": this.invitees})
+                    .then(() => {
+                        this.makeToast("Users were added", "success");
+                        this.invitees = []
+                        this.getProject();
+                        this.getUsers();
                     })
                     .catch((rej) => {
                         this.makeToast(rej.response.data.error, "danger");
@@ -160,6 +194,7 @@
         },
         async created() {
             await this.getProject();
+            this.getUsers()
         }
     }
 </script>

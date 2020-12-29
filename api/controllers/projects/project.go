@@ -2,6 +2,7 @@ package projects
 
 import (
 	"api/model/projects"
+	"api/model/user"
 	"api/utlis/jwtParser"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,10 @@ import (
 type Request struct {
 	Name  string `json:"name"`
 	About string `json:"about"`
+}
+
+type RequestInvitees struct {
+	Users []user.User `json:"users"`
 }
 
 func CreateProject(context *gin.Context) {
@@ -197,6 +202,16 @@ func ChangeName(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
 		return
 	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	user, errs := projects.GetMember(context.Param("id"), claims["id"])
+	if errs != nil && !(user.IsOwner || user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
 	if request.Name == "" {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Field is empty"})
 		return
@@ -221,7 +236,17 @@ func ChangeAbout(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
 		return
 	}
-	if request.About == "" {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	user, errs := projects.GetMember(context.Param("id"), claims["id"])
+	if errs != nil && !(user.IsOwner || user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+		if request.About == "" {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Field is empty"})
 		return
 	}
@@ -241,6 +266,16 @@ func ChangeAbout(context *gin.Context) {
 
 func ChangeAvatar(context *gin.Context) {
 	var newProject projects.Project
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	user, errs := projects.GetMember(context.Param("id"), claims["id"])
+	if errs != nil && !(user.IsOwner || user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
 	file, _ := context.FormFile("avatar")
 	if file != nil {
 		integer, err := strconv.Atoi(context.Param("id"))
@@ -269,10 +304,38 @@ func ChangeAvatar(context *gin.Context) {
 }
 
 func GetNonMembers(context *gin.Context) {
-	user, err := projects.GetNonMembers(context.Param("id"))
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	user := projects.GetNonMembers(context.Param("id"))
+	context.JSON(200,user)
+}
+
+func AddUsers(context *gin.Context) {
+	var users RequestInvitees
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
 		return
 	}
-	context.JSON(200, gin.H{"data": user})
+	user, errs := projects.GetMember(context.Param("id"), claims["id"])
+	if errs != nil && !(user.IsOwner || user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+	err := context.ShouldBindJSON(&users)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	for _, iter := range users.Users {
+		var newMember projects.Member
+		newMember.UserID = iter.ID
+		newMember.IsOwner = false
+		newMember.IsAdmin = false
+		newMember.ProjectID, _ = strconv.Atoi(context.Param("id"))
+		response := projects.AddMembers(&newMember)
+		if response != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the Members"})
+			return
+		}
+	}
+	context.JSON(200, gin.H{"message": "Members Added"})
 }

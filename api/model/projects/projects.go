@@ -84,12 +84,8 @@ func UpdateAbout(article *Project) interface{} {
 	return results.Error
 }
 
-func GetNonMembers(id interface{}) ([]user.User, interface{}) {
+func GetNonMembers(id interface{}) ([]user.User) {
 	var users []user.User
-	results := database.DBConn.Model(&user.User{}).
-		Select("users.email, users.id").
-		Joins("left join members on members.user_id = users.id").
-		Where("members.user_id is ?", nil).
-		Where("members.project_id").Scan(&users)
-	return users, results
+	database.DBConn.Raw("SELECT DISTINCT users.email, users.id FROM `users` left join members on members.user_id = users.id WHERE users.id NOT IN (SELECT members.user_id FROM members WHERE members.project_id = ?)", id).Scan(&users)
+	return users
 }

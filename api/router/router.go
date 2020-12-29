@@ -4,7 +4,6 @@ import (
 	"api/config"
 	"api/controllers/general"
 	"api/controllers/projects"
-	"api/controllers/tags"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/jwt"
 	"github.com/gin-gonic/gin"
@@ -37,7 +36,6 @@ func setupRoutes(router *gin.Engine) {
 
 	adminRoutes(admin)
 	apiRoutes(api)
-	tagRoutes(api)
 	projectRoutes(api)
 }
 
@@ -97,35 +95,8 @@ func trackingRoutes(api *gin.RouterGroup) {
 
 func managerRoutes(api *gin.RouterGroup) {
 	manager := api.Group("/manager")
-	/*
-		blog := api.Group("/blog")
-		blog.POST("/add", general.AddBlog)
-		blog.POST("/update/:id", general.UpdateBlog)
-		blog.GET("/owner", general.GetYourBlogs)
-		blog.GET("/owner/get/:id/delete", general.DeleteBlog)
-		blog.GET("/owner/get/:id/undelete", general.UndeleteBlog)
-		blog.GET("/get/:id/", general.GetBlog)
-		blog.GET("/all/", general.GetBlogs)
-		blog.GET("/get/:id/count",general.GetBlogCount)
-		blog.GET("/home/limited", general.GetHomeBlogs)
-	*/
 	manager.GET("/check/ismanager/", general.ManagerIsMemeber)
 	manager.GET("/list/", general.SeeSubmissions)
-}
-
-func tagRoutes(api *gin.RouterGroup) {
-	tag := api.Group("/tags")
-	tag.GET("/private", tags.IndexPrivate)
-	tag.GET("/public", tags.IndexPublic)
-	tag.GET("/tag/:id/profile", tags.Profile)
-	tag.POST("/tag/:id/join", tags.JoinTag)
-	tag.POST("/tag/:id/delete", tags.DeleteTag)
-	tag.POST("/tag/:id/newname", tags.NewName)
-	tag.POST("/tag/:id/newabout", tags.NewAbout)
-	tag.GET("/tag/:id/makePublic", tags.MakePublic)
-	tag.GET("/tag/:id/makePrivate", tags.MakePrivate)
-	tag.POST("/tag/:id/leave", tags.LeaveTag)
-	tag.POST("/tag/:id/setavatar", tags.SetAvatar)
 }
 
 func projectRoutes(api *gin.RouterGroup) {
@@ -141,18 +112,6 @@ func projectRoutes(api *gin.RouterGroup) {
 	project.POST("/change/:id/about/", projects.ChangeAbout)
 	project.POST("/change/:id/name/", projects.ChangeName)
 	project.POST("/change/:id/avatar/", projects.ChangeAvatar)
-	project.GET("/get/:id/nonmembers/", projects.ChangeAvatar)
-	/*
-		tag.GET("/private", tags.IndexPrivate)
-		tag.GET("/public", tags.IndexPublic)
-		tag.GET("/tag/:id/profile", tags.Profile)
-		tag.POST("/tag/:id/join", tags.JoinTag)
-		tag.POST("/tag/:id/delete", tags.DeleteTag)
-		tag.POST("/tag/:id/newname", tags.NewName)
-		tag.POST("/tag/:id/newabout", tags.NewAbout)
-		tag.GET("/tag/:id/makePublic", tags.MakePublic)
-		tag.GET("/tag/:id/makePrivate", tags.MakePrivate)
-		tag.POST("/tag/:id/leave", tags.LeaveTag)
-		tag.POST("/tag/:id/setavatar", tags.SetAvatar)
-	*/
+	project.GET("/get/:id/nonmembers/", projects.GetNonMembers)
+	project.POST("/invite/:id/users/", projects.AddUsers)
 }
