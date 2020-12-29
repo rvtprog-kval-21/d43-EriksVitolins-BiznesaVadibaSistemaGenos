@@ -93,7 +93,7 @@
     <div class="d-flex justify-content-between">
       <b-button @click="clearForm" variant="warning">Reset</b-button>
       <b-button v-if="!isEdit" @click="addBlog" variant="success"
-        >Save edit</b-button
+        >Save</b-button
       >
       <b-button v-if="isEdit" @click="updateBlog" variant="success"
         >Save</b-button
@@ -141,12 +141,12 @@ export default {
     },
     addBlog() {
       let formData = new FormData();
-      formData.append("title", `${this.form.title}`);
-      formData.append("publish_at", `${this.form.publish_at}`);
-      formData.append("headtext", `${this.form.headtext}`);
+      formData.append("title", this.form.title);
+      formData.append("publish_at", this.form.publish_at);
+      formData.append("headtext", this.form.headtext);
       formData.append("photo", this.form.photo);
-      formData.append("topic", `${this.form.topic}`);
-      formData.append("content", `${this.form.content}`);
+      formData.append("topic", this.form.topic);
+      formData.append("content", this.form.content);
       window.axios
         .post("api/blog/add", formData, {
           headers: {
@@ -164,12 +164,12 @@ export default {
     },
     updateBlog() {
       let formData = new FormData();
-      formData.append("title", `${this.form.title}`);
-      formData.append("publish_at", `${this.form.publish_at}`);
-      formData.append("headtext", `${this.form.headtext}`);
+      formData.append("title", this.form.title);
+      formData.append("publish_at", this.form.publish_at);
+      formData.append("headtext", this.form.headtext);
       formData.append("photo", this.form.photo);
-      formData.append("topic", `${this.form.topic}`);
-      formData.append("content", `${this.form.content}`);
+      formData.append("topic", this.form.topic);
+      formData.append("content", this.form.content);
       window.axios
         .post("api/blog/update/" + this.editID, formData, {
           headers: {

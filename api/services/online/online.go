@@ -18,7 +18,7 @@ func initiate() {
 }
 
 func ClearOldOnes() {
-	for key, date := range Online {
+	/* for key, date := range Online {
 		if time.Since(date) > 1*time.Minute {
 			delete(Online, key)
 		}
@@ -26,4 +26,6 @@ func ClearOldOnes() {
 
 	time.Sleep(1 * time.Minute)
 	ClearOldOnes()
+
+	*/
 }

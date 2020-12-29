@@ -41,14 +41,51 @@ func AddMembers(member *Member) interface{} {
 	return results.Error
 }
 
-func GetAll() []Project{
+func GetAll() []Project {
 	var projects []Project
 	database.DBConn.Preload("Members.User").Find(&projects)
 	return projects
 }
 
-func GetProject(id interface{}) (Project, interface{}){
+func GetProject(id interface{}) (Project, interface{}) {
 	var project Project
 	response := database.DBConn.Preload("Members.User").Where("id = ?", id).Find(&project)
 	return project, response.Error
+}
+
+func GetMember(id interface{}, userID interface{}) (Member, interface{}) {
+	var member Member
+	response := database.DBConn.Where("project_id = ?", id).Where("user_id = ?", userID).Find(&member)
+	return member, response.Error
+}
+
+func UpdateAdmin(id interface{}, userID interface{}, isAdmin bool) interface{} {
+	response := database.DBConn.Model(&Member{}).Where("project_id = ?", id).Where("user_id = ?", userID).Update("is_admin", isAdmin)
+	return response.Error
+}
+
+func DeleteMember(id interface{}, userID interface{}) interface{} {
+	response := database.DBConn.Where("project_id = ?", id).Where("user_id = ?", userID).Delete(Member{})
+	return response.Error
+}
+
+func DeleteProject(id interface{}) interface{} {
+	response := database.DBConn.Where("id = ?", id).Delete(Project{})
+	return response.Error
+}
+
+func UpdateName(article *Project) interface{} {
+	results := database.DBConn.Model(&article).Update("name", article.Name)
+	return results.Error
+}
+
+func UpdateAbout(article *Project) interface{} {
+	results := database.DBConn.Model(&article).Update("about", article.About)
+	return results.Error
+}
+
+func GetNonMembers(id interface{}) ([]user.User) {
+	var users []user.User
+	database.DBConn.Raw("SELECT DISTINCT users.email, users.id FROM `users` left join members on members.user_id = users.id WHERE users.id NOT IN (SELECT members.user_id FROM members WHERE members.project_id = ?)", id).Scan(&users)
+	return users
 }
