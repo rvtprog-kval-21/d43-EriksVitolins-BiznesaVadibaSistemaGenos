@@ -32,20 +32,11 @@
     <div>
       <div class="row-blog">
         <h5>Project About:</h5>
-        <b-form-textarea
-          v-model="form.about"
-          placeholder="Project about(You can use markdown)"
-          rows="9"
-          class="w-75"
-          no-resize
-        ></b-form-textarea>
-      </div>
-      <div class="mt-1 mb-4">
-        <VueShowdown
-          :markdown="form.about"
-          flavor="github"
-          :options="{ emoji: true }"
-        ></VueShowdown>
+        <quill-editor
+                :content="form.about"
+                :options="editorOption"
+                @change="onEditorChange($event)"
+        />
       </div>
     </div>
     <div>
@@ -83,7 +74,11 @@ export default {
         about: "",
         owners: []
       },
-      options: []
+      tags: [],
+      options: [],
+      editorOption: {
+        // Some Quill options...
+      }
     };
   },
   methods: {
@@ -120,6 +115,10 @@ export default {
       } else {
         this.makeToast("Name or owners field not filled", "danger");
       }
+    },
+    onEditorChange({ quill, html, text }) {
+      console.log('editor change!', quill, html, text)
+      this.form.about = html
     },
     makeToast(text, variant) {
       this.$bvToast.toast(text, {

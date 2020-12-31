@@ -74,20 +74,11 @@
     <div>
       <div class="row-blog">
         <h5>Article content:</h5>
-        <b-form-textarea
-          v-model="form.content"
-          placeholder="Article content"
-          rows="9"
-          class="w-75"
-          no-resize
-        ></b-form-textarea>
-      </div>
-      <div class="mt-1 mb-4">
-        <VueShowdown
-          :markdown="form.content"
-          flavor="github"
-          :options="{ emoji: true }"
-        ></VueShowdown>
+        <quill-editor
+                :content="form.content"
+                :options="editorOption"
+                @change="onEditorChange($event)"
+        />
       </div>
     </div>
     <div class="d-flex justify-content-between">
@@ -114,7 +105,10 @@ export default {
         headtext: "",
         photo: null,
         topic: "",
-        content: ""
+        content: "",
+        editorOption: {
+          // Some Quill options...
+        }
       }
     };
   },
@@ -126,6 +120,10 @@ export default {
       this.form.photo = null;
       this.form.topic = "";
       this.form.content = "";
+    },
+    onEditorChange({ quill, html, text }) {
+      console.log('editor change!', quill, html, text)
+      this.form.content = html
     },
     init() {
       if (this.isEdit === true) {

@@ -24,6 +24,8 @@ func migrateTables() {
 	err := database.DBConn.AutoMigrate(&user2.User{})
 	err = database.DBConn.AutoMigrate(&projects.Project{})
 	err = database.DBConn.AutoMigrate(&projects.Member{})
+	err = database.DBConn.AutoMigrate(&projects.Tags{})
+	err = database.DBConn.AutoMigrate(&projects.UserTags{})
 	err = database.DBConn.AutoMigrate(&blog.Bloggers{})
 	err = database.DBConn.AutoMigrate(&blog.Blogs{})
 	err = database.DBConn.AutoMigrate(&blog.BlogsLog{})

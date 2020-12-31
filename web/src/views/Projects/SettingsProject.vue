@@ -18,6 +18,11 @@
             <b-button @click="saveName()" variant="success" v-if="name != ''">Save</b-button>
         </div>
         <div class="borders d-flex justify-content-between mt-5">
+            <h5>Project Tags:</h5>
+            <v-select multiple v-model="tags"  taggable push-tags :options="tags" />
+        </div>
+        <div>
+        <div class="borders d-flex justify-content-between mt-5">
                 <h4>Project avatar:</h4>
                 <b-form-file
                         v-model="avatar"
@@ -41,23 +46,14 @@
             <b-button variant="success"  @click="inviteUsers()" v-if="invitees.length > 0">Add</b-button>
         </div>
         <div class="borders mt-5">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between editor">
                 <h5>Project About:</h5>
-                <b-form-textarea
-                        v-model="about"
-                        placeholder="Project about(You can use markdown)"
-                        rows="9"
-                        class="w-75"
-                        no-resize
-                ></b-form-textarea>
+                <quill-editor
+                        :content="about"
+                        :options="editorOption"
+                        @change="onEditorChange($event)"
+                />
             <b-button variant="success" @click="saveAbout()" v-if="about != ''" >Save</b-button>
-            </div>
-            <div class="mt-1 mb-4">
-                <VueShowdown
-                        :markdown="about"
-                        flavor="github"
-                        :options="{ emoji: true }"
-                ></VueShowdown>
             </div>
         </div>
     </b-container>
@@ -81,6 +77,9 @@
                 about:"",
                 options: [],
                 invitees: [],
+                editorOption: {
+                    // Some Quill options...
+                }
             };
         },
         methods: {
@@ -116,6 +115,10 @@
                     variant: variant,
                     title: "Notification"
                 });
+            },
+            onEditorChange({ quill, html, text }) {
+                console.log('editor change!', quill, html, text)
+                this.about = html
             },
             goBack() {
                 this.$router.push(`/projects/${this.$route.params.id}/see`)
@@ -206,4 +209,7 @@
     border-bottom: solid #607d8b 1px;
     border-top: solid #607d8b 1px;
 }
+    .editor{
+        min-height: 440px;
+    }
 </style>
