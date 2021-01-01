@@ -33,9 +33,9 @@
       <div class="row-blog">
         <h5>Project About:</h5>
         <quill-editor
-                :content="form.about"
-                :options="editorOption"
-                @change="onEditorChange($event)"
+          :content="form.about"
+          :options="editorOption"
+          @change="onEditorChange($event)"
         />
       </div>
     </div>
@@ -117,8 +117,8 @@ export default {
       }
     },
     onEditorChange({ quill, html, text }) {
-      console.log('editor change!', quill, html, text)
-      this.form.about = html
+      console.log("editor change!", quill, html, text);
+      this.form.about = html;
     },
     makeToast(text, variant) {
       this.$bvToast.toast(text, {

@@ -16,6 +16,7 @@ type Project struct {
 	Avatar    string         `json:"avatar"`
 	About     string         `json:"about"`
 	Members   []Member       `json:"members"`
+	Tags      []Tag          `json:"tags"`
 }
 
 type Member struct {
@@ -24,6 +25,8 @@ type Member struct {
 	UserID    int       `json:"user_id" gorm:"index"`
 	IsAdmin   bool      `json:"is_admin" gorm:"default:0;index"`
 	IsOwner   bool      `json:"is_owner" gorm:"default:0;index"`
+	TagID     int       `json:"tag_id" gorm:"index"`
+	Tag       Tag       `json:"tag"  gorm:"foreignKey:TagID"`
 }
 
 func AddProject(project *Project) interface{} {
@@ -49,7 +52,7 @@ func GetAll() []Project {
 
 func GetProject(id interface{}) (Project, interface{}) {
 	var project Project
-	response := database.DBConn.Preload("Members.User").Where("id = ?", id).Find(&project)
+	response := database.DBConn.Preload("Members.User").Preload("Tags").Preload("Members.Tag").Where("id = ?", id).Find(&project)
 	return project, response.Error
 }
 
@@ -84,8 +87,13 @@ func UpdateAbout(article *Project) interface{} {
 	return results.Error
 }
 
-func GetNonMembers(id interface{}) ([]user.User) {
+func GetNonMembers(id interface{}) []user.User {
 	var users []user.User
 	database.DBConn.Raw("SELECT DISTINCT users.email, users.id FROM `users` left join members on members.user_id = users.id WHERE users.id NOT IN (SELECT members.user_id FROM members WHERE members.project_id = ?)", id).Scan(&users)
 	return users
+}
+
+func UpdateMemberTags(projectID string, UserID string, tagID int) interface{} {
+	response := database.DBConn.Model(&Member{}).Where("project_id = ?", projectID).Where("user_id = ?", UserID).Update("tag_id", tagID)
+	return response.Error
 }

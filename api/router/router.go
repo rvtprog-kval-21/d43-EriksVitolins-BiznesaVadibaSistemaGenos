@@ -114,4 +114,6 @@ func projectRoutes(api *gin.RouterGroup) {
 	project.POST("/change/:id/avatar/", projects.ChangeAvatar)
 	project.GET("/get/:id/nonmembers/", projects.GetNonMembers)
 	project.POST("/invite/:id/users/", projects.AddUsers)
+	project.POST("/change/:id/tags/", projects.ChangeTags)
+	project.POST("/update/:id/tags/", projects.UpdateTags)
 }

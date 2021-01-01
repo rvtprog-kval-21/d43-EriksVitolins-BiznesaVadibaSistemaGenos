@@ -75,9 +75,9 @@
       <div class="row-blog">
         <h5>Article content:</h5>
         <quill-editor
-                :content="form.content"
-                :options="editorOption"
-                @change="onEditorChange($event)"
+          :content="form.content"
+          :options="editorOption"
+          @change="onEditorChange($event)"
         />
       </div>
     </div>
@@ -122,8 +122,8 @@ export default {
       this.form.content = "";
     },
     onEditorChange({ quill, html, text }) {
-      console.log('editor change!', quill, html, text)
-      this.form.content = html
+      console.log("editor change!", quill, html, text);
+      this.form.content = html;
     },
     init() {
       if (this.isEdit === true) {
