@@ -49,7 +49,7 @@
                       :src="getImgUrl(iter.user.avatar)"
                     ></b-avatar>
                     <h6 v-if="iter.user.name">
-                      {{ iter.user.name + " " + iter.user.last_name }}
+                      {{ iter.user.name + " " + iter.user.last_name + " ( " + iter.tag.name + " )"}}
                     </h6>
                   </div>
                 </template>

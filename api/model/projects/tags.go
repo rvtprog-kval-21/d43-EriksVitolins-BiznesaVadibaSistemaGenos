@@ -2,7 +2,6 @@ package projects
 
 import (
 	"api/database"
-	"fmt"
 )
 
 type Tag struct {
@@ -30,7 +29,7 @@ func RemoveOrphans(names []string, projectID string) {
 	for _, iter := range tags {
 		ids = append(ids, iter.ID)
 	}
+	database.DBConn.Model(&Member{}).Where("tag_id IN ?", ids).Update("tag_id", nil)
 	database.DBConn.Where("id IN ?", ids).Delete(&Tag{})
-	database.DBConn.Where("tag_id IN ?", ids).Update("tag_id", nil)
-	fmt.Println(tags)
+	return
 }
