@@ -58,6 +58,12 @@ a {
   text-decoration: none;
 }
 
+.ql-syntax {
+  background-color: #23241f;
+  color: #f8f8f2;
+  overflow: visible;
+}
+
 hr {
   border: none;
 }

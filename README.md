@@ -88,6 +88,8 @@ Projektā tiek izmantots:
     [Vue table](https://xaksis.github.io/vue-good-table/guide/configuration/#columns) - vue table docs, izmantoju piemērus
     
     [Vue markdown](https://vue-showdown.js.org/guide/#npm) - vue markdown docs, izmantoju piemērus
+    
+    [Vue Rich text editor](https://github.com/surmon-china/vue-quill-editor) - vue Rich text editor docs, izmantoju piemērus
   - CSS
   
     [Material colors](https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=FFCCBC) - krāsu izvēle

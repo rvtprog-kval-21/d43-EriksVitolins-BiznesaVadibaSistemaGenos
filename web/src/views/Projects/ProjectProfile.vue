@@ -1,28 +1,37 @@
 <template>
   <div class="body">
     <div class="right">
-      <b-button v-if="this.user.is_admin || this.user.is_owner" class="mt-3 ml-3" variant="outline-primary" @click="goToSettings()">Settings</b-button>
+      <b-button
+        v-if="this.user.is_admin || this.user.is_owner"
+        class="mt-3 ml-3"
+        variant="outline-primary"
+        @click="goToSettings()"
+        >Settings</b-button
+      >
       <div
         class="header d-flex flex-column align-items-center justify-content-center mt-4 mb-4"
       >
-        <template  v-if="project">
+        <template v-if="project">
           <template>
             <b-avatar size="8rem" :src="getImgUrl(project.avatar)"></b-avatar>
           </template>
           <h3 class="mt-2 mb-2">{{ project.name }}</h3>
           <div v-if="user" class="w-100 p-4">
-            <div @click="aboutIsOpened = !aboutIsOpened" class="d-flex about flex-column align-items-center justify-content-center mb-2">
+            <div
+              @click="aboutIsOpened = !aboutIsOpened"
+              class="d-flex about flex-column align-items-center justify-content-center mb-2"
+            >
               <h5 class="mb-0">About</h5>
               <b-icon v-if="!aboutIsOpened" icon="arrow-down"></b-icon>
-                <b-icon v-if="aboutIsOpened" icon="arrow-up"></b-icon>
+              <b-icon v-if="aboutIsOpened" icon="arrow-up"></b-icon>
             </div>
-              <VueShowdown
-                      v-if="aboutIsOpened"
-                      class="border"
-                      :markdown="project.about"
-                      flavor="github"
-                      :options="{ emoji: true }"
-              ></VueShowdown>
+            <VueShowdown
+              v-if="aboutIsOpened"
+              class="border"
+              :markdown="project.about"
+              flavor="github"
+              :options="{ emoji: true }"
+            ></VueShowdown>
           </div>
         </template>
       </div>
@@ -32,24 +41,69 @@
         <template v-for="(iter, index) in project.members">
           <div class="user" :key="index">
             <template v-if="iter">
-              <b-dropdown variant="outline-none" class="item">
+              <b-dropdown variant="outline-none" class="item item-drowpdown">
                 <template class="wow" #button-content>
                   <div class="info" v-if="iter">
                     <b-avatar
-                            size="3rem"
-                            :src="getImgUrl(iter.user.avatar)"
+                      size="3rem"
+                      :src="getImgUrl(iter.user.avatar)"
                     ></b-avatar>
-                    <h6 v-if="iter.user.name">{{ iter.user.name + " " + iter.user.last_name }}</h6>
+                    <h6 v-if="iter.user.name">
+                      {{ iter.user.name + " " + iter.user.last_name + " ( " + iter.tag.name + " )"}}
+                    </h6>
                   </div>
                 </template>
                 <b-dropdown-item :href="`/user/${iter.user.id}/profile`"
-                >Profile</b-dropdown-item
+                  >Profile</b-dropdown-item
                 >
                 <template v-if="!isLoading">
-                  <b-dropdown-item @click="makeAdmin(iter.user.id)" v-if="user.is_owner && getXUser(iter.user.id).is_admin == false && getXUser(iter.user.id).is_owner == false && currentUser.id != iter.user.id" href="#">Make Admin</b-dropdown-item>
-                  <b-dropdown-item @click="unmakeAdmin(iter.user.id)" v-else-if="user.is_owner && getXUser(iter.user.id).is_admin == true && getXUser(iter.user.id).is_owner == false &&  currentUser.id != iter.user.id" href="#">Take Away Admin</b-dropdown-item>
-                  <b-dropdown-item @click="kickUser(iter.user.id)" v-if="(user.is_owner || user.is_admin) && getXUser(iter.user.id).is_admin == false && getXUser(iter.user.id).is_owner == false &&  currentUser.id != iter.user.id" href="#">Kick</b-dropdown-item>
-                  <b-dropdown-item @click="leaveProject()" v-if="currentUser.id == iter.user.id" href="#">Leave</b-dropdown-item>
+                  <vSelect
+                    v-if="user.is_owner || user.is_admin"
+                    class=" ml-auto mr-auto w-75"
+                    v-model="iter.tag"
+                    label="name"
+                    :options="project.tags"
+                    @input="updateTag(iter.user.id, iter.tag)"
+                  />
+                  <b-dropdown-item
+                    @click="makeAdmin(iter.user.id)"
+                    v-if="
+                      user.is_owner &&
+                        getXUser(iter.user.id).is_admin == false &&
+                        getXUser(iter.user.id).is_owner == false &&
+                        currentUser.id != iter.user.id
+                    "
+                    href="#"
+                    >Make Admin</b-dropdown-item
+                  >
+                  <b-dropdown-item
+                    @click="unmakeAdmin(iter.user.id)"
+                    v-else-if="
+                      user.is_owner &&
+                        getXUser(iter.user.id).is_admin == true &&
+                        getXUser(iter.user.id).is_owner == false &&
+                        currentUser.id != iter.user.id
+                    "
+                    href="#"
+                    >Take Away Admin</b-dropdown-item
+                  >
+                  <b-dropdown-item
+                    @click="kickUser(iter.user.id)"
+                    v-if="
+                      (user.is_owner || user.is_admin) &&
+                        getXUser(iter.user.id).is_admin == false &&
+                        getXUser(iter.user.id).is_owner == false &&
+                        currentUser.id != iter.user.id
+                    "
+                    href="#"
+                    >Kick</b-dropdown-item
+                  >
+                  <b-dropdown-item
+                    @click="leaveProject()"
+                    v-if="currentUser.id == iter.user.id"
+                    href="#"
+                    >Leave</b-dropdown-item
+                  >
                 </template>
               </b-dropdown>
             </template>
@@ -61,11 +115,16 @@
 </template>
 
 <script>
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+
 export default {
   name: "ProjectProfile",
+  components: { vSelect },
   data() {
     return {
       project: null,
+      test: [],
       user: {},
       aboutIsOpened: false,
       isLoading: false
@@ -74,7 +133,7 @@ export default {
   computed: {
     currentUser() {
       return this.$store.getters.currentUser;
-    },
+    }
   },
   methods: {
     getUser() {
@@ -84,16 +143,16 @@ export default {
     getXUser(id) {
       const users = this.project.members;
       const user = users.find(e => e.user.id === id);
-      return user
+      return user;
     },
     getProject() {
-      this.isLoading = true
+      this.isLoading = true;
       window.axios
         .get(`api/projects/get/${this.$route.params.id}/item/`)
         .then(res => {
           this.project = res.data.project;
           this.getUser();
-          this.isLoading = false
+          this.isLoading = false;
         })
         .catch(() => {
           this.$router.push("/projects");
@@ -104,46 +163,52 @@ export default {
     },
     makeAdmin(id) {
       window.axios
-              .get(`api/projects/add/${this.$route.params.id}/admin/?id=${id}`)
-              .then(() => {
-                this.getProject()
-                this.makeToast(`User was made an admin`, "success");
-              })
-              .catch((rej) => {
-                this.makeToast(rej.response.data.error, "danger");
-              });
+        .get(`api/projects/add/${this.$route.params.id}/admin/?id=${id}`)
+        .then(() => {
+          this.getProject();
+          this.makeToast(`User was made an admin`, "success");
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
+    },
+    updateTag(id, tag) {
+      window.axios.post(
+        `api/projects/update/${this.$route.params.id}/tags/?id=${id}`,
+        tag
+      );
     },
     unmakeAdmin(id) {
       window.axios
-              .get(`api/projects/remove/${this.$route.params.id}/admin/?id=${id}`)
-              .then(() => {
-                this.getProject()
-                this.makeToast(`Admin was taken away from the user`, "success");
-              })
-              .catch((rej) => {
-                this.makeToast(rej.response.data.error, "danger");
-              });
+        .get(`api/projects/remove/${this.$route.params.id}/admin/?id=${id}`)
+        .then(() => {
+          this.getProject();
+          this.makeToast(`Admin was taken away from the user`, "success");
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
     },
     kickUser(id) {
       window.axios
-              .get(`api/projects/kick/${this.$route.params.id}/member/?id=${id}`)
-              .then(() => {
-                this.getProject()
-                this.makeToast(`User was kicked from the project`, "success");
-              })
-              .catch((rej) => {
-                this.makeToast(rej.response.data.error, "danger");
-              });
+        .get(`api/projects/kick/${this.$route.params.id}/member/?id=${id}`)
+        .then(() => {
+          this.getProject();
+          this.makeToast(`User was kicked from the project`, "success");
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
     },
     leaveProject() {
       window.axios
-              .get(`api/projects/leave/${this.$route.params.id}/member/`)
-              .then(() => {
-                this.$router.push("/projects");
-              })
-              .catch((rej) => {
-                this.makeToast(rej.response.data.error, "danger");
-              });
+        .get(`api/projects/leave/${this.$route.params.id}/member/`)
+        .then(() => {
+          this.$router.push("/projects");
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
     },
     makeToast(text, variant) {
       this.$bvToast.toast(text, {
@@ -170,12 +235,12 @@ export default {
   .right {
     width: 70%;
     overflow: auto;
-      .about{
-          cursor: pointer;
-          &:hover{
-              color: #17a2b8;
-          }
+    .about {
+      cursor: pointer;
+      &:hover {
+        color: #17a2b8;
       }
+    }
   }
   .left {
     width: 30%;
@@ -204,6 +269,9 @@ export default {
 </style>
 
 <style lang="scss">
+.dropdown-menu {
+  width: 250px;
+}
 .users {
   .user {
     .item {
