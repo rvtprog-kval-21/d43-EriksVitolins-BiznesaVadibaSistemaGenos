@@ -33,6 +33,62 @@
               :options="{ emoji: true }"
             ></VueShowdown>
           </div>
+          <div class=" p-4 w-100">
+            <h5 class="d-flex">Announcement Board:</h5>
+            <div class="w-100">
+              <div class="w-100 bg-white a-board">
+                <div class="loadMore mt-2 mr-2 d-flex justify-content-end">
+                  <b-button @click="getAnn()" v-if="!loadingNew" pill  variant="outline-info">
+                    <b-icon icon="arrow-down-circle" font-scale="2"></b-icon>
+                  </b-button>
+                  <b-icon v-else icon="arrow-clockwise" animation="spin" font-scale="2"></b-icon>
+                </div>
+                <div class="d-flex flex-column">
+                  <div class="ann-row ml-3 mb-3" v-for="(iter, index) in annc" :key="index">
+                      <div class="d-flex align-items-end">
+                        <b-avatar size="3rem" :src="getImgUrl(iter.author.avatar)"></b-avatar>
+                        <h6> {{
+                          iter.author.name +
+                          " " +
+                          iter.author.last_name
+                          }}</h6>
+                        <p>{{getDate(iter.published)}}</p>
+                      </div>
+                      <div class="bubble mt-3">
+                        <VueShowdown
+                                :markdown="iter.content"
+                                flavor="github"
+                                :options="{ emoji: true }"
+                        ></VueShowdown>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                v-if="this.user.is_admin || this.user.is_owner"
+                class="mt-3 d-flex form-row"
+              >
+                <b-form-textarea
+                  class="w-50"
+                  id="textarea"
+                  v-model="message"
+                  placeholder="Message"
+                  rows="3"
+                  max-rows="6"
+                ></b-form-textarea>
+                <vSelect
+                  multiple
+                  class="w-25"
+                  v-model="messageTags"
+                  label="name"
+                  :options="project.tags"
+                />
+                <b-button @click="createAnn()" variant="success" class="w-25"
+                  >Announce</b-button
+                >
+              </div>
+            </div>
+          </div>
         </template>
       </div>
     </div>
@@ -49,7 +105,14 @@
                       :src="getImgUrl(iter.user.avatar)"
                     ></b-avatar>
                     <h6 v-if="iter.user.name">
-                      {{ iter.user.name + " " + iter.user.last_name + " ( " + iter.tag.name + " )"}}
+                      {{
+                        iter.user.name +
+                          " " +
+                          iter.user.last_name +
+                          " ( " +
+                          iter.tag.name +
+                          " )"
+                      }}
                     </h6>
                   </div>
                 </template>
@@ -127,7 +190,12 @@ export default {
       test: [],
       user: {},
       aboutIsOpened: false,
-      isLoading: false
+      isLoading: false,
+      message: "",
+      messageTags: null,
+      annc: [],
+      loadingNew: false,
+      currentPage: 0
     };
   },
   computed: {
@@ -136,6 +204,13 @@ export default {
     }
   },
   methods: {
+    getDate(date) {
+      date = new Date(date);
+      const day = date.getDate();
+      const year = date.getFullYear();
+      const month = date.toLocaleString("default", {month: "long"});
+      return day + " " + month + " " + year;
+    },
     getUser() {
       const users = this.project.members;
       this.user = users.find(e => e.user.id === this.currentUser.id);
@@ -167,6 +242,45 @@ export default {
         .then(() => {
           this.getProject();
           this.makeToast(`User was made an admin`, "success");
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
+    },
+    getAnn() {
+      this.loadingNew = true
+      window.axios
+        .get(
+          `api/projects/see/${this.$route.params.id}/current/announcement?currentPage=${this.currentPage}`
+        )
+        .then(res => {
+          console.log(res.data.annc)
+          const arr = res.data.annc
+          this.annc = this.annc.concat(arr);
+          this.currentPage +=1;
+          if (res.data.annc.length < 1) {
+            this.makeToast(`No more announcements available`, "warning");
+          }
+        })
+        .catch(rej => {
+          this.makeToast(rej.response.data.error, "danger");
+        });
+      this.loadingNew = false
+    },
+    createAnn() {
+      window.axios
+        .post(`api/projects/create/${this.$route.params.id}/new/announcement`, {
+          content: this.message,
+          tags: this.messageTags
+        })
+        .then(() => {
+          this.getProject();
+          this.message = null;
+          this.messageTags = null;
+          this.currentPage = 0;
+          this.annc = [];
+          this.getAnn();
+          this.makeToast(`Admin was taken away from the user`, "success");
         })
         .catch(rej => {
           this.makeToast(rej.response.data.error, "danger");
@@ -224,11 +338,56 @@ export default {
   },
   async created() {
     await this.getProject();
+    this.getAnn()
   }
 };
 </script>
 
 <style scoped lang="scss">
+  .loadMore{
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    padding-top: 10px;
+  }
+
+  .ann-row{
+    p{
+      color: #9e9e9e;
+      font-size: small;
+      margin-left:10px ;
+    }
+
+    h6{
+      margin-bottom: auto;
+      margin-top: auto;
+      margin-left: 10px;
+    }
+
+    .bubble{
+      position: relative;
+      max-width: 30em;
+
+      background-color: #fff;
+      padding: 0.5em 1em;
+      font-size: 1.25em;
+      border-radius: 1rem;
+      box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
+    }
+    .bubble:after{
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      bottom: 100%;
+      left: 0.6em;
+      border: .75rem solid transparent;
+      border-top: none;
+
+      border-bottom-color: #fff;
+      filter: drop-shadow(0 -0.0625rem 0.0625rem rgba(0, 0, 0, .1));
+    }
+  }
 .body {
   height: 100%;
   display: flex;
@@ -264,6 +423,11 @@ export default {
         }
       }
     }
+  }
+  .a-board {
+    min-height: 200px;
+    max-height: 400px;
+    overflow: auto;
   }
 }
 </style>

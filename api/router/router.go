@@ -116,4 +116,6 @@ func projectRoutes(api *gin.RouterGroup) {
 	project.POST("/invite/:id/users/", projects.AddUsers)
 	project.POST("/change/:id/tags/", projects.ChangeTags)
 	project.POST("/update/:id/tags/", projects.UpdateTags)
+	project.POST("/create/:id/new/announcement", projects.SaveAnnouncement)
+	project.GET("/see/:id/current/announcement", projects.SeeAnnouncements)
 }

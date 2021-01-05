@@ -104,6 +104,8 @@ Projektā tiek izmantots:
     
     [link](https://demos.creative-tim.com/bootstrap-vue-argon-dashboard-pro/#/!) - dizains
     
+    [codepen](https://codepen.io/rikschennink/pen/mjywQb) - burbuļa dizains un kopēts kods
+    
   - HTML
   
     [Icons](https://tablericons.com/) - svg ikonas
