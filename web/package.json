@@ -10,7 +10,7 @@
   "dependencies": {
     "@johmun/vue-tags-input": "^2.1.0",
     "@toast-ui/vue-editor": "^2.5.1",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
