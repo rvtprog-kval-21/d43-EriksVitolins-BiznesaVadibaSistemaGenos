@@ -1,6 +1,7 @@
 package projects
 
 import (
+	"api/model/notifications"
 	"api/model/projects"
 	"api/utlis/jwtParser"
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ import (
 
 type announcementRequest struct {
 	Content string `json:"content"`
+	Tags []projects.Tag `json:"tags"`
 }
 
 func SaveAnnouncement(context *gin.Context) {
@@ -37,11 +39,28 @@ func SaveAnnouncement(context *gin.Context) {
 	newAnnounc.AuthorID = int(claims["id"].(float64))
 	newAnnounc.Published = time.Now()
 
+	var tags []string
+	for _, iter := range request.Tags{
+		tags = append(tags, iter.Name)
+	}
+	ids := projects.GetTagMembers( context.Param("id"),tags)
+	for _, iter := range ids {
+		newNotification := notifications.Notifications{
+			Published: time.Now(),
+			Topic: "Announcement",
+			OwnerID: iter.ID,
+			AuthorID: int(claims["id"].(float64)),
+			Content: request.Content,
+		}
+		notifications.SaveNotifications(newNotification)
+	}
 	response := projects.SaveAnnouncement(newAnnounc)
 	if response != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 		return
 	}
+
+
 
 	context.JSON(http.StatusOK, gin.H{"message": "Announcement was saved"})
 }

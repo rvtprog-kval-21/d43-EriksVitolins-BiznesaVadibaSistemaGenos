@@ -25,9 +25,10 @@ const ProfileComponent = () => import("../views/Profile/ProfileComponent");
 const AddUsers = () => import("../views/Admin/AddUsers");
 const UserList = () => import("../views/Admin/UserList");
 const Home = () => import("../views/Home");
-const TagsList = () => import("../views/Tags/TagsList");
-const TagsProfile = () => import("../views/Tags/TagsProfile");
 const Timetable = () => import("../views/TimeTable/TimeTables");
+const Notifications = () => import("../views/Notifications/Notifications");
+
+const Calendar = () => import("../views/Calendar/Calendar")
 Vue.use(VueRouter);
 
 const routes = [
@@ -39,6 +40,14 @@ const routes = [
   {
     path: "/blog",
     component: Blog
+  },
+  {
+    path: "/notifications",
+    component: Notifications
+  },
+  {
+    path: "/calendar",
+    component: Calendar
   },
   {
     path: "/blog/admin",
@@ -101,20 +110,6 @@ const routes = [
   {
     path: "/user/:id/profile",
     component: ProfileComponent,
-    meta: {
-      requireAdmin: true
-    }
-  },
-  {
-    path: "/tags",
-    component: TagsList,
-    meta: {
-      requireAdmin: true
-    }
-  },
-  {
-    path: "/tags/:id/tag",
-    component: TagsProfile,
     meta: {
       requireAdmin: true
     }

@@ -39,6 +39,16 @@
         </b-navbar-nav>
       </b-collapse>
       <b-button
+        @click="goToNotifications()"
+        class="button-burger"
+        title="Notifications"
+      >
+        <b-icon icon="bell" variant="white"> </b-icon>
+        <b-badge v-if="notifications != 0" pill variant="danger">{{
+          notifications
+        }}</b-badge>
+      </b-button>
+      <b-button
         v-b-tooltip.hover
         title="Settings"
         @click="settings"
@@ -72,7 +82,26 @@ import { setAuthorization } from "../../helpers/middleware";
 export default {
   components: { SidebarContent },
   name: "HeaderMain",
+  data() {
+    return {
+      notifications: 0
+    };
+  },
   methods: {
+    goToNotifications() {
+      this.$router.push("/notifications");
+    },
+    getNotificationCount() {
+      window.axios
+        .get(process.env.VUE_APP_API + "/api/notifications/get/count/current")
+        .then(response => {
+          console.log(response.data);
+          this.notifications = response.data.count;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     logout() {
       window.axios
         .get(process.env.VUE_APP_API + "/api/auth/logout")
@@ -96,6 +125,9 @@ export default {
     currentUser() {
       return this.$store.getters.currentUser;
     }
+  },
+  created() {
+    this.getNotificationCount();
   }
 };
 </script>

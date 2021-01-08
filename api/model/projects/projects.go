@@ -97,3 +97,9 @@ func UpdateMemberTags(projectID string, UserID string, tagID int) interface{} {
 	response := database.DBConn.Model(&Member{}).Where("project_id = ?", projectID).Where("user_id = ?", UserID).Update("tag_id", tagID)
 	return response.Error
 }
+
+func GetTagMembers(id interface{}, tags []string) []user.User {
+	var users []user.User
+	database.DBConn.Raw("SELECT DISTINCT users.email, users.id FROM `users` \nleft join members on members.user_id = users.id \nLEFT JOIN tags ON tags.id = members.tag_id \nWHERE users.id IN (SELECT members.user_id FROM members WHERE members.project_id = ?) AND tags.name IN (?)", id, tags).Scan(&users)
+	return users
+}

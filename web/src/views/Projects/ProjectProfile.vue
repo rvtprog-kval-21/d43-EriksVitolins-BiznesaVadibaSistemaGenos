@@ -38,29 +38,44 @@
             <div class="w-100">
               <div class="w-100 bg-white a-board">
                 <div class="loadMore mt-2 mr-2 d-flex justify-content-end">
-                  <b-button @click="getAnn()" v-if="!loadingNew" pill  variant="outline-info">
+                  <b-button
+                    @click="getAnn()"
+                    v-if="!loadingNew"
+                    pill
+                    variant="outline-info"
+                  >
                     <b-icon icon="arrow-down-circle" font-scale="2"></b-icon>
                   </b-button>
-                  <b-icon v-else icon="arrow-clockwise" animation="spin" font-scale="2"></b-icon>
+                  <b-icon
+                    v-else
+                    icon="arrow-clockwise"
+                    animation="spin"
+                    font-scale="2"
+                  ></b-icon>
                 </div>
                 <div class="d-flex flex-column">
-                  <div class="ann-row ml-3 mb-3" v-for="(iter, index) in annc" :key="index">
-                      <div class="d-flex align-items-end">
-                        <b-avatar size="3rem" :src="getImgUrl(iter.author.avatar)"></b-avatar>
-                        <h6> {{
-                          iter.author.name +
-                          " " +
-                          iter.author.last_name
-                          }}</h6>
-                        <p>{{getDate(iter.published)}}</p>
-                      </div>
-                      <div class="bubble mt-3">
-                        <VueShowdown
-                                :markdown="iter.content"
-                                flavor="github"
-                                :options="{ emoji: true }"
-                        ></VueShowdown>
-                      </div>
+                  <div
+                    class="ann-row ml-3 mb-3"
+                    v-for="(iter, index) in annc"
+                    :key="index"
+                  >
+                    <div class="d-flex align-items-end">
+                      <b-avatar
+                        size="3rem"
+                        :src="getImgUrl(iter.author.avatar)"
+                      ></b-avatar>
+                      <h6>
+                        {{ iter.author.name + " " + iter.author.last_name }}
+                      </h6>
+                      <p>{{ getDate(iter.published) }}</p>
+                    </div>
+                    <div class="bubble mt-3">
+                      <VueShowdown
+                        :markdown="iter.content"
+                        flavor="github"
+                        :options="{ emoji: true }"
+                      ></VueShowdown>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -208,7 +223,7 @@ export default {
       date = new Date(date);
       const day = date.getDate();
       const year = date.getFullYear();
-      const month = date.toLocaleString("default", {month: "long"});
+      const month = date.toLocaleString("default", { month: "long" });
       return day + " " + month + " " + year;
     },
     getUser() {
@@ -248,16 +263,16 @@ export default {
         });
     },
     getAnn() {
-      this.loadingNew = true
+      this.loadingNew = true;
       window.axios
         .get(
           `api/projects/see/${this.$route.params.id}/current/announcement?currentPage=${this.currentPage}`
         )
         .then(res => {
-          console.log(res.data.annc)
-          const arr = res.data.annc
+          console.log(res.data.annc);
+          const arr = res.data.annc;
           this.annc = this.annc.concat(arr);
-          this.currentPage +=1;
+          this.currentPage += 1;
           if (res.data.annc.length < 1) {
             this.makeToast(`No more announcements available`, "warning");
           }
@@ -265,7 +280,7 @@ export default {
         .catch(rej => {
           this.makeToast(rej.response.data.error, "danger");
         });
-      this.loadingNew = false
+      this.loadingNew = false;
     },
     createAnn() {
       window.axios
@@ -280,7 +295,7 @@ export default {
           this.currentPage = 0;
           this.annc = [];
           this.getAnn();
-          this.makeToast(`Admin was taken away from the user`, "success");
+          this.makeToast(`Announcement was made`, "success");
         })
         .catch(rej => {
           this.makeToast(rej.response.data.error, "danger");
@@ -338,56 +353,57 @@ export default {
   },
   async created() {
     await this.getProject();
-    this.getAnn()
+    this.getAnn();
   }
 };
 </script>
 
 <style scoped lang="scss">
-  .loadMore{
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    padding-top: 10px;
+.loadMore {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  padding-top: 10px;
+}
+
+.ann-row {
+  p {
+    color: #9e9e9e;
+    font-size: small;
+    margin-left: 10px;
   }
 
-  .ann-row{
-    p{
-      color: #9e9e9e;
-      font-size: small;
-      margin-left:10px ;
-    }
-
-    h6{
-      margin-bottom: auto;
-      margin-top: auto;
-      margin-left: 10px;
-    }
-
-    .bubble{
-      position: relative;
-      max-width: 30em;
-
-      background-color: #fff;
-      padding: 0.5em 1em;
-      font-size: 1.25em;
-      border-radius: 1rem;
-      box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
-    }
-    .bubble:after{
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 0;
-      bottom: 100%;
-      left: 0.6em;
-      border: .75rem solid transparent;
-      border-top: none;
-
-      border-bottom-color: #fff;
-      filter: drop-shadow(0 -0.0625rem 0.0625rem rgba(0, 0, 0, .1));
-    }
+  h6 {
+    margin-bottom: auto;
+    margin-top: auto;
+    margin-left: 10px;
   }
+
+  .bubble {
+    position: relative;
+    max-width: 30em;
+
+    background-color: #fff;
+    padding: 0.5em 1em;
+    font-size: 1.25em;
+    border-radius: 1rem;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3),
+      0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2);
+  }
+  .bubble:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 100%;
+    left: 0.6em;
+    border: 0.75rem solid transparent;
+    border-top: none;
+
+    border-bottom-color: #fff;
+    filter: drop-shadow(0 -0.0625rem 0.0625rem rgba(0, 0, 0, 0.1));
+  }
+}
 .body {
   height: 100%;
   display: flex;

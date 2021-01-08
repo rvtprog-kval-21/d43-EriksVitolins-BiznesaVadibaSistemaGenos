@@ -3,6 +3,7 @@ package router
 import (
 	"api/config"
 	"api/controllers/general"
+	"api/controllers/notifications"
 	"api/controllers/projects"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/jwt"
@@ -33,10 +34,17 @@ func setupRoutes(router *gin.Engine) {
 	api.Use(jwt.Auth(config.Secret))
 
 	admin := api.Group("/admin", IsAdmin)
-
+	notifications := api.Group("/notifications")
 	adminRoutes(admin)
 	apiRoutes(api)
 	projectRoutes(api)
+	notificationRoutes(notifications)
+}
+
+func notificationRoutes(notifi *gin.RouterGroup) {
+	notifi.GET("/get/count/current", notifications.NotifsAvailable)
+	notifi.GET("/get/existing/current", notifications.Notifs)
+	notifi.GET("/update/:id/notification/seen", notifications.UpdateSeenToTrue)
 }
 
 func adminRoutes(admin *gin.RouterGroup) {

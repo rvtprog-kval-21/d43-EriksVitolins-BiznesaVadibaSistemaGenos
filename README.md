@@ -90,6 +90,10 @@ Projektā tiek izmantots:
     [Vue markdown](https://vue-showdown.js.org/guide/#npm) - vue markdown docs, izmantoju piemērus
     
     [Vue Rich text editor](https://github.com/surmon-china/vue-quill-editor) - vue Rich text editor docs, izmantoju piemērus
+  
+    [Github](https://github.com/richardtallent/vue-simple-calendar) - tika izmantots example kods priekš kalendārs
+    
+    [Github](https://github.com/richardtallent/vue-simple-calendar-sample) - tika izmantots example kods priekš kalendārs
   - CSS
   
     [Material colors](https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=FFCCBC) - krāsu izvēle

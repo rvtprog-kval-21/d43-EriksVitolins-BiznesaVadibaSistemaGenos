@@ -67,10 +67,10 @@
           class="nav-row"
           tag="li"
           active-class="active"
-          to="/tags"
+          to="/calendar"
           exact
         >
-          <a>Tags</a>
+          <a>Calendar</a>
         </router-link>
       </b-col>
     </b-row>
