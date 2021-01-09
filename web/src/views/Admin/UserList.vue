@@ -108,7 +108,7 @@ export default {
       this.errors = [];
       const vue = this;
       window.axios
-        .post("/api/admin/users")
+        .post("/api/users")
         .then(response => {
           this.users = response.data.data;
           this.toggleBusy();

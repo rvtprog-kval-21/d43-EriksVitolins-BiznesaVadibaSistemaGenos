@@ -69,6 +69,7 @@ func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/ping", general.Ping)
 	api.GET("/usersonline", general.UsersOnline)
 	api.GET("/users/search", general.SearchUsers)
+	api.POST("/users", general.UserList)
 
 	blogRoutes(api)
 	managerRoutes(api)
@@ -126,4 +127,5 @@ func projectRoutes(api *gin.RouterGroup) {
 	project.POST("/update/:id/tags/", projects.UpdateTags)
 	project.POST("/create/:id/new/announcement", projects.SaveAnnouncement)
 	project.GET("/see/:id/current/announcement", projects.SeeAnnouncements)
+	project.GET("/gather/members/tags/list", projects.GetTagsOfMemberProject)
 }

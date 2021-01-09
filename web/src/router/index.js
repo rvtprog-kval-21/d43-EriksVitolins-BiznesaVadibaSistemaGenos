@@ -28,7 +28,7 @@ const Home = () => import("../views/Home");
 const Timetable = () => import("../views/TimeTable/TimeTables");
 const Notifications = () => import("../views/Notifications/Notifications");
 
-const Calendar = () => import("../views/Calendar/Calendar")
+const Calendar = () => import("../views/Calendar/Calendar");
 Vue.use(VueRouter);
 
 const routes = [

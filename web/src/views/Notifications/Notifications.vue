@@ -51,7 +51,7 @@ export default {
             `/api/notifications/update/${id}/notification/seen`
         )
         .then(() => {
-          this.makeToast("Notification dismissed", "success")
+          this.makeToast("Notification dismissed", "success");
           this.getNotifications();
         })
         .catch(error => {

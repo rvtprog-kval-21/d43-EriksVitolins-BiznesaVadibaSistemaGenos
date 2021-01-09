@@ -3,6 +3,7 @@ package migrations
 import (
 	"api/database"
 	"api/model/blog"
+	"api/model/calendar"
 	"api/model/notifications"
 	"api/model/projects"
 	"api/model/tracking"
@@ -30,6 +31,7 @@ func migrateTables() {
 	err = database.DBConn.AutoMigrate(&blog.Bloggers{})
 	err = database.DBConn.AutoMigrate(&blog.Blogs{})
 	err = database.DBConn.AutoMigrate(&notifications.Notifications{})
+	err = database.DBConn.AutoMigrate(&calendar.Calendar{})
 	err = database.DBConn.AutoMigrate(&blog.BlogsLog{})
 	err = database.DBConn.AutoMigrate(&tracking.Managers{})
 	err = database.DBConn.AutoMigrate(&tracking.TrackedSubmission{})

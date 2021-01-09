@@ -103,3 +103,9 @@ func GetTagMembers(id interface{}, tags []string) []user.User {
 	database.DBConn.Raw("SELECT DISTINCT users.email, users.id FROM `users` \nleft join members on members.user_id = users.id \nLEFT JOIN tags ON tags.id = members.tag_id \nWHERE users.id IN (SELECT members.user_id FROM members WHERE members.project_id = ?) AND tags.name IN (?)", id, tags).Scan(&users)
 	return users
 }
+
+func GetMemberOfProjectTags(id interface{}) []Tag {
+	var tags []Tag
+	database.DBConn.Raw("SELECT tags.*\nFROM members \nLEFT JOIN projects On projects.id = members.project_id \nLEFT JOIN tags ON tags.project_id = projects.id\nWHERE members.user_id = ? AND tags.id  IS NOT NULL", id).Scan(&tags)
+	return tags
+}

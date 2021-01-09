@@ -339,3 +339,14 @@ func AddUsers(context *gin.Context) {
 	}
 	context.JSON(200, gin.H{"message": "Members Added"})
 }
+
+func GetTagsOfMemberProject(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	tags := projects.GetMemberOfProjectTags(claims["id"])
+
+	context.JSON(200, gin.H{"tags": tags})
+}

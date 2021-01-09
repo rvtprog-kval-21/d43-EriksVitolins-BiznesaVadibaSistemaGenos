@@ -128,7 +128,7 @@ export default {
       });
     },
     getUsers() {
-      window.axios.post("api/admin/users").then(res => {
+      window.axios.post("api/users").then(res => {
         this.options = res.data.users;
       });
     },
