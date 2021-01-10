@@ -64,7 +64,7 @@
                   :options="tags"
           ></vSelect>
         </div>
-        <b-button variant="success">Create Event</b-button>
+        <b-button @click="createEvent()" variant="success">Create Event</b-button>
       </div>
       <div class="right">Rights</div>
     </div>
@@ -95,7 +95,8 @@ export default {
         description: "",
         public: false,
         time:"",
-        users: []
+        users: [],
+        tags: [],
       }
     };
   },
@@ -116,6 +117,11 @@ export default {
     },
     getTags() {
       window.axios.get("api/projects/gather/members/tags/list").then(res => {
+        this.tags = res.data.tags;
+      });
+    },
+    createEvent() {
+      window.axios.post("api/calendar/create/new/event/", this.form).then(res => {
         this.tags = res.data.tags;
       });
     },

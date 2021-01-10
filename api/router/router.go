@@ -2,6 +2,7 @@ package router
 
 import (
 	"api/config"
+	"api/controllers/calendar"
 	"api/controllers/general"
 	"api/controllers/notifications"
 	"api/controllers/projects"
@@ -74,7 +75,7 @@ func apiRoutes(api *gin.RouterGroup) {
 	blogRoutes(api)
 	managerRoutes(api)
 	trackingRoutes(api)
-
+	calendarRoutes(api)
 }
 
 func blogRoutes(api *gin.RouterGroup) {
@@ -100,6 +101,11 @@ func trackingRoutes(api *gin.RouterGroup) {
 	tracking.GET("/manager/list/", general.SeeSubmissions)
 	tracking.GET("/manager/item/:id/open", general.OpenSubmissions)
 	tracking.GET("/manager/item/:id/close", general.CloseSubmissions)
+}
+
+func calendarRoutes(api *gin.RouterGroup) {
+	manager := api.Group("/calendar")
+	manager.POST("/create/new/event/", calendar.CreateEvent)
 }
 
 func managerRoutes(api *gin.RouterGroup) {
