@@ -6,7 +6,13 @@ import (
 	"api/utlis/jwtParser"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
+
+type EventsRequest struct {
+	StartDate time.Time `json:"startDate"`
+	EndDate   time.Time `json:"endDate"`
+}
 
 func CreateEvent(context *gin.Context) {
 	var event calendar.Event
@@ -45,7 +51,42 @@ func CreateEvent(context *gin.Context) {
 		ids = append(ids, iter.UserID)
 	}
 
-	context.JSON(200, gin.H{"message": event})
+	event.StartDate = event.Time[0]
+	event.EndDate = event.Time[1]
+
+	_, id := calendar.SaveEvent(event)
+	for _, iter := range ids {
+		isOwner := false
+		if iter == int(claims["id"].(float64)) {
+			isOwner = true
+		}
+		member := calendar.EventMember{
+			IsOwner: isOwner,
+			EventID: id,
+			UserID:  iter,
+		}
+		calendar.SaveEventMember(member)
+	}
+
+	context.JSON(200, gin.H{"message": "success"})
+}
+
+func GetEvents(context *gin.Context) {
+	var eventData EventsRequest
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	err := context.ShouldBindJSON(&eventData)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+
+	events := calendar.GetEvents(eventData.StartDate, eventData.EndDate, claims["id"])
+
+	context.JSON(200, gin.H{"events": events})
 }
 
 func arrayContains(arr []int, needle int) bool {

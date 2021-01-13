@@ -106,6 +106,7 @@ func trackingRoutes(api *gin.RouterGroup) {
 func calendarRoutes(api *gin.RouterGroup) {
 	manager := api.Group("/calendar")
 	manager.POST("/create/new/event/", calendar.CreateEvent)
+	manager.POST("/get/current/events/", calendar.GetEvents)
 }
 
 func managerRoutes(api *gin.RouterGroup) {
