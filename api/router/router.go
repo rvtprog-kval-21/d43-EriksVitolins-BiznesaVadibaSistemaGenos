@@ -107,6 +107,9 @@ func calendarRoutes(api *gin.RouterGroup) {
 	manager := api.Group("/calendar")
 	manager.POST("/create/new/event/", calendar.CreateEvent)
 	manager.POST("/get/current/events/", calendar.GetEvents)
+	manager.GET("/delete/:id/event", calendar.DeleteEvent)
+	manager.GET("/leave/:id/event", calendar.LeaveEvent)
+	manager.POST("/update/:id/event", calendar.UpdateEvent)
 }
 
 func managerRoutes(api *gin.RouterGroup) {

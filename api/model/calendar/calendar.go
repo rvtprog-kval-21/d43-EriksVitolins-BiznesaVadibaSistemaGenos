@@ -48,3 +48,31 @@ func GetEvents(startDate time.Time, endDate time.Time, id interface{}) []Event {
 
 	return events
 }
+
+func DeleteEventMember(eventID string, userID interface{}) {
+	database.DBConn.Where("event_id = ?", eventID).Where("user_id = ?", userID).Delete(&EventMember{})
+}
+
+func UpdateEvent(event Event) {
+	database.DBConn.Save(event)
+}
+
+func DeleteEvent(eventID string) {
+	database.DBConn.Where("id = ?", eventID).Delete(&Event{})
+}
+
+func DeleteAllEventsUsers(eventID string) {
+	database.DBConn.Where("event_id = ?", eventID).Delete(&EventMember{})
+}
+
+func GetMember(userId interface{}, eventId string) EventMember {
+	var member EventMember
+	database.DBConn.Where("user_id = ? AND event_id = ?", userId, eventId).
+		Find(&member)
+
+	return member
+}
+
+func DeleteEveryOtherMember(eventID int, ids []int) {
+	database.DBConn.Where("event_id = ?", eventID).Where("user_id NOT IN (?)", ids).Delete(&EventMember{})
+}
