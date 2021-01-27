@@ -50,11 +50,12 @@ func notificationRoutes(notifi *gin.RouterGroup) {
 
 func adminRoutes(admin *gin.RouterGroup) {
 	admin.POST("/users", general.UserList)
+	admin.POST("/user/signup", general.UserSignUp)
 
-	admin.POST("/user/:id/lock", general.LockUser)
-	admin.POST("/user/:id/unlock", general.UnlockUser)
-	admin.POST("/user/:id/newEmail", general.NewEmail)
-	admin.GET("/user/:id/passwordReset", general.ResetPassword)
+	admin.POST("/user/settings/:id/lock", general.LockUser)
+	admin.POST("/user/settings/:id/unlock", general.UnlockUser)
+	admin.POST("/user/settings/:id/newEmail", general.NewEmail)
+	admin.GET("/user/settings/:id/passwordReset", general.ResetPassword)
 
 	admin.GET("/blog/:id/add", general.AddUserToBlogRole)
 	admin.GET("/blog/:id/delete", general.DeleteUserFromBlogRole)
@@ -104,12 +105,13 @@ func trackingRoutes(api *gin.RouterGroup) {
 }
 
 func calendarRoutes(api *gin.RouterGroup) {
-	manager := api.Group("/calendar")
-	manager.POST("/create/new/event/", calendar.CreateEvent)
-	manager.POST("/get/current/events/", calendar.GetEvents)
-	manager.GET("/delete/:id/event", calendar.DeleteEvent)
-	manager.GET("/leave/:id/event", calendar.LeaveEvent)
-	manager.POST("/update/:id/event", calendar.UpdateEvent)
+	calander := api.Group("/calendar")
+	calander.POST("/create/new/event/", calendar.CreateEvent)
+	calander.POST("/get/current/events/", calendar.GetEvents)
+	calander.GET("/delete/:id/event", calendar.DeleteEvent)
+	calander.GET("/leave/:id/event", calendar.LeaveEvent)
+	calander.POST("/update/:id/event", calendar.UpdateEvent)
+	calander.POST("/get/home/events/", calendar.GetEventsHome)
 }
 
 func managerRoutes(api *gin.RouterGroup) {

@@ -129,7 +129,11 @@
             </template>
           </b-card>
           <div class="mt-3">
-            <b-button @click="editEvent()" variant="warning" class="mr-3" v-if="isItemOwner"
+            <b-button
+              @click="editEvent()"
+              variant="warning"
+              class="mr-3"
+              v-if="isItemOwner"
               >Edit</b-button
             >
             <b-button
@@ -190,7 +194,12 @@
               ></vSelect>
             </div>
             <div>
-              <b-button @click="updateEvent(item.originalItem.id)" class="mr-3" variant="success">Save</b-button>
+              <b-button
+                @click="updateEvent(item.originalItem.id)"
+                class="mr-3"
+                variant="success"
+                >Save</b-button
+              >
               <b-button @click="isEditing = false" variant="primary"
                 >Back</b-button
               >
@@ -374,7 +383,7 @@ export default {
       this.isItemOwner = false;
     },
     editEvent() {
-      console.log("test")
+      console.log("test");
       this.isEditing = true;
       this.edit.title = this.item.originalItem.title;
       this.edit.description = this.item.originalItem.description;
@@ -395,7 +404,7 @@ export default {
         .then(() => {
           this.isEditing = false;
           this.makeToast("Event updated", "success");
-          this.item = null
+          this.item = null;
           this.getEvents();
         });
     },

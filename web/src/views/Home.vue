@@ -1,8 +1,8 @@
 <template>
   <div class="content d-flex mt-2">
     <div class="col-10">
-      <div class="top-row">
-        <div class="blog pt-3">
+      <div class="top-row d-flex">
+        <div class="blog pt-3 mr-0">
           <div class="blog-top pl-3 d-flex flex-column">
             <h5>Blogs:</h5>
           </div>
@@ -48,6 +48,64 @@
             </div>
           </div>
         </div>
+        <div class="pt-3 ml-3 calendar">
+          <div class="d-flex">
+            <h5 class="ml-3 mb-4">Calendars:</h5>
+            <h5 class="ml-2">{{events.length}}</h5>
+          </div>
+          <hr>
+          <template v-for="(item, index) in events">
+            <div :key="index" class="mb-3">
+              <b-card :title="item.title" img-alt="Image" img-top>
+                <template v-for="(iter, index) in item.members">
+                  <div
+                          class="d-flex align-items-center"
+                          :key="index"
+                          v-if="iter.isOwner == true"
+                  >
+                    <b-avatar
+                            class="mr-1"
+                            size="2rem"
+                            :src="getImgUrl(iter.user.avatar)"
+                    ></b-avatar>
+                    <p class="mb-0 text-muted">
+                      {{ iter.user.name + " " + iter.user.last_name }}
+                    </p>
+                  </div>
+                </template>
+                <hr />
+                <b-card-text>
+                  {{ item.description }}
+                </b-card-text>
+                <template v-if="item.members.length > 1">
+                  <p>Participants:</p>
+                  <div class="d-flex">
+                    <template
+                            v-for="(iter, index) in item.members"
+                    >
+                      <div
+                              class="d-flex align-items-center"
+                              :key="index"
+                              v-if="iter.isOwner == false"
+                      >
+                        <b-avatar
+                                class="mr-1"
+                                size="2rem"
+                                :src="getImgUrl(iter.user.avatar)"
+                        ></b-avatar>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+                <template #footer>
+                  <small class="text-muted"
+                  >{{ item.startDate + " ~ " + item.endDate }}}</small
+                  >
+                </template>
+              </b-card>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
     <div class="col-2">
@@ -84,7 +142,8 @@ export default {
   data() {
     return {
       onlineUsers: null,
-      blogs: []
+      blogs: [],
+      events: [],
     };
   },
   mounted() {
@@ -101,6 +160,13 @@ export default {
           vue.onlineUsers = res.data.users;
         });
       }, 60 * 1000);
+    },
+    getEvents() {
+      window.axios
+              .post("api/calendar/get/home/events/")
+              .then(res => {
+                this.events = res.data.events;
+              });
     },
     getImgUrl(avatar) {
       let images = process.env.VUE_APP_API + "/static" + avatar;
@@ -134,6 +200,7 @@ export default {
   },
   created() {
     this.getBlogs();
+    this.getEvents();
   }
 };
 </script>
@@ -154,6 +221,12 @@ export default {
       }
     }
   }
+}
+
+.calendar{
+  width: 100%;
+  overflow: auto;
+  border-radius: 10px;
 }
 .users {
   padding: 30px;

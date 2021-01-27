@@ -75,6 +75,11 @@ func GetUsersIn(ids []interface{}) []User {
 	return users
 }
 
+func CreateUsers(user User) interface{} {
+	response := database.DBConn.Create(user)
+	return response.Error
+}
+
 func SearchUsers(search string) []User {
 	var users []User
 	database.DBConn.Select("email", "id").Where("email like ?", "%"+search+"%").Find(&users)

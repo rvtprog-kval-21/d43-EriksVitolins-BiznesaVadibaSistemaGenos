@@ -1,89 +1,76 @@
 <template>
-  <div class="wrapper">
-    <div class="container">
-      <div class="background">
-        <div class="topBar">
-          <h1>Add users</h1>
-          <div class="input">
-            <p>Skaits:</p>
-            <input type="number" min="0" v-model="addFieldsCount" />
-            <input
-              class="btn-add-users btn"
-              type="submit"
-              @click="addField"
-              value="Add"
-            />
-          </div>
+  <b-container>
+    <div class="background">
+      <div class="topBar">
+        <h1>Add users</h1>
+        <div class="input">
+          <p class="mb-0">Skaits:</p>
+          <b-form-input
+            type="number"
+            v-model="addFieldsCount"
+            placeholder="Enter how many fields to add"
+          ></b-form-input>
+          <input
+            class="btn-add-users btn"
+            type="submit"
+            @click="addField"
+            value="Add"
+          />
         </div>
-        <div class="input-fields">
-          <div class="input-box" v-for="(field, index) in fields" :key="index">
-            <div class="top">
-              <h1>User</h1>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                @click="removeField(index)"
-                class="icon icon-tabler icon-tabler-x"
-                width="35"
-                height="35"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="#607D8B"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" />
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </div>
-            <hr />
-            <div class="input-container">
-              <div class="input-wrapper">
-                <p>First name:</p>
-                <input
-                  type="text"
-                  v-model="field.name"
-                  class="input-field"
-                  placeholder="Jānis"
-                />
-              </div>
-              <div class="input-wrapper">
-                <p>Last name:</p>
-                <input
-                  type="text"
-                  v-model="field.lastname"
-                  class="input-field"
-                  placeholder="Bērzs"
-                />
-              </div>
-              <div class="input-wrapper">
-                <p>Email:</p>
-                <input
-                  class="input-field"
-                  v-model="field.email"
-                  type="email"
-                  placeholder="berzs@mga.lv"
-                />
-              </div>
-              <div class="input-wrapper">
-                <p>Account type:</p>
-                <select
-                  class="input-field"
-                  v-model="field.role"
-                  name="category"
-                >
-                  <option value="regular" selected>Regular</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <button @click="add">Submit</button>
       </div>
+      <div class="input-fields">
+        <div class="input-box" v-for="(field, index) in fields" :key="index">
+          <div class="top">
+            <h1>User</h1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              @click="removeField(index)"
+              class="icon icon-tabler icon-tabler-x"
+              width="35"
+              height="35"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="#607D8B"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" />
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </div>
+          <hr />
+          <div class="input-container">
+            <div>
+              <b-form-input
+                class="mb-2"
+                v-model="field.name"
+                placeholder="Enter the users name"
+              ></b-form-input>
+              <b-form-input
+                v-model="field.lastname"
+                placeholder="Enter the users last name"
+              ></b-form-input>
+            </div>
+            <div>
+              <b-form-input
+                class="mb-2"
+                type="email"
+                v-model="field.email"
+                placeholder="Enter the users email"
+              ></b-form-input>
+              <b-form-select
+                v-model="field.role"
+                :options="options"
+              ></b-form-select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button @click="add">Submit</button>
     </div>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -93,10 +80,15 @@ export default {
   name: "AddUsers",
   data() {
     return {
-      fields: [{ name: "", lastname: "", email: "", role: "regular" }],
+      fields: [{ name: "", lastname: "", email: "", role: "" }],
       addFieldsCount: 1,
       errorArray: [],
-      alerts: ""
+      alerts: "",
+      options: [
+        { value: "", text: "Please select users role" },
+        { value: "regular", text: "Regular" },
+        { value: "admin", text: "Admin" }
+      ]
     };
   },
   methods: {
@@ -114,26 +106,33 @@ export default {
       this.fields.splice(index, 1);
     },
     add() {
-      this.alerts = "";
-      this.errorArray = [];
-      const vue = this;
       const constraints = this.getConstraints();
       for (let iter = 0; iter < this.fields.length; iter++) {
         const errors = validate(this.fields[iter], constraints);
         if (errors) {
-          this.errorArray = errors;
+          console.log(errors)
+          this.makeToast(errors.email, "danger");
+          this.makeToast(errors.role, "danger");
+          this.makeToast(errors.lastname, "danger");
+          this.makeToast(errors.name, "danger");
           return;
         }
         window.axios
           .post("/api/signup", this.fields[iter])
-          .then(res => {
-            this.alerts = { alert: res.data.message };
+          .then(() => {
             this.fields.splice(iter, 1);
           })
           .catch(function(rej) {
-            vue.errorArray = { error: rej.response.data.message };
+            this.makeToast(rej.response.data.error, "danger");
           });
       }
+    },
+    makeToast(text, variant) {
+      this.$bvToast.toast(text, {
+        autoHideDelay: 5000,
+        variant: variant,
+        title: "Notification"
+      });
     },
     getConstraints() {
       return {
@@ -149,7 +148,10 @@ export default {
           email: true
         },
         role: {
-          presence: true
+          presence: true,
+          length: {
+            minimum: 3
+          }
         },
         lastname: {
           presence: true,
@@ -216,7 +218,6 @@ p {
   margin: auto;
   padding-top: 20px;
   width: 90%;
-  height: 40px;
   display: flex;
   justify-content: space-between;
 }
@@ -285,12 +286,6 @@ button:hover {
   border: 1px solid grey;
   height: 22px;
   margin-top: 5px;
-}
-
-select {
-  border-radius: 10px !important;
-  padding: 1px 2px;
-  height: 26px !important;
 }
 
 @media screen and (max-width: 1500px) {

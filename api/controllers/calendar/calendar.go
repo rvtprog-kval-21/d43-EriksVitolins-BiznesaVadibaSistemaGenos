@@ -104,6 +104,18 @@ func GetEvents(context *gin.Context) {
 	context.JSON(200, gin.H{"events": events})
 }
 
+func GetEventsHome(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+
+	events := calendar.GetEventsHome(time.Now(), time.Now().AddDate(0, 0, 7 * 1), claims["id"])
+
+	context.JSON(200, gin.H{"events": events})
+}
+
 func DeleteEvent(context *gin.Context) {
 	claims := jwtParser.GetClaims(context)
 	if claims == nil {

@@ -339,13 +339,6 @@ export default {
           this.makeToast(rej.response.data.error, "danger");
         });
     },
-    makeToast(text, variant) {
-      this.$bvToast.toast(text, {
-        autoHideDelay: 5000,
-        variant: variant,
-        title: "Notification"
-      });
-    },
     getImgUrl(image) {
       let images = process.env.VUE_APP_API + "/static" + image;
       return images;

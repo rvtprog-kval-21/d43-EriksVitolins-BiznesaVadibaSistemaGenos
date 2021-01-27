@@ -135,6 +135,25 @@ func NewEmail(context *gin.Context) {
 	}
 }
 
+func UserSignUp(context *gin.Context) {
+	var request user2.User
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.Email == "" || request.LastName == "" || request.Name == "" || request.Role == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	response := user2.CreateUsers(request)
+	if response != nil {
+		context.JSON(422, gin.H{"error": "User " + request.Email + "wasn't available"})
+		return
+	}
+	context.JSON(200, gin.H{"users": "User created successfully"})
+}
+
 func ResetPassword(context *gin.Context) {
 	var temp []string
 	gomail.SendEmailSMTP(append(temp, "vitolinseriks@gmail.com"), "test", "test")

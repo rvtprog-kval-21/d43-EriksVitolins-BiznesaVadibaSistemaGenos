@@ -42,8 +42,18 @@ func SaveEventMember(member EventMember) interface{} {
 func GetEvents(startDate time.Time, endDate time.Time, id interface{}) []Event {
 	var events []Event
 	database.DBConn.Preload("Members.User").Joins("Left Join event_members ON event_members.event_id = events.id").
-		Where("events.start_date > ? OR events.end_date < ?", startDate, endDate).
-		Where("events.public = TRUE OR event_members.user_id = ?", id).
+		Where("(events.start_date > ? OR events.end_date < ?", startDate, endDate).
+		Where("events.public = TRUE OR event_members.user_id = ?)", id).
+		Find(&events)
+
+	return events
+}
+
+func GetEventsHome(startDate time.Time, endDate time.Time, id interface{}) []Event {
+	var events []Event
+	database.DBConn.Preload("Members.User").Joins("Left Join event_members ON event_members.event_id = events.id").
+		Where("(events.start_date > ? AND events.end_date < ?", startDate, endDate).
+		Where("events.public = TRUE OR event_members.user_id = ?)", id).
 		Find(&events)
 
 	return events
