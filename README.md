@@ -54,6 +54,8 @@ Projektā tiek izmantots:
  
     [youbasics](https://yourbasic.org/golang/maps-explained/) - maps iekš golang
     
+    [Article](https://www.loginradius.com/blog/async/sending-emails-with-golang/) - ēpastu sūtīšana
+    
     [Go](https://golang.org/doc/) - docs priekš golang
   
     [stackoverflow](https://stackoverflow.com/questions/59249418/how-to-get-the-claims-from-the-token) - kā parse jwt

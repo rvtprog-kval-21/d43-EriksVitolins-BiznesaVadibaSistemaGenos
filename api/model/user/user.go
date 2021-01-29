@@ -75,9 +75,13 @@ func GetUsersIn(ids []interface{}) []User {
 	return users
 }
 
-func CreateUsers(user User) interface{} {
-	response := database.DBConn.Create(user)
-	return response.Error
+func UpdateAvatar(user User) {
+	database.DBConn.Where("id in ?", user.ID).Update("avatar", user.Avatar)
+}
+
+func CreateUsers(user User) (interface{},User) {
+	response := database.DBConn.Create(&user)
+	return response.Error, user
 }
 
 func SearchUsers(search string) []User {

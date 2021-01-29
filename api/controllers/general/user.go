@@ -4,12 +4,19 @@ import (
 	"api/config"
 	"api/model/projects"
 	user2 "api/model/user"
-	"api/services/gomail"
 	"api/utlis/jwtParser"
+	"api/utlis/password"
+	"crypto/tls"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/o1egl/govatar"
 	"golang.org/x/crypto/bcrypt"
+	gomail "gopkg.in/mail.v2"
+	"math/rand"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -154,20 +161,76 @@ func UserSignUp(context *gin.Context) {
 		context.JSON(422, gin.H{"error": "Fields were not filled"})
 		return
 	}
-	response := user2.CreateUsers(request)
+
+	pass := RandStringRunes(12)
+
+	request.Password = password.HashAndSalt([]byte(pass))
+	request.Birthday = time.Now()
+	request.NameDay = time.Now()
+	response, request := user2.CreateUsers(request)
 	if response != nil {
 		context.JSON(422, gin.H{"error": "User " + request.Email + "wasn't available"})
 		return
 	}
+	id := strconv.Itoa(request.ID)
+	os.MkdirAll("storage/avatar/" + id, os.ModeDir)
+
+	err = govatar.GenerateFile(govatar.MALE, "storage/avatar/" + id + "/avatar.jpg")
+	if err == nil {
+		request.Avatar = "/avatar/" + id + "/avatar.jpg"
+		user2.UpdateAvatar(request)
+	}
+	sendEmail("Hello, we are glad that you have joined our company. Here is your password: " + pass, request.Email)
 	context.JSON(200, gin.H{"users": "User created successfully"})
 }
 
 func ResetPassword(context *gin.Context) {
-	var temp []string
-	gomail.SendEmailSMTP(append(temp, "vitolinseriks@gmail.com"), "test", "test")
+	//var temp []string
+	//gomail.SendEmailSMTP(append(temp, "vitolinseriks@gmail.com"), "test", "test")
 }
 
 func SearchUsers(context *gin.Context) {
 	users := user2.SearchUsers(context.Query("condition"))
 	context.JSON(200, gin.H{"users": users})
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+
+func RandStringRunes(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
+}
+
+func sendEmail(content string, email string)  {
+	m := gomail.NewMessage()
+
+	// Set E-Mail sender
+	m.SetHeader("From", "Weeping.Willow177@gmail.com")
+
+	// Set E-Mail receivers
+	m.SetHeader("To", email)
+
+	// Set E-Mail subject
+	m.SetHeader("Subject", "News from X")
+
+	// Set E-Mail body. You can set plain text or html with text/html
+	m.SetBody("text/plain", content)
+
+	// Settings for SMTP server
+	d := gomail.NewDialer("smtp.gmail.com", 587, "Weeping.Willow177@gmail.com", "LLAOcI0plH2s")
+
+	// This is only needed when SSL/TLS certificate is not valid on server.
+	// In production this should be set to false.
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Now send E-Mail
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+
+	return
 }

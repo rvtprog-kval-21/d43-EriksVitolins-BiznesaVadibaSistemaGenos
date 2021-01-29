@@ -49,7 +49,7 @@
                 placeholder="Enter the users name"
               ></b-form-input>
               <b-form-input
-                v-model="field.lastname"
+                v-model="field.last_name"
                 placeholder="Enter the users last name"
               ></b-form-input>
             </div>
@@ -80,7 +80,7 @@ export default {
   name: "AddUsers",
   data() {
     return {
-      fields: [{ name: "", lastname: "", email: "", role: "" }],
+      fields: [{ name: "", last_name: "", email: "", role: "" }],
       addFieldsCount: 1,
       errorArray: [],
       alerts: "",
@@ -96,7 +96,7 @@ export default {
       for (let iter = 0; iter < this.addFieldsCount; iter++) {
         this.fields.push({
           name: "",
-          lastname: "",
+          last_name: "",
           email: "",
           role: "regular"
         });
@@ -113,12 +113,12 @@ export default {
           console.log(errors)
           this.makeToast(errors.email, "danger");
           this.makeToast(errors.role, "danger");
-          this.makeToast(errors.lastname, "danger");
+          this.makeToast(errors.last_name, "danger");
           this.makeToast(errors.name, "danger");
           return;
         }
         window.axios
-          .post("/api/signup", this.fields[iter])
+          .post("/api/admin/signup", this.fields[iter])
           .then(() => {
             this.fields.splice(iter, 1);
           })
@@ -153,7 +153,7 @@ export default {
             minimum: 3
           }
         },
-        lastname: {
+        last_name: {
           presence: true,
           length: {
             minimum: 3,

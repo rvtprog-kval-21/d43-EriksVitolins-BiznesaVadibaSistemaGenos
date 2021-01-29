@@ -50,7 +50,7 @@ func notificationRoutes(notifi *gin.RouterGroup) {
 
 func adminRoutes(admin *gin.RouterGroup) {
 	admin.POST("/users", general.UserList)
-	admin.POST("/user/signup", general.UserSignUp)
+	admin.POST("/signup", general.UserSignUp)
 
 	admin.POST("/user/settings/:id/lock", general.LockUser)
 	admin.POST("/user/settings/:id/unlock", general.UnlockUser)
