@@ -56,6 +56,12 @@ func GetProject(id interface{}) (Project, interface{}) {
 	return project, response.Error
 }
 
+func GetProjects(ids []int) []Project {
+	var project []Project
+	database.DBConn.Where("id IN (?)", ids).Find(&project)
+	return project
+}
+
 func GetMember(id interface{}, userID interface{}) (Member, interface{}) {
 	var member Member
 	response := database.DBConn.Where("project_id = ?", id).Where("user_id = ?", userID).Find(&member)
@@ -114,4 +120,15 @@ func GetMembersOfTags(tags []int) []Member {
 	var members []Member
 	database.DBConn.Distinct("user_id").Where("tag_id in (?)", tags).Find(&members)
 	return members
+}
+
+func GetProjectsThatUserIsPartOF(user interface{}) []Project {
+	var member []Member
+	database.DBConn.Where("user_id = ?", user).Find(&member)
+	var ids []int
+	for _, iter := range member{
+		ids = append(ids, iter.ProjectID)
+	}
+	project := GetProjects(ids)
+	return project
 }

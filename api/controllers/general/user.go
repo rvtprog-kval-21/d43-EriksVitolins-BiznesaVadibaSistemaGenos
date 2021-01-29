@@ -2,8 +2,10 @@ package general
 
 import (
 	"api/config"
+	"api/model/projects"
 	user2 "api/model/user"
 	"api/services/gomail"
+	"api/utlis/jwtParser"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -96,8 +98,14 @@ func User(context *gin.Context) {
 		context.JSON(http.StatusNotFound, gin.H{"error": "Profile doesn't exist"})
 		return
 	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	projects := projects.GetProjectsThatUserIsPartOF(claims["id"])
 
-	context.JSON(http.StatusOK, responseUser{Data: userObject})
+	context.JSON(http.StatusOK, gin.H{"data": userObject, "projects": projects})
 }
 
 func LockUser(context *gin.Context) {

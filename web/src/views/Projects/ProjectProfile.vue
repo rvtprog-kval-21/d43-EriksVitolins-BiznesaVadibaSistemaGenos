@@ -2,7 +2,7 @@
   <div class="body">
     <div class="right">
       <b-button
-        v-if="this.user.is_admin || this.user.is_owner"
+        v-if="this.user && (this.user.is_admin || this.user.is_owner)"
         class="mt-3 ml-3"
         variant="outline-primary"
         @click="goToSettings()"
@@ -33,7 +33,7 @@
               :options="{ emoji: true }"
             ></VueShowdown>
           </div>
-          <div class=" p-4 w-100">
+          <div class=" p-4 w-100" v-if="user">
             <h5 class="d-flex">Announcement Board:</h5>
             <div class="w-100">
               <div class="w-100 bg-white a-board">
@@ -80,7 +80,7 @@
                 </div>
               </div>
               <div
-                v-if="this.user.is_admin || this.user.is_owner"
+                v-if="this.user && (this.user.is_admin || this.user.is_owner)"
                 class="mt-3 d-flex form-row"
               >
                 <b-form-textarea
@@ -136,7 +136,7 @@
                 >
                 <template v-if="!isLoading">
                   <vSelect
-                    v-if="user.is_owner || user.is_admin"
+                    v-if="user && (this.user.is_admin || this.user.is_owner)"
                     class=" ml-auto mr-auto w-75"
                     v-model="iter.tag"
                     label="name"
@@ -145,7 +145,7 @@
                   />
                   <b-dropdown-item
                     @click="makeAdmin(iter.user.id)"
-                    v-if="
+                    v-if="user &&
                       user.is_owner &&
                         getXUser(iter.user.id).is_admin == false &&
                         getXUser(iter.user.id).is_owner == false &&
@@ -156,22 +156,22 @@
                   >
                   <b-dropdown-item
                     @click="unmakeAdmin(iter.user.id)"
-                    v-else-if="
-                      user.is_owner &&
+                    v-else-if="user &&
+                      (user.is_owner &&
                         getXUser(iter.user.id).is_admin == true &&
                         getXUser(iter.user.id).is_owner == false &&
-                        currentUser.id != iter.user.id
+                        currentUser.id != iter.user.id)
                     "
                     href="#"
                     >Take Away Admin</b-dropdown-item
                   >
                   <b-dropdown-item
                     @click="kickUser(iter.user.id)"
-                    v-if="
-                      (user.is_owner || user.is_admin) &&
+                    v-if="user &&
+                      ((user.is_owner || user.is_admin) &&
                         getXUser(iter.user.id).is_admin == false &&
                         getXUser(iter.user.id).is_owner == false &&
-                        currentUser.id != iter.user.id
+                        currentUser.id != iter.user.id)
                     "
                     href="#"
                     >Kick</b-dropdown-item
@@ -263,22 +263,26 @@ export default {
         });
     },
     getAnn() {
+
       this.loadingNew = true;
       window.axios
         .get(
           `api/projects/see/${this.$route.params.id}/current/announcement?currentPage=${this.currentPage}`
         )
         .then(res => {
-          console.log(res.data.annc);
-          const arr = res.data.annc;
-          this.annc = this.annc.concat(arr);
-          this.currentPage += 1;
-          if (res.data.annc.length < 1) {
-            this.makeToast(`No more announcements available`, "warning");
+          if (res.data){
+            const arr = res.data.annc;
+            this.annc = this.annc.concat(arr);
+            this.currentPage += 1;
+            if (res.data.annc.length < 1) {
+              this.makeToast(`No more announcements available`, "warning");
+            }
           }
         })
         .catch(rej => {
-          this.makeToast(rej.response.data.error, "danger");
+          if (rej.response){
+            this.makeToast(rej.response.data.error, "danger");
+          }
         });
       this.loadingNew = false;
     },

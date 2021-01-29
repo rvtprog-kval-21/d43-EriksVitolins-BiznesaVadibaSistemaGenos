@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mother-load">
     <template v-if="user.email">
       <div class="header d-flex align-items-center">
         <div class="container-fluid">
@@ -38,6 +38,7 @@
           </div>
           <div class="d-flex p-4 justify-content-between">
             <b-button variant="success" v-if="!sameUser()">Message</b-button>
+            <b-button variant="success" v-if="!sameUser()">Follow</b-button>
             <b-button variant="outline-primary" v-if="sameUser()"
               >Settings</b-button
             >
@@ -51,20 +52,16 @@
           <div class="d-flex grey justify-content-center mt-1">
             <h5>{{ user.email }} | {{ user.phone_number }}</h5>
           </div>
-          <div class="p-4 d-flex justify-content-between">
-            <h6 class="">
-              <span class="mr-2">Birthday:</span> {{ getDate(user.birthday) }}
-            </h6>
-            <h6 class="">
-              <span class="mr-2">NameDay:</span> {{ getDate(user.name_day) }}
-            </h6>
+          <h5 class="pt-3 pl-4">About:</h5>
+          <div class="border ml-4 mr-4">
+            <p class="m-2">{{user.about}}</p>
           </div>
-          <div class="p-4">
+          <div class="pt-2 pl-4 pr-4 pb-4">
             <div class="d-flex justify-content-center grey">
-              <h5>Tags</h5>
+              <h5>Projects</h5>
             </div>
-            <template v-for="(iter, index) in tags">
-              <a :href="'/tags/' + iter.id + '/tag'" :key="index">
+            <template v-for="(iter, index) in projects">
+              <a :href="'/projects/' + iter.id + '/see'" :key="index">
                 <b-avatar
                   variant="info"
                   size="4rem"
@@ -74,8 +71,16 @@
               </a>
             </template>
           </div>
+          <div class="ml-4 mr-4 grey d-flex justify-content-between">
+            <h6 class="">
+              <span class="mr-2">Birthday:</span> {{ getDate(user.birthday) }}
+            </h6>
+            <h6 class="">
+              <span class="mr-2">NameDay:</span> {{ getDate(user.name_day) }}
+            </h6>
+          </div>
         </b-col>
-        <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
+        <b-col  v-if="this.currentUser.role == 'admin'" class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
           <div class="d-flex justify-content-center">
             <b-alert v-if="this.errors.error" variant="danger" show="">{{
               this.errors.error
@@ -84,19 +89,6 @@
               this.alerts.message
             }}</b-alert>
           </div>
-          <div
-            v-if="this.currentUser.role == 'admin'"
-            class="d-flex justify-content-between align-items-center"
-          >
-            <h5>User profile</h5>
-            <b-button>Settings</b-button>
-          </div>
-          <hr />
-          <h6 class="category-title">User info:</h6>
-          <div class="p-4">
-            <p>About: {{ user.about }}</p>
-          </div>
-          <hr />
           <template v-if="this.currentUser.role == 'admin'">
             <h6 class="category-title">Admin section:</h6>
             <b-row>
@@ -160,7 +152,7 @@ export default {
       alerts: {},
       accountLocked: false,
       tag: "",
-      tags: {},
+      projects: {},
       newEmail: ""
     };
   },
@@ -213,7 +205,7 @@ export default {
         .get("/api/user/" + this.$route.params.id + "/profile")
         .then(res => {
           this.user = res.data.data;
-          this.tags = res.data.tags;
+          this.projects = res.data.projects;
         })
         .catch(function(rej) {
           vue.errors = { error: rej.response.data.error };
@@ -224,7 +216,7 @@ export default {
       return images;
     },
     sameUser() {
-      return this.$route.params.id == this.user.ID;
+      return this.$route.params.id == this.currentUser.id;
     },
     geBackgroundUrl() {
       let images = process.env.VUE_APP_API + "/static" + this.user.background;
@@ -266,7 +258,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.header {
+.mother-load{
+  min-height: 1000px;
+}
+
+  .header {
   min-height: 400px;
   background-size: cover;
   background: #49599a;
@@ -290,7 +286,7 @@ export default {
     }
   }
   .profile {
-    min-height: 500px;
+    min-height: 700px;
     .avatar {
       position: relative;
       bottom: -75px;
@@ -306,4 +302,7 @@ export default {
     height: 35% !important;
   }
 }
+  .border{
+    border: 1px black solid;
+  }
 </style>
