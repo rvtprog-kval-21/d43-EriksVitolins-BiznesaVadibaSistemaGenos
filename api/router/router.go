@@ -40,6 +40,7 @@ func setupRoutes(router *gin.Engine) {
 	apiRoutes(api)
 	projectRoutes(api)
 	notificationRoutes(notifications)
+	userSettingsRoutes(api)
 }
 
 func notificationRoutes(notifi *gin.RouterGroup) {
@@ -55,7 +56,7 @@ func adminRoutes(admin *gin.RouterGroup) {
 	admin.POST("/user/settings/:id/lock", general.LockUser)
 	admin.POST("/user/settings/:id/unlock", general.UnlockUser)
 	admin.POST("/user/settings/:id/newEmail", general.NewEmail)
-	admin.GET("/user/settings/:id/passwordReset", general.ResetPassword)
+	admin.POST("/user/reset/password", general.ResetPassword)
 
 	admin.GET("/blog/:id/add", general.AddUserToBlogRole)
 	admin.GET("/blog/:id/delete", general.DeleteUserFromBlogRole)
@@ -140,4 +141,16 @@ func projectRoutes(api *gin.RouterGroup) {
 	project.POST("/create/:id/new/announcement", projects.SaveAnnouncement)
 	project.GET("/see/:id/current/announcement", projects.SeeAnnouncements)
 	project.GET("/gather/members/tags/list", projects.GetTagsOfMemberProject)
+}
+
+func userSettingsRoutes(api *gin.RouterGroup) {
+	user := api.Group("/user/settings/new")
+	user.POST("/name", general.UpdateUserName)
+	user.POST("/birthday", general.UpdateUserBirthday)
+	user.POST("/about", general.UpdateUserAbout)
+	user.POST("/avatar", general.UpdateUserAvatar)
+	user.POST("/background", general.UpdateUserBackground)
+	user.POST("/number", general.UpdateUserNumber)
+	user.POST("/password", general.UpdateUserPassword)
+	user.POST("/title", general.UpdateUserTitle)
 }

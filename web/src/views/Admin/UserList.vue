@@ -67,7 +67,7 @@
         </template>
         <template v-slot:cell(name)="data">
           <p class="profile-link" @click="toProfile(data.item.id)">
-            {{ data.item.Name }} {{ data.item.last_name }}
+            {{ data.item.name + " " + data.item.last_name }}
           </p>
         </template>
       </b-table>
@@ -110,7 +110,7 @@ export default {
       window.axios
         .post("/api/users")
         .then(response => {
-          this.users = response.data.data;
+          this.users = response.data.users;
           this.toggleBusy();
         })
         .catch(function(errors) {

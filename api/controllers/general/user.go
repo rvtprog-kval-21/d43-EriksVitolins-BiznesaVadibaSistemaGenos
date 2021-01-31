@@ -105,12 +105,7 @@ func User(context *gin.Context) {
 		context.JSON(http.StatusNotFound, gin.H{"error": "Profile doesn't exist"})
 		return
 	}
-	claims := jwtParser.GetClaims(context)
-	if claims == nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
-		return
-	}
-	projects := projects.GetProjectsThatUserIsPartOF(claims["id"])
+	projects := projects.GetProjectsThatUserIsPartOF(context.Param("id"))
 
 	context.JSON(http.StatusOK, gin.H{"data": userObject, "projects": projects})
 }
@@ -185,8 +180,21 @@ func UserSignUp(context *gin.Context) {
 }
 
 func ResetPassword(context *gin.Context) {
-	//var temp []string
-	//gomail.SendEmailSMTP(append(temp, "vitolinseriks@gmail.com"), "test", "test")
+	var request user2.User
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.Email == ""{
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	pass := RandStringRunes(12)
+	request.Password = password.HashAndSalt([]byte(pass))
+
+	user2.UpdatePassword(request)
+	sendEmail("Hello, we have generated a new password for you. Here is your password: " + pass, request.Email)
 }
 
 func SearchUsers(context *gin.Context) {
@@ -233,4 +241,202 @@ func sendEmail(content string, email string)  {
 	}
 
 	return
+}
+
+func UpdateUserName(context *gin.Context) {
+	var request user2.User
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	if request.ID == claims["id"] {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+	}
+	if request.ID == 0 || request.LastName == "" || request.Email == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	user2.UpdateNameAndLastName(request)
+	context.JSON(200, gin.H{"message": "Name or Last name changed"})
+}
+
+func UpdateUserBirthday(context *gin.Context) {
+	var request user2.User
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	if request.ID == claims["id"] {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+	}
+	zero := time.Time{}
+	if request.ID == 0 || request.Birthday == zero || request.NameDay == zero {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	user2.UpdateBirthdayAndNameday(request)
+	context.JSON(200, gin.H{"message": "Birthday or Nameday changed"})
+}
+
+func UpdateUserAbout(context *gin.Context) {
+	var request user2.User
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	if request.ID == claims["id"] {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+	}
+	if request.About == "" || request.ID == 0 {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	user2.UpdateAbout(request)
+	context.JSON(200, gin.H{"message": "About changed"})
+}
+
+func UpdateUserPassword(context *gin.Context) {
+	var request user2.User
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	if request.ID == claims["id"] {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+	}
+	if request.Password == "" || request.Email == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	request.Password = password.HashAndSalt([]byte(request.Password))
+	user2.UpdatePassword(request)
+	context.JSON(200, gin.H{"message": "Password changed"})
+}
+
+func UpdateUserTitle(context *gin.Context) {
+	var request user2.User
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	if request.ID == claims["id"] {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+	}
+	if request.Title == "" || request.ID == 0 {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	user2.UpdateTitle(request)
+	context.JSON(200, gin.H{"message": "Title changed"})
+}
+
+func UpdateUserNumber(context *gin.Context) {
+	var request user2.User
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	if request.ID == claims["id"] {
+		context.JSON(403, gin.H{"error": "You don't have access"})
+	}
+	if request.PhoneNumber == "" || request.ID == 0 {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	user2.UpdateNumber(request)
+	context.JSON(200, gin.H{"message": "Number changed"})
+}
+
+func UpdateUserAvatar(context *gin.Context) {
+	var request user2.User
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	file, _ := context.FormFile("avatar")
+	if file != nil {
+		path := "/avatar/%s/"
+		path = fmt.Sprintf(path, fmt.Sprint(claims["id"]))
+		if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
+			os.MkdirAll("storage"+path, os.ModeDir)
+		}
+		path = path + file.Filename
+		err := context.SaveUploadedFile(file, "storage"+path)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the avatar"})
+			return
+		}
+		request.Avatar = path
+		request.ID = int(claims["id"].(float64))
+		user2.UpdateAvatar(request)
+		context.JSON(200, gin.H{"message": "Avatar changed"})
+		return
+	}
+	context.JSON(200, gin.H{"message": "There was an error"})
+}
+
+func UpdateUserBackground(context *gin.Context) {
+	var request user2.User
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	file, _ := context.FormFile("background")
+	if file != nil {
+		path := "/background/%s/"
+		path = fmt.Sprintf(path, fmt.Sprint(claims["id"]))
+		if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
+			os.MkdirAll("storage"+path, os.ModeDir)
+		}
+		path = path + file.Filename
+		err := context.SaveUploadedFile(file, "storage"+path)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the avatar"})
+			return
+		}
+		request.Background = path
+		request.ID = int(claims["id"].(float64))
+		user2.UpdateBackground(request)
+		context.JSON(200, gin.H{"message": "Background changed"})
+		return
+	}
+	context.JSON(200, gin.H{"message": "There was an error"})
 }

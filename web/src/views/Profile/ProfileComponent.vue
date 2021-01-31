@@ -39,7 +39,7 @@
           <div class="d-flex p-4 justify-content-between">
             <b-button variant="success" v-if="!sameUser()">Message</b-button>
             <b-button variant="success" v-if="!sameUser()">Follow</b-button>
-            <b-button variant="outline-primary" v-if="sameUser()"
+            <b-button variant="outline-primary" @click="$router.push('/user/' + user.id + '/settings')" v-if="sameUser()"
               >Settings</b-button
             >
           </div>
@@ -93,19 +93,19 @@
             <h6 class="category-title">Admin section:</h6>
             <b-row>
               <b-col
-                v-if="user.created_at == '0001-01-01T00:00:00Z'"
+                v-if="user.created_at != '0001-01-01T00:00:00Z'"
                 cols="6"
                 class="pl-5 pr-5 pt-5"
                 >Created on: {{ new Date(user.created_at) }}</b-col
               >
               <b-col
-                v-if="user.updated_at == '0001-01-01T00:00:00Z'"
+                v-if="user.updated_at != '0001-01-01T00:00:00Z'"
                 cols="6"
                 class="pl-5 pr-5 pt-5"
                 >Updated on: {{ new Date(user.updated_at) }}</b-col
               >
               <b-col cols="6" class="pl-5 pr-5 pt-5"
-                ><b-button>Reset password</b-button></b-col
+                ><b-button @click="resetPassword(user.email)">Reset password</b-button></b-col
               >
               <b-col cols="6" class="pl-5 pr-5 pt-5">
                 <b-button
@@ -239,12 +239,12 @@ export default {
           vue.errors = { error: errors.response.data.error };
         });
     },
-    resetPassword() {
+    resetPassword(email) {
       this.errors = [];
       this.alerts = [];
       const vue = this;
       window.axios
-        .post("/api/auth/user/passreset", { id: this.user.id })
+        .post("/api/admin/user/reset/password", {"email": email})
         .then(response => {
           this.alerts = { message: response.data.message };
           this.getUser();

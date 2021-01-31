@@ -69,14 +69,36 @@ func NewEmail(id *string, email *string) (bool, string) {
 	return false, "Internal error"
 }
 
-func GetUsersIn(ids []interface{}) []User {
-	var users []User
-	database.DBConn.Select("email", "id", "avatar", "name", "last_name").Where("id in ?", ids).Find(&users)
-	return users
+func UpdateAvatar(user User) {
+	database.DBConn.Model(&User{}).Where("id in ?", user.ID).Update("avatar", user.Avatar)
 }
 
-func UpdateAvatar(user User) {
-	database.DBConn.Where("id in ?", user.ID).Update("avatar", user.Avatar)
+func UpdatePassword(user User) {
+	database.DBConn.Model(&User{}).Where("email = ?", user.Email).Update("password", user.Password)
+}
+
+func UpdateNameAndLastName(user User) {
+	database.DBConn.Model(&User{}).Where("id = ?", user.ID).Updates(User{Name: user.Name, LastName: user.LastName})
+}
+
+func UpdateBirthdayAndNameday(user User) {
+	database.DBConn.Model(&User{}).Where("id = ?", user.ID).Updates(User{Birthday: user.Birthday, NameDay: user.NameDay})
+}
+
+func UpdateTitle(user User) {
+	database.DBConn.Model(&User{}).Where("id = ?", user.ID).Update("title", user.Title)
+}
+
+func UpdateNumber(user User) {
+	database.DBConn.Model(&User{}).Where("id = ?", user.ID).Update("phone_number", user.PhoneNumber)
+}
+
+func UpdateAbout(user User) {
+	database.DBConn.Model(&User{}).Where("id = ?", user.ID).Update("about", user.About)
+}
+
+func UpdateBackground(user User) {
+	database.DBConn.Model(&User{}).Where("id in ?", user.ID).Update("background", user.Background)
 }
 
 func CreateUsers(user User) (interface{},User) {

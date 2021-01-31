@@ -22,6 +22,7 @@ const SettingsProject = () => import("../views/Projects/SettingsProject");
 const Submissions = () => import("../views/general/Submissions");
 
 const ProfileComponent = () => import("../views/Profile/ProfileComponent");
+const SettingsComponent = () => import("../views/Profile/SettingsComponent");
 const AddUsers = () => import("../views/Admin/AddUsers");
 const UserList = () => import("../views/Admin/UserList");
 const Home = () => import("../views/Home");
@@ -110,6 +111,13 @@ const routes = [
   {
     path: "/user/:id/profile",
     component: ProfileComponent,
+    meta: {
+      requireAdmin: true
+    }
+  },
+  {
+    path: "/user/:id/settings",
+    component: SettingsComponent,
     meta: {
       requireAdmin: true
     }
