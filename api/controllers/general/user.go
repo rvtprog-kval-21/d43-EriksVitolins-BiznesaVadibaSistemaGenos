@@ -314,7 +314,7 @@ func UpdateUserAbout(context *gin.Context) {
 }
 
 func UpdateUserPassword(context *gin.Context) {
-	var request user2.User
+	var request login
 	err := context.ShouldBindJSON(&request)
 	if err != nil {
 		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
@@ -325,15 +325,21 @@ func UpdateUserPassword(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
 		return
 	}
-	if request.ID == claims["id"] {
+	usr := user2.User{
+		Email: request.Email,
+		Password: password.HashAndSalt([]byte(request.Password)),
+		ID: int(claims["id"].(float64)),
+	}
+
+	if usr.ID == claims["id"] {
 		context.JSON(403, gin.H{"error": "You don't have access"})
 	}
 	if request.Password == "" || request.Email == "" {
 		context.JSON(422, gin.H{"error": "Fields were not filled"})
 		return
 	}
-	request.Password = password.HashAndSalt([]byte(request.Password))
-	user2.UpdatePassword(request)
+
+	user2.UpdatePassword(usr)
 	context.JSON(200, gin.H{"message": "Password changed"})
 }
 
@@ -409,7 +415,7 @@ func UpdateUserAvatar(context *gin.Context) {
 		context.JSON(200, gin.H{"message": "Avatar changed"})
 		return
 	}
-	context.JSON(200, gin.H{"message": "There was an error"})
+	context.JSON(422, gin.H{"message": "No file attached"})
 }
 
 func UpdateUserBackground(context *gin.Context) {
@@ -438,5 +444,5 @@ func UpdateUserBackground(context *gin.Context) {
 		context.JSON(200, gin.H{"message": "Background changed"})
 		return
 	}
-	context.JSON(200, gin.H{"message": "There was an error"})
+	context.JSON(422, gin.H{"message": "No file attached"})
 }

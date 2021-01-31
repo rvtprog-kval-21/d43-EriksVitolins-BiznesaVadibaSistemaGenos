@@ -70,7 +70,7 @@ func NewEmail(id *string, email *string) (bool, string) {
 }
 
 func UpdateAvatar(user User) {
-	database.DBConn.Model(&User{}).Where("id in ?", user.ID).Update("avatar", user.Avatar)
+	database.DBConn.Model(&User{}).Where("id = ?", user.ID).Update("avatar", user.Avatar)
 }
 
 func UpdatePassword(user User) {
@@ -98,7 +98,7 @@ func UpdateAbout(user User) {
 }
 
 func UpdateBackground(user User) {
-	database.DBConn.Model(&User{}).Where("id in ?", user.ID).Update("background", user.Background)
+	database.DBConn.Model(&User{}).Where("id = ?", user.ID).Update("background", user.Background)
 }
 
 func CreateUsers(user User) (interface{},User) {
