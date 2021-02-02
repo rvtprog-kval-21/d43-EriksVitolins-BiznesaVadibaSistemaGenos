@@ -46,6 +46,7 @@
                 </div>
               </div>
             </div>
+            <h4 class="d-flex justify-content-center" v-if="blogs.length < 1">No blogs available</h4>
           </div>
         </div>
         <div class="pt-3 ml-3 calendar">
@@ -54,6 +55,7 @@
             <h5 class="ml-2">{{events.length}}</h5>
           </div>
           <hr>
+          <h4 class="d-flex justify-content-center" v-if="events.length < 1">No Events available</h4>
           <template v-for="(item, index) in events">
             <div :key="index" class="mb-3">
               <b-card :title="item.title" img-alt="Image" img-top>

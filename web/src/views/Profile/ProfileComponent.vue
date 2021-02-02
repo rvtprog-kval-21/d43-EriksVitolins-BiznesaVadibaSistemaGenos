@@ -82,14 +82,37 @@
         </b-col>
         <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
           <div class="annc-top border">
-
+            <h4 class="d-flex justify-content-center" v-if="annc.length < 1">No Announcements available</h4>
+            <template v-for="(iter,index) in annc">
+              <div :key="index" class="m-row">
+              <div class="d-flex mt-2 mb-2">
+                <div class="w-75">
+                  <div class="d-flex align-content-center">
+                    <b-avatar
+                        class="avatar ml-2"
+                        :src="getImgUrl()"
+                        variant="primary"
+                        size="2rem"
+                        text="EV"
+                    ></b-avatar>
+                    <p class="mb-0 ml-2 grey">{{new Date(iter.created_at)}}</p>
+                  </div>
+                  <p class="ml-2 mt-2 mb-0">{{iter.message}}</p>
+                </div>
+                <div class="d-flex justify-content-center align-content-center">
+                  <b-button v-if="sameUser()" @click="deleteAnnouncement(iter.id)" variant="outline-danger">Delete</b-button>
+                </div>
+              </div>
+              <hr class="mt-0">
+              </div>
+            </template>
           </div>
-          <div class="d-flex justify-content-between mt-4">
+          <div class="d-flex justify-content-between mt-4" v-if="sameUser()">
             <div class="w-65">
               <b-form-input v-model="message" placeholder="Enter message"></b-form-input>
             </div>
             <div class="w-25">
-              <b-button class="w-100" variant="outline-success">Announce</b-button>
+              <b-button class="w-100" @click="newAnnouncement()" variant="outline-success">Announce</b-button>
             </div>
           </div>
         </b-col>
@@ -167,11 +190,13 @@ export default {
       tag: "",
       projects: {},
       message: "",
+      annc: [],
       newEmail: ""
     };
   },
   mounted() {
     this.getUser();
+    this.getAnnc();
   },
   methods: {
     getLogo(item) {
@@ -253,6 +278,47 @@ export default {
           vue.errors = { error: errors.response.data.error };
         });
     },
+    newAnnouncement() {
+      this.errors = [];
+      this.alerts = [];
+      const vue = this;
+      window.axios
+        .post("/api/user/announcements/new/announcements", {
+          message: this.message})
+          .then(() => {
+            this.message = ""
+            this.getAnnc()
+          })
+          .catch(function(errors) {
+            vue.errors = { error: errors.response.data.error };
+          });
+    },
+   deleteAnnouncement(id) {
+      this.errors = [];
+      this.alerts = [];
+      const vue = this;
+      window.axios
+          .post("/api/user/announcements/delete/announcement", {
+            "id": `${id}`})
+          .then(() => {
+            this.getAnnc()
+          })
+          .catch(function(errors) {
+            vue.errors = { error: errors.response.data.error };
+          });
+    },
+    getAnnc: function() {
+      this.errors = {};
+      const vue = this;
+      window.axios
+          .post("/api/user/announcements/get/user", {"id": this.$route.params.id})
+          .then(res => {
+            this.annc = res.data.data;
+          })
+          .catch(function(rej) {
+            vue.errors = { error: rej.response.data.error };
+          });
+    },
     resetPassword(email) {
       this.errors = [];
       this.alerts = [];
@@ -275,6 +341,7 @@ export default {
   .annc-top{
     overflow: auto;
     height: 90%;
+    max-height: 600px;
   }
 .mother-load{
   min-height: 1000px;
@@ -326,5 +393,9 @@ export default {
 }
   .border{
     border: 1px black solid;
+  }
+
+  .grey {
+    color: #b0bec5;
   }
 </style>

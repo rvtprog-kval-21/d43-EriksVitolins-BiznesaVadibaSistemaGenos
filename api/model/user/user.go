@@ -3,7 +3,6 @@ package user
 import (
 	"api/database"
 	"gorm.io/gorm"
-	"os/user"
 	"time"
 )
 
@@ -26,14 +25,14 @@ type User struct {
 	NameDay     time.Time      `json:"name_day"`
 }
 
-type UserAnnouncements struct {
-	ID          int            `gorm:"primaryKey;not null" json:"id"`
-	User   user.User `json:"user" gorm:"foreignKey:UserID"`
-	UserID int       `json:"user_id" gorm:"foreignKey:UserID;index"`
-	Message       string         `json:"message"`
-	CreatedAt   time.Time      `json:"created_at" json:"created_at"`
-
+type AnnouncementsUser struct {
+	ID        int       `gorm:"primaryKey;not null" json:"id"`
+	User      User      `json:"user" gorm:"foreignKey:UserID"`
+	UserID    int       `json:"user_id" gorm:"foreignKey:UserID;index"`
+	Message   string    `json:"message"`
+	CreatedAt time.Time `json:"created_at" json:"created_at"`
 }
+
 // FindByEmail find user by their email address
 func FindByEmail(email string) (*User, error) {
 	var user User
@@ -110,7 +109,7 @@ func UpdateBackground(user User) {
 	database.DBConn.Model(&User{}).Where("id = ?", user.ID).Update("background", user.Background)
 }
 
-func CreateUsers(user User) (interface{},User) {
+func CreateUsers(user User) (interface{}, User) {
 	response := database.DBConn.Create(&user)
 	return response.Error, user
 }
@@ -119,4 +118,24 @@ func SearchUsers(search string) []User {
 	var users []User
 	database.DBConn.Select("email", "id").Where("email like ?", "%"+search+"%").Find(&users)
 	return users
+}
+
+func SaveAnnouncement(annc AnnouncementsUser) {
+	database.DBConn.Create(&annc)
+}
+
+func GetAnnouncementUser(id string) []AnnouncementsUser {
+	var annc []AnnouncementsUser
+	database.DBConn.Where("user_id = ?", id).Order("id desc").Find(&annc)
+	return annc
+}
+
+func GetFollowedAnnouncementUser(id interface{}) []AnnouncementsUser {
+	var annc []AnnouncementsUser
+	database.DBConn.Where("user_id = ?", id).First(&annc)
+	return annc
+}
+
+func DeleteAnnouncementUser(id string, user_id interface{}) {
+	database.DBConn.Where("user_id = ?", user_id).Where("id = ?", id).Delete(AnnouncementsUser{})
 }

@@ -40,7 +40,7 @@ func UpdateAvatar(article *Project) interface{} {
 }
 
 func AddMembers(member *Member) interface{} {
-	results := database.DBConn.Create(&member)
+	results := database.DBConn.Select("project_id", "user_id", "is_admin", "is_owner").Create(&member)
 	return results.Error
 }
 
@@ -126,7 +126,7 @@ func GetProjectsThatUserIsPartOF(user interface{}) []Project {
 	var member []Member
 	database.DBConn.Where("user_id = ?", user).Find(&member)
 	var ids []int
-	for _, iter := range member{
+	for _, iter := range member {
 		ids = append(ids, iter.ProjectID)
 	}
 	project := GetProjects(ids)

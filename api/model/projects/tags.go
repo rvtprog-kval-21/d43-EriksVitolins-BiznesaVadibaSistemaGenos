@@ -21,6 +21,11 @@ func AddTag(tag *Tag) interface{} {
 	return results.Error
 }
 
+func AddTagBody(tag *Tag) (Tag, interface{}) {
+	results := database.DBConn.Create(&tag)
+	return Tag{}, results.Error
+}
+
 func RemoveOrphans(names []string, projectID string) {
 	var tags []Tag
 	var ids []int

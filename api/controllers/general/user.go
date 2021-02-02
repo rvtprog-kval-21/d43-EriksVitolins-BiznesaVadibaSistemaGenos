@@ -168,14 +168,14 @@ func UserSignUp(context *gin.Context) {
 		return
 	}
 	id := strconv.Itoa(request.ID)
-	os.MkdirAll("storage/avatar/" + id, os.ModeDir)
+	os.MkdirAll("storage/avatar/"+id, os.ModeDir)
 
-	err = govatar.GenerateFile(govatar.MALE, "storage/avatar/" + id + "/avatar.jpg")
+	err = govatar.GenerateFile(govatar.MALE, "storage/avatar/"+id+"/avatar.jpg")
 	if err == nil {
 		request.Avatar = "/avatar/" + id + "/avatar.jpg"
 		user2.UpdateAvatar(request)
 	}
-	sendEmail("Hello, we are glad that you have joined our company. Here is your password: " + pass, request.Email)
+	sendEmail("Hello, we are glad that you have joined our company. Here is your password: "+pass, request.Email)
 	context.JSON(200, gin.H{"users": "User created successfully"})
 }
 
@@ -186,7 +186,7 @@ func ResetPassword(context *gin.Context) {
 		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
 		return
 	}
-	if request.Email == ""{
+	if request.Email == "" {
 		context.JSON(422, gin.H{"error": "Fields were not filled"})
 		return
 	}
@@ -194,7 +194,8 @@ func ResetPassword(context *gin.Context) {
 	request.Password = password.HashAndSalt([]byte(pass))
 
 	user2.UpdatePassword(request)
-	sendEmail("Hello, we have generated a new password for you. Here is your password: " + pass, request.Email)
+	sendEmail("Hello, we have generated a new password for you. Here is your password: "+pass, request.Email)
+	context.JSON(200, gin.H{"message": "Password is reset"})
 }
 
 func SearchUsers(context *gin.Context) {
@@ -212,7 +213,7 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func sendEmail(content string, email string)  {
+func sendEmail(content string, email string) {
 	m := gomail.NewMessage()
 
 	// Set E-Mail sender
@@ -326,9 +327,9 @@ func UpdateUserPassword(context *gin.Context) {
 		return
 	}
 	usr := user2.User{
-		Email: request.Email,
+		Email:    request.Email,
 		Password: password.HashAndSalt([]byte(request.Password)),
-		ID: int(claims["id"].(float64)),
+		ID:       int(claims["id"].(float64)),
 	}
 
 	if usr.ID == claims["id"] {
@@ -445,4 +446,89 @@ func UpdateUserBackground(context *gin.Context) {
 		return
 	}
 	context.JSON(422, gin.H{"message": "No file attached"})
+}
+
+func NewUserAnnc(context *gin.Context) {
+	var request user2.AnnouncementsUser
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.Message == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	request.CreatedAt = time.Now()
+	request.UserID = int(claims["id"].(float64))
+
+	user2.SaveAnnouncement(request)
+	context.JSON(200, gin.H{"message": "Announcement is saved"})
+}
+
+type AnncRequest struct {
+	ID string `json:"id"`
+}
+
+func UsersAnnc(context *gin.Context) {
+	var request AnncRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.ID == "0" {
+		context.JSON(422, gin.H{"error": "ID was not filled"})
+		return
+	}
+
+	annc := user2.GetAnnouncementUser(request.ID)
+	context.JSON(200, gin.H{"data": annc})
+}
+
+func FollowedAnnc(context *gin.Context) {
+	var request user2.AnnouncementsUser
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.Message == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+
+	annc := user2.GetFollowedAnnouncementUser(claims["id"])
+	context.JSON(200, gin.H{"data": annc})
+}
+
+func DeleteAnnc(context *gin.Context) {
+	var request AnncRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.ID == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+
+	user2.DeleteAnnouncementUser(request.ID, claims["id"])
+	context.JSON(200, gin.H{"data": "Message deleted"})
 }

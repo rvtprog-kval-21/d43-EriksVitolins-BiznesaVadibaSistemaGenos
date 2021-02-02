@@ -33,7 +33,7 @@ func migrateTables() {
 	err = database.DBConn.AutoMigrate(&notifications.Notifications{})
 	err = database.DBConn.AutoMigrate(&calendar.Event{})
 	err = database.DBConn.AutoMigrate(&calendar.EventMember{})
-	err = database.DBConn.AutoMigrate(&user2.UserAnnouncements{})
+	err = database.DBConn.AutoMigrate(&user2.AnnouncementsUser{})
 	err = database.DBConn.AutoMigrate(&blog.BlogsLog{})
 	err = database.DBConn.AutoMigrate(&tracking.Managers{})
 	err = database.DBConn.AutoMigrate(&tracking.TrackedSubmission{})

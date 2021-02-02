@@ -2,7 +2,7 @@
   <div class="body">
     <div class="right">
       <b-button
-        v-if="this.user && (this.user.is_admin || this.user.is_owner)"
+        v-if="user && (user.is_admin || user.is_owner)"
         class="mt-3 ml-3"
         variant="outline-primary"
         @click="goToSettings()"
@@ -80,7 +80,7 @@
                 </div>
               </div>
               <div
-                v-if="this.user && (this.user.is_admin || this.user.is_owner)"
+                v-if="user && (user.is_admin || user.is_owner)"
                 class="mt-3 d-flex form-row"
               >
                 <b-form-textarea
@@ -136,7 +136,7 @@
                 >
                 <template v-if="!isLoading">
                   <vSelect
-                    v-if="user && (this.user.is_admin || this.user.is_owner)"
+                    v-if="user && (user.is_admin || user.is_owner)"
                     class=" ml-auto mr-auto w-75"
                     v-model="iter.tag"
                     label="name"
@@ -348,8 +348,8 @@ export default {
       return images;
     }
   },
-  async created() {
-    await this.getProject();
+  created() {
+    this.getProject();
     this.getAnn();
   }
 };

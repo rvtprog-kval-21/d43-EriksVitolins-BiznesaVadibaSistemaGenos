@@ -41,6 +41,7 @@ func setupRoutes(router *gin.Engine) {
 	projectRoutes(api)
 	notificationRoutes(notifications)
 	userSettingsRoutes(api)
+	userAnnouncementsRoutes(api)
 }
 
 func notificationRoutes(notifi *gin.RouterGroup) {
@@ -153,4 +154,12 @@ func userSettingsRoutes(api *gin.RouterGroup) {
 	user.POST("/number", general.UpdateUserNumber)
 	user.POST("/password", general.UpdateUserPassword)
 	user.POST("/title", general.UpdateUserTitle)
+}
+
+func userAnnouncementsRoutes(api *gin.RouterGroup) {
+	user := api.Group("/user/announcements")
+	user.POST("/new/announcements", general.NewUserAnnc)
+	user.POST("/get/user", general.UsersAnnc)
+	user.POST("/gets/follow", general.FollowedAnnc)
+	user.POST("/delete/announcement", general.DeleteAnnc)
 }
