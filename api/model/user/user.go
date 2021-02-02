@@ -3,6 +3,7 @@ package user
 import (
 	"api/database"
 	"gorm.io/gorm"
+	"os/user"
 	"time"
 )
 
@@ -25,6 +26,14 @@ type User struct {
 	NameDay     time.Time      `json:"name_day"`
 }
 
+type UserAnnouncements struct {
+	ID          int            `gorm:"primaryKey;not null" json:"id"`
+	User   user.User `json:"user" gorm:"foreignKey:UserID"`
+	UserID int       `json:"user_id" gorm:"foreignKey:UserID;index"`
+	Message       string         `json:"message"`
+	CreatedAt   time.Time      `json:"created_at" json:"created_at"`
+
+}
 // FindByEmail find user by their email address
 func FindByEmail(email string) (*User, error) {
 	var user User

@@ -80,6 +80,19 @@
             </h6>
           </div>
         </b-col>
+        <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
+          <div class="annc-top border">
+
+          </div>
+          <div class="d-flex justify-content-between mt-4">
+            <div class="w-65">
+              <b-form-input v-model="message" placeholder="Enter message"></b-form-input>
+            </div>
+            <div class="w-25">
+              <b-button class="w-100" variant="outline-success">Announce</b-button>
+            </div>
+          </div>
+        </b-col>
         <b-col  v-if="this.currentUser.role == 'admin'" class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
           <div class="d-flex justify-content-center">
             <b-alert v-if="this.errors.error" variant="danger" show="">{{
@@ -153,6 +166,7 @@ export default {
       accountLocked: false,
       tag: "",
       projects: {},
+      message: "",
       newEmail: ""
     };
   },
@@ -258,8 +272,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  .annc-top{
+    overflow: auto;
+    height: 90%;
+  }
 .mother-load{
   min-height: 1000px;
+}
+
+.w-65 {
+  width: 65% !important;
 }
 
   .header {
