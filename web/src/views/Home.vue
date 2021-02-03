@@ -109,6 +109,38 @@
           </template>
         </div>
       </div>
+      <div class="top-row d-flex mt-3">
+        <div class="random mr-0">
+          Test
+        </div>
+        <div class="follow-field">
+            <h5 class="ml-3 mb-4">Announcements from people You follow:</h5>
+          <hr>
+          <h4 class="d-flex justify-content-center" v-if="annc.length < 1">No Announcements available</h4>
+          <template v-for="(iter,index) in annc">
+            <div :key="index" class="m-row">
+              <div class="d-flex mt-2 mb-2">
+                <div class="w-100">
+                  <div class="d-flex align-content-center">
+                    <div class="cursor" @click="goToProfile(iter.user.id)">
+                      <b-avatar
+                          class="avatar ml-2"
+                          :src="getImgUrl(iter.user.avatar)"
+                          variant="primary"
+                          size="2rem"
+                          text="EV"
+                      ></b-avatar>
+                    </div>
+                    <p class="mb-0 ml-2 grey">{{new Date(iter.created_at)}}</p>
+                  </div>
+                  <p class="ml-2 mt-2 mb-0">{{iter.message}}</p>
+                </div>
+              </div>
+              <hr class="mt-0">
+            </div>
+          </template>
+        </div>
+      </div>
     </div>
     <div class="col-2">
       <div class="users">
@@ -146,6 +178,7 @@ export default {
       onlineUsers: null,
       blogs: [],
       events: [],
+      annc: [],
     };
   },
   mounted() {
@@ -174,8 +207,21 @@ export default {
       let images = process.env.VUE_APP_API + "/static" + avatar;
       return images;
     },
+    goToProfile(id) {
+      console.log(1)
+      this.$router.push("/user/" + id + "/profile");
+    },
     profile() {
       this.$router.push("/user/" + this.currentUser.id + "/profile");
+    },
+    getAnnc: function() {
+      window.axios
+          .post("/api/user/announcements/gets/follow")
+          .then(res => {
+            if (res.data.data){
+              this.annc = res.data.data;
+            }
+          })
     },
     getBlogs() {
       window.axios
@@ -203,6 +249,7 @@ export default {
   created() {
     this.getBlogs();
     this.getEvents();
+    this.getAnnc()
   }
 };
 </script>
@@ -211,7 +258,7 @@ export default {
 .top-row {
   height: 500px;
   .blog {
-    width: 400px;
+    width: 320px;
     background: white;
     height: 100%;
     border-radius: 10px;
@@ -225,13 +272,16 @@ export default {
   }
 }
 
+.cursor{
+  cursor: pointer;
+}
 .calendar{
   width: 100%;
   overflow: auto;
   border-radius: 10px;
 }
 .users {
-  padding: 30px;
+  padding: 30px 30px 30px 0;
   .user {
     .item {
       .info {
@@ -249,6 +299,14 @@ export default {
     }
   }
 }
+.random {
+  width: 320px;
+}
+.follow-field{
+  width: 100%;
+  overflow: auto;
+  max-height: 400px;
+}
 </style>
 
 <style lang="scss">
@@ -258,10 +316,17 @@ export default {
       .btn {
         display: flex;
         justify-content: space-between;
-        min-width: 400px;
+        min-width: 300px;
         align-items: center;
       }
     }
   }
 }
+.grey {
+  color: #b0bec5;
+}
+.border{
+  border: 1px black solid;
+}
 </style>
+

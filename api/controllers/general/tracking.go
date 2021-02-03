@@ -126,7 +126,7 @@ func AddAttachments(context *gin.Context) {
 		path = path + file.Filename
 		err := context.SaveUploadedFile(file, "storage"+path)
 		if err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the banner"})
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the attachment"})
 			return
 		}
 		var newAttachment tracking.TrackedAttachment
@@ -134,7 +134,7 @@ func AddAttachments(context *gin.Context) {
 		newAttachment.SubmissionID, _ = strconv.Atoi(context.PostForm("id"))
 		response := tracking.AddTracking(&newAttachment)
 		if response != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the blog banner"})
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the attachment"})
 			return
 		}
 	}

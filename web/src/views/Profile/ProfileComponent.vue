@@ -38,7 +38,8 @@
           </div>
           <div class="d-flex p-4 justify-content-between">
             <b-button variant="success" v-if="!sameUser()">Message</b-button>
-            <b-button variant="success" v-if="!sameUser()">Follow</b-button>
+            <b-button variant="success" @click="followUser()" v-if="!sameUser() && !isBeingFollowed">Follow</b-button>
+            <b-button variant="warning" @click="unfollowUser()" v-if="!sameUser() && isBeingFollowed">Unfollow</b-button>
             <b-button variant="outline-primary" @click="$router.push('/user/' + user.id + '/settings')" v-if="sameUser()"
               >Settings</b-button
             >
@@ -189,6 +190,7 @@ export default {
       accountLocked: false,
       tag: "",
       projects: {},
+      isBeingFollowed: false,
       message: "",
       annc: [],
       newEmail: ""
@@ -197,6 +199,7 @@ export default {
   mounted() {
     this.getUser();
     this.getAnnc();
+    this.isFollowingUser();
   },
   methods: {
     getLogo(item) {
@@ -277,6 +280,55 @@ export default {
         .catch(function(errors) {
           vue.errors = { error: errors.response.data.error };
         });
+    },
+    followUser() {
+      this.errors = [];
+      this.alerts = [];
+      const vue = this;
+      window.axios
+          .post("/api/user/follower/start", {
+            "following_id": this.$route.params.id
+          })
+          .then(response => {
+            this.isBeingFollowed = true
+            this.alerts = { message: response.data.data };
+          })
+          .catch(function(errors) {
+            vue.errors = { error: errors.response.data.error };
+          });
+    },
+    isFollowingUser() {
+      if (this.sameUser()) {
+        return
+      }
+      this.errors = [];
+      const vue = this;
+      window.axios
+          .post("/api/user/follower/check", {
+            "following_id": this.$route.params.id,
+          })
+          .then(response => {
+            this.isBeingFollowed = response.data.isFollowing
+          })
+          .catch(function(errors) {
+            vue.errors = { error: errors.response.data.error };
+          });
+    },
+    unfollowUser() {
+      this.errors = [];
+      this.alerts = [];
+      const vue = this;
+      window.axios
+          .post("/api/user/follower/delete", {
+            "following_id": this.$route.params.id,
+          })
+          .then(response => {
+            this.isBeingFollowed = false
+            this.alerts = { message: response.data.message };
+          })
+          .catch(function(errors) {
+            vue.errors = { error: errors.response.data.error };
+          });
     },
     newAnnouncement() {
       this.errors = [];

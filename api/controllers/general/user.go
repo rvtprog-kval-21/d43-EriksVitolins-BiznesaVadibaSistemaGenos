@@ -492,16 +492,6 @@ func UsersAnnc(context *gin.Context) {
 }
 
 func FollowedAnnc(context *gin.Context) {
-	var request user2.AnnouncementsUser
-	err := context.ShouldBindJSON(&request)
-	if err != nil {
-		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
-		return
-	}
-	if request.Message == "" {
-		context.JSON(422, gin.H{"error": "Fields were not filled"})
-		return
-	}
 	claims := jwtParser.GetClaims(context)
 	if claims == nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
@@ -531,4 +521,100 @@ func DeleteAnnc(context *gin.Context) {
 
 	user2.DeleteAnnouncementUser(request.ID, claims["id"])
 	context.JSON(200, gin.H{"data": "Message deleted"})
+}
+
+
+func DeleteFollower(context *gin.Context) {
+	var request followingRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.FollowingID == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	var follower user2.FollowingUser
+	follower.FollowingID, _ = strconv.Atoi(request.FollowingID)
+	follower.FollowerID = int(claims["id"].(float64))
+
+	user2.DeleteFollowerUser(follower)
+	context.JSON(200, gin.H{"data": "Stopped following"})
+}
+
+type followingRequest struct {
+	FollowingID string `json:"following_id"`
+}
+
+func AddFollower(context *gin.Context) {
+	var request followingRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.FollowingID == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	var follower user2.FollowingUser
+	follower.FollowingID, _ = strconv.Atoi(request.FollowingID)
+	follower.FollowerID = int(claims["id"].(float64))
+
+	user2.AddFollowerUser(follower)
+	context.JSON(200, gin.H{"data": "Started following"})
+}
+
+func SeeIfFollowing(context *gin.Context) {
+	var request followingRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	if request.FollowingID == "" {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	var follower user2.FollowingUser
+	follower.FollowingID, _ = strconv.Atoi(request.FollowingID)
+	follower.FollowerID = int(claims["id"].(float64))
+
+	follower =  user2.SearchForFollowerUser(follower)
+	if follower.ID != 0 {
+		context.JSON(200, gin.H{"isFollowing": true})
+		return
+	}
+	context.JSON(200, gin.H{"isFollowing": false})
+}
+
+type searchUser struct {
+	Search string `json:"search"`
+}
+func SearchUser(context *gin.Context) {
+	var request searchUser
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+
+	users :=  user2.SearchForUser(request.Search)
+	context.JSON(200, gin.H{"users": users})
 }

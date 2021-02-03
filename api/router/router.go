@@ -74,6 +74,7 @@ func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/usersonline", general.UsersOnline)
 	api.GET("/users/search", general.SearchUsers)
 	api.POST("/users", general.UserList)
+	api.POST("/users/search", general.SearchUser)
 
 	blogRoutes(api)
 	managerRoutes(api)
@@ -157,9 +158,12 @@ func userSettingsRoutes(api *gin.RouterGroup) {
 }
 
 func userAnnouncementsRoutes(api *gin.RouterGroup) {
-	user := api.Group("/user/announcements")
-	user.POST("/new/announcements", general.NewUserAnnc)
-	user.POST("/get/user", general.UsersAnnc)
-	user.POST("/gets/follow", general.FollowedAnnc)
-	user.POST("/delete/announcement", general.DeleteAnnc)
+	user := api.Group("/user")
+	user.POST("/announcements/new/announcements", general.NewUserAnnc)
+	user.POST("/announcements/get/user", general.UsersAnnc)
+	user.POST("/announcements/gets/follow", general.FollowedAnnc)
+	user.POST("/announcements/delete/announcement", general.DeleteAnnc)
+	user.POST("follower/start", general.AddFollower)
+	user.POST("follower/delete", general.DeleteFollower)
+	user.POST("follower/check", general.SeeIfFollowing)
 }
