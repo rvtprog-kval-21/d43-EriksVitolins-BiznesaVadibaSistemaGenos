@@ -23,6 +23,7 @@ type User struct {
 	PhoneNumber string         `json:"phone_number"`
 	Birthday    time.Time      `json:"birthday"`
 	NameDay     time.Time      `json:"name_day"`
+	IsInitiated bool `json:"is_initiated" gorm:"default:0"`
 }
 
 type AnnouncementsUser struct {
@@ -53,7 +54,7 @@ func GetAllUsers() []User {
 	return users
 }
 
-func GetUserById(id string) (*User, error) {
+func GetUserById(id interface{}) (*User, error) {
 	var user User
 	response := database.DBConn.Unscoped().Where("id = ?", id).First(&user)
 	return &user, response.Error
@@ -171,7 +172,11 @@ func SearchForUser(search string) []User{
 	if search == "" {
 		database.DBConn.Limit(10).Find(&users)
 	} else {
-		database.DBConn.Where("name LIKE %?% OR last_name LIKE %?% OR email LIKE %?%", search, search, search).Find(&users)
+		database.DBConn.Where("name LIKE ? OR last_name LIKE ? OR email LIKE ?", "%"+search +"%", "%"+search +"%", "%"+search +"%").Find(&users)
 	}
 	return users
+}
+
+func InitUser(id interface{})  {
+	database.DBConn.Model(&User{}).Where("id = ?", id).Update("is_initiated",true)
 }

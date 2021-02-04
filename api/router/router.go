@@ -72,10 +72,10 @@ func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/user/:id/profile", general.User)
 	api.GET("/ping", general.Ping)
 	api.GET("/usersonline", general.UsersOnline)
-	api.GET("/users/search", general.SearchUsers)
 	api.POST("/users", general.UserList)
 	api.POST("/users/search", general.SearchUser)
-
+	api.GET("/account/check/", general.SeeIfUserInitiated)
+	api.GET("/account/init/", general.InitUser)
 	blogRoutes(api)
 	managerRoutes(api)
 	trackingRoutes(api)

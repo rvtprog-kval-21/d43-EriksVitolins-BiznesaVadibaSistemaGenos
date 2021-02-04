@@ -618,3 +618,25 @@ func SearchUser(context *gin.Context) {
 	users :=  user2.SearchForUser(request.Search)
 	context.JSON(200, gin.H{"users": users})
 }
+
+func SeeIfUserInitiated(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+
+	user, _ :=  user2.GetUserById(claims["id"])
+	context.JSON(200, gin.H{"isInit": user.IsInitiated})
+}
+
+func InitUser(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+
+	user2.InitUser(claims["id"])
+	context.JSON(200, gin.H{"isInit": "done"})
+}

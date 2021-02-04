@@ -1,6 +1,6 @@
 <template>
   <div class="content d-flex mt-2">
-    <div class="col-10">
+    <div v-if="isInit" class="col-10">
       <div class="top-row d-flex">
         <div class="blog pt-3 mr-0">
           <div class="blog-top pl-3 d-flex flex-column">
@@ -142,7 +142,7 @@
         </div>
       </div>
     </div>
-    <div class="col-2">
+    <div v-if="isInit" class="col-2">
       <div class="users">
         <template v-for="(iter, index) in onlineUsers">
           <div class="user" :key="index">
@@ -167,17 +167,25 @@
         </template>
       </div>
     </div>
+    <div v-if="!isInit" class="w-100">
+      <SetupWizard :is-init="isInit"></SetupWizard>
+    </div>
   </div>
 </template>
 
 <script>
+import SetupWizard from "../components/SetupWizard";
 export default {
+  components: {
+    SetupWizard
+  },
   name: "Home",
   data() {
     return {
       onlineUsers: null,
       blogs: [],
       events: [],
+      isInit: true,
       annc: [],
     };
   },
@@ -239,7 +247,14 @@ export default {
         variant: variant,
         title: "Notification"
       });
-    }
+    },
+    checkInit: function() {
+      window.axios
+          .get("/api/account/check/")
+          .then(res => {
+            this.isInit = res.data.isInit;
+          })
+    },
   },
   computed: {
     currentUser() {
@@ -250,6 +265,7 @@ export default {
     this.getBlogs();
     this.getEvents();
     this.getAnnc()
+    this.checkInit();
   }
 };
 </script>

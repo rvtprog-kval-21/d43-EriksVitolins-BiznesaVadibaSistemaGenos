@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Search from "@/views/general/Search";
 
 const Login = () => import("../views/general/Login");
 const NotFound = () => import("../views/general/NotFound");
@@ -40,51 +41,94 @@ const routes = [
   },
   {
     path: "/blog",
-    component: Blog
+    component: Blog,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/notifications",
-    component: Notifications
+    component: Notifications,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/calendar",
-    component: Calendar
+    component: Calendar,
+    meta: {
+      requireAdmin: true
+    }
+  },
+  {
+    path: "/search/:search/",
+    component: Search,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/blog/admin",
-    component: AdminPanelBlog
+    component: AdminPanelBlog,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/projects",
-    component: Projects
+    component: Projects,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/projects/create",
-    component: CreateProjects
+    component: CreateProjects,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/projects/:id/see",
-    component: ProjectProfile
+    component: ProjectProfile,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/projects/:id/settings",
-    component: SettingsProject
+    component: SettingsProject,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/blog/creator",
-    component: CreatorPanelBlog
+    component: CreatorPanelBlog,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/blog/:id/view",
-    component: IndividualBlog
+    component: IndividualBlog,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/tracking",
-    component: Tracking
+    component: Tracking,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/tracking/admin",
-    component: AdminPanelTracking
+    component: AdminPanelTracking,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/tracking/manager",
@@ -92,7 +136,10 @@ const routes = [
   },
   {
     path: "/home",
-    component: Home
+    component: Home,
+    meta: {
+      requireAdmin: true
+    }
   },
   {
     path: "/admin/userAdd",
