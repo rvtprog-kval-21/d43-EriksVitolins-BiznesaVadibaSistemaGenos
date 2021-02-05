@@ -144,7 +144,7 @@
     </div>
     <div v-if="isInit" class="col-2">
       <div class="users">
-        <template v-for="(iter, index) in onlineUsers">
+        <template v-for="(iter, index) in users">
           <div class="user" :key="index">
             <b-dropdown variant="outline-none" class="item">
               <template class="wow" #button-content>
@@ -182,28 +182,36 @@ export default {
   name: "Home",
   data() {
     return {
-      onlineUsers: null,
+      onlineUsers: [],
       blogs: [],
       events: [],
       isInit: true,
       annc: [],
+      users: [],
     };
-  },
-  mounted() {
-    this.getOnlineUsers();
   },
   methods: {
     getOnlineUsers() {
-      const vue = this;
       window.axios.get("/api/usersonline").then(res => {
-        vue.onlineUsers = res.data.users;
+        this.onlineUsers = res.data.users;
+        this.getUsers()
       });
-      setInterval(() => {
-        window.axios.get("/api/usersonline").then(res => {
-          vue.onlineUsers = res.data.users;
-        });
-      }, 60 * 1000);
     },
+    getUsers() {
+      if (this.onlineUsers){
+        const users = []
+        for(const item in this.onlineUsers) {
+          users.push(item)
+        }
+        console.log(users)
+        window.axios
+            .post("/api/users/get/multiple", {"users": users})
+            .then(res => {
+              console.log(122)
+              this.users = res.data.users;
+            });
+      }
+      },
     getEvents() {
       window.axios
               .post("api/calendar/get/home/events/")
@@ -216,7 +224,6 @@ export default {
       return images;
     },
     goToProfile(id) {
-      console.log(1)
       this.$router.push("/user/" + id + "/profile");
     },
     profile() {
@@ -262,6 +269,7 @@ export default {
     }
   },
   created() {
+    this.getOnlineUsers();
     this.getBlogs();
     this.getEvents();
     this.getAnnc()

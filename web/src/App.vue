@@ -24,11 +24,15 @@ export default {
   methods: {
     pingServer() {
       let currentUser = this.currentUser;
+      if (currentUser.id) {
+        console.log(1)
+        window.axios.get("/api/ping");
+      }
       setInterval(function() {
         if (currentUser.id) {
           window.axios.get("/api/ping");
         }
-      }, 40 * 1000);
+      }, 180 * 1000);
     }
   },
   mounted() {

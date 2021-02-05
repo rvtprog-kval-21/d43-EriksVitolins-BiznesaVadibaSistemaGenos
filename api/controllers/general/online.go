@@ -19,22 +19,6 @@ func Ping(context *gin.Context) {
 }
 
 func UsersOnline(context *gin.Context) {
-	/*
-		claims := jwtParser.GetClaims(context)
-		if claims == nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
-			return
-		}
-		var keys []interface{}
-		for key, _ := range online.Online {
-			if key == claims["id"] {
-				continue
-			}
-			keys = append(keys, key)
-		}
-
-		users := user.GetUsersIn(keys)
-		context.JSON(200, gin.H{"users": users})
-	*/
-	context.JSON(200, gin.H{"users": "Test"})
+	users := online.UsersOnline()
+	context.JSON(200, gin.H{"users": users})
 }

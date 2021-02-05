@@ -1,31 +1,22 @@
 package online
 
 import (
+	"fmt"
 	"time"
+	"github.com/patrickmn/go-cache"
 )
 
-var Online map[interface{}]time.Time
+var cacheStorage *cache.Cache
 
 func Ping(id interface{}) {
-	initiate()
-	Online[id] = time.Now()
+	fmt.Println(cacheStorage)
+	cacheStorage.Set(fmt.Sprintf("%v", id), "true",cache.DefaultExpiration)
 }
 
-func initiate() {
-	if Online == nil {
-		Online = make(map[interface{}]time.Time)
-	}
+func Initiate() {
+	cacheStorage = cache.New(3*time.Minute, 5*time.Minute)
 }
 
-func ClearOldOnes() {
-	/* for key, date := range Online {
-		if time.Since(date) > 1*time.Minute {
-			delete(Online, key)
-		}
-	}
-
-	time.Sleep(1 * time.Minute)
-	ClearOldOnes()
-
-	*/
+func UsersOnline() map[string]cache.Item {
+	return cacheStorage.Items()
 }

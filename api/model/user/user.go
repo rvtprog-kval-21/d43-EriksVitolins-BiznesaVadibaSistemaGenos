@@ -180,3 +180,9 @@ func SearchForUser(search string) []User{
 func InitUser(id interface{})  {
 	database.DBConn.Model(&User{}).Where("id = ?", id).Update("is_initiated",true)
 }
+
+func GetUsers(ids []string) []User  {
+	var users []User
+	database.DBConn.Where("id IN (?)", ids).Find(&users)
+	return users
+}

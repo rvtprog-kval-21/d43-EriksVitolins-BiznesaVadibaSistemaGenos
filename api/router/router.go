@@ -76,6 +76,7 @@ func apiRoutes(api *gin.RouterGroup) {
 	api.POST("/users/search", general.SearchUser)
 	api.GET("/account/check/", general.SeeIfUserInitiated)
 	api.GET("/account/init/", general.InitUser)
+	api.POST("/users/get/multiple", general.GetUsersMultiple)
 	blogRoutes(api)
 	managerRoutes(api)
 	trackingRoutes(api)

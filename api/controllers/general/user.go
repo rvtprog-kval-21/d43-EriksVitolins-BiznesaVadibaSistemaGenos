@@ -640,3 +640,18 @@ func InitUser(context *gin.Context) {
 	user2.InitUser(claims["id"])
 	context.JSON(200, gin.H{"isInit": "done"})
 }
+
+type usersMultipleRequest struct {
+	Users []string `json:"users"`
+}
+
+func GetUsersMultiple(context *gin.Context) {
+	var request usersMultipleRequest
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(422, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	users := user2.GetUsers(request.Users)
+	context.JSON(200, gin.H{"users": users})
+}

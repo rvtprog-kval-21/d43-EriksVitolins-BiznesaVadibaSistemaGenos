@@ -14,7 +14,7 @@ import (
 func main() {
 	argsWithoutProg := os.Args[1:]
 	if argsWithoutProg[0] == "server" {
-		go online.ClearOldOnes()
+		go online.Initiate()
 		database.Open()
 		app := router.Init()
 		server := &http.Server{
