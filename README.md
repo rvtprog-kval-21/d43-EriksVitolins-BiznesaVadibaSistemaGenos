@@ -91,6 +91,10 @@ Projektā tiek izmantots:
     
     [Vue markdown](https://vue-showdown.js.org/guide/#npm) - vue markdown docs, izmantoju piemērus
     
+    [Stackoverflow](https://stackoverflow.com/questions/13146418/find-all-the-days-in-a-month-with-date-object) - dabūt visas dienas mēnesī   
+
+    [Stackoverflow](https://stackoverflow.com/questions/1643320/get-month-name-from-date/18648314#18648314) - formtatēt datumus
+
     [Vue Rich text editor](https://github.com/surmon-china/vue-quill-editor) - vue Rich text editor docs, izmantoju piemērus
   
     [Github](https://github.com/richardtallent/vue-simple-calendar) - tika izmantots example kods priekš kalendārs
