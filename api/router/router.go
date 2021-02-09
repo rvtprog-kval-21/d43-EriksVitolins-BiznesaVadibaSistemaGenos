@@ -6,6 +6,7 @@ import (
 	"api/controllers/general"
 	"api/controllers/notifications"
 	"api/controllers/projects"
+	"api/controllers/timetable"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/jwt"
 	"github.com/gin-gonic/gin"
@@ -42,6 +43,7 @@ func setupRoutes(router *gin.Engine) {
 	notificationRoutes(notifications)
 	userSettingsRoutes(api)
 	userAnnouncementsRoutes(api)
+	timetableRoutes(api)
 }
 
 func notificationRoutes(notifi *gin.RouterGroup) {
@@ -122,6 +124,12 @@ func managerRoutes(api *gin.RouterGroup) {
 	manager := api.Group("/manager")
 	manager.GET("/check/ismanager/", general.ManagerIsMemeber)
 	manager.GET("/list/", general.SeeSubmissions)
+}
+
+func timetableRoutes(api *gin.RouterGroup) {
+	manager := api.Group("/timetable")
+	manager.POST("/save/schedule", timetable.Save)
+	manager.POST("/get/personal/schedule", timetable.Get)
 }
 
 func projectRoutes(api *gin.RouterGroup) {

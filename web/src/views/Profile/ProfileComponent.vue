@@ -38,9 +38,22 @@
           </div>
           <div class="d-flex p-4 justify-content-between">
             <b-button variant="success" v-if="!sameUser()">Message</b-button>
-            <b-button variant="success" @click="followUser()" v-if="!sameUser() && !isBeingFollowed">Follow</b-button>
-            <b-button variant="warning" @click="unfollowUser()" v-if="!sameUser() && isBeingFollowed">Unfollow</b-button>
-            <b-button variant="outline-primary" @click="$router.push('/user/' + user.id + '/settings')" v-if="sameUser()"
+            <b-button
+              variant="success"
+              @click="followUser()"
+              v-if="!sameUser() && !isBeingFollowed"
+              >Follow</b-button
+            >
+            <b-button
+              variant="warning"
+              @click="unfollowUser()"
+              v-if="!sameUser() && isBeingFollowed"
+              >Unfollow</b-button
+            >
+            <b-button
+              variant="outline-primary"
+              @click="$router.push('/user/' + user.id + '/settings')"
+              v-if="sameUser()"
               >Settings</b-button
             >
           </div>
@@ -55,7 +68,7 @@
           </div>
           <h5 class="pt-3 pl-4">About:</h5>
           <div class="border ml-4 mr-4">
-            <p class="m-2">{{user.about}}</p>
+            <p class="m-2">{{ user.about }}</p>
           </div>
           <div class="pt-2 pl-4 pr-4 pb-4">
             <div class="d-flex justify-content-center grey">
@@ -83,41 +96,63 @@
         </b-col>
         <b-col class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
           <div class="annc-top border">
-            <h4 class="d-flex justify-content-center" v-if="annc.length < 1">No Announcements available</h4>
-            <template v-for="(iter,index) in annc">
+            <h4 class="d-flex justify-content-center" v-if="annc.length < 1">
+              No Announcements available
+            </h4>
+            <template v-for="(iter, index) in annc">
               <div :key="index" class="m-row">
-              <div class="d-flex mt-2 mb-2">
-                <div class="w-75">
-                  <div class="d-flex align-content-center">
-                    <b-avatar
+                <div class="d-flex mt-2 mb-2">
+                  <div class="w-75">
+                    <div class="d-flex align-content-center">
+                      <b-avatar
                         class="avatar ml-2"
                         :src="getImgUrl()"
                         variant="primary"
                         size="2rem"
                         text="EV"
-                    ></b-avatar>
-                    <p class="mb-0 ml-2 grey">{{new Date(iter.created_at)}}</p>
+                      ></b-avatar>
+                      <p class="mb-0 ml-2 grey">
+                        {{ new Date(iter.created_at) }}
+                      </p>
+                    </div>
+                    <p class="ml-2 mt-2 mb-0">{{ iter.message }}</p>
                   </div>
-                  <p class="ml-2 mt-2 mb-0">{{iter.message}}</p>
+                  <div
+                    class="d-flex justify-content-center align-content-center"
+                  >
+                    <b-button
+                      v-if="sameUser()"
+                      @click="deleteAnnouncement(iter.id)"
+                      variant="outline-danger"
+                      >Delete</b-button
+                    >
+                  </div>
                 </div>
-                <div class="d-flex justify-content-center align-content-center">
-                  <b-button v-if="sameUser()" @click="deleteAnnouncement(iter.id)" variant="outline-danger">Delete</b-button>
-                </div>
-              </div>
-              <hr class="mt-0">
+                <hr class="mt-0" />
               </div>
             </template>
           </div>
           <div class="d-flex justify-content-between mt-4" v-if="sameUser()">
             <div class="w-65">
-              <b-form-input v-model="message" placeholder="Enter message"></b-form-input>
+              <b-form-input
+                v-model="message"
+                placeholder="Enter message"
+              ></b-form-input>
             </div>
             <div class="w-25">
-              <b-button class="w-100" @click="newAnnouncement()" variant="outline-success">Announce</b-button>
+              <b-button
+                class="w-100"
+                @click="newAnnouncement()"
+                variant="outline-success"
+                >Announce</b-button
+              >
             </div>
           </div>
         </b-col>
-        <b-col  v-if="this.currentUser.role == 'admin'" class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal">
+        <b-col
+          v-if="this.currentUser.role == 'admin'"
+          class="col-lg-7 mt-5 col-md-12 p-4 bg-white card-universal"
+        >
           <div class="d-flex justify-content-center">
             <b-alert v-if="this.errors.error" variant="danger" show="">{{
               this.errors.error
@@ -142,7 +177,9 @@
                 >Updated on: {{ new Date(user.updated_at) }}</b-col
               >
               <b-col cols="6" class="pl-5 pr-5 pt-5"
-                ><b-button @click="resetPassword(user.email)">Reset password</b-button></b-col
+                ><b-button @click="resetPassword(user.email)"
+                  >Reset password</b-button
+                ></b-col
               >
               <b-col cols="6" class="pl-5 pr-5 pt-5">
                 <b-button
@@ -286,49 +323,49 @@ export default {
       this.alerts = [];
       const vue = this;
       window.axios
-          .post("/api/user/follower/start", {
-            "following_id": this.$route.params.id
-          })
-          .then(response => {
-            this.isBeingFollowed = true
-            this.alerts = { message: response.data.data };
-          })
-          .catch(function(errors) {
-            vue.errors = { error: errors.response.data.error };
-          });
+        .post("/api/user/follower/start", {
+          following_id: this.$route.params.id
+        })
+        .then(response => {
+          this.isBeingFollowed = true;
+          this.alerts = { message: response.data.data };
+        })
+        .catch(function(errors) {
+          vue.errors = { error: errors.response.data.error };
+        });
     },
     isFollowingUser() {
       if (this.sameUser()) {
-        return
+        return;
       }
       this.errors = [];
       const vue = this;
       window.axios
-          .post("/api/user/follower/check", {
-            "following_id": this.$route.params.id,
-          })
-          .then(response => {
-            this.isBeingFollowed = response.data.isFollowing
-          })
-          .catch(function(errors) {
-            vue.errors = { error: errors.response.data.error };
-          });
+        .post("/api/user/follower/check", {
+          following_id: this.$route.params.id
+        })
+        .then(response => {
+          this.isBeingFollowed = response.data.isFollowing;
+        })
+        .catch(function(errors) {
+          vue.errors = { error: errors.response.data.error };
+        });
     },
     unfollowUser() {
       this.errors = [];
       this.alerts = [];
       const vue = this;
       window.axios
-          .post("/api/user/follower/delete", {
-            "following_id": this.$route.params.id,
-          })
-          .then(response => {
-            this.isBeingFollowed = false
-            this.alerts = { message: response.data.message };
-          })
-          .catch(function(errors) {
-            vue.errors = { error: errors.response.data.error };
-          });
+        .post("/api/user/follower/delete", {
+          following_id: this.$route.params.id
+        })
+        .then(response => {
+          this.isBeingFollowed = false;
+          this.alerts = { message: response.data.message };
+        })
+        .catch(function(errors) {
+          vue.errors = { error: errors.response.data.error };
+        });
     },
     newAnnouncement() {
       this.errors = [];
@@ -336,47 +373,49 @@ export default {
       const vue = this;
       window.axios
         .post("/api/user/announcements/new/announcements", {
-          message: this.message})
-          .then(() => {
-            this.message = ""
-            this.getAnnc()
-          })
-          .catch(function(errors) {
-            vue.errors = { error: errors.response.data.error };
-          });
+          message: this.message
+        })
+        .then(() => {
+          this.message = "";
+          this.getAnnc();
+        })
+        .catch(function(errors) {
+          vue.errors = { error: errors.response.data.error };
+        });
     },
-   deleteAnnouncement(id) {
+    deleteAnnouncement(id) {
       this.errors = [];
       this.alerts = [];
       const vue = this;
       window.axios
-          .post("/api/user/announcements/delete/announcement", {
-            "id": `${id}`})
-          .then(() => {
-            this.getAnnc()
-          })
-          .catch(function(errors) {
-            vue.errors = { error: errors.response.data.error };
-          });
+        .post("/api/user/announcements/delete/announcement", {
+          id: `${id}`
+        })
+        .then(() => {
+          this.getAnnc();
+        })
+        .catch(function(errors) {
+          vue.errors = { error: errors.response.data.error };
+        });
     },
     getAnnc: function() {
       this.errors = {};
       const vue = this;
       window.axios
-          .post("/api/user/announcements/get/user", {"id": this.$route.params.id})
-          .then(res => {
-            this.annc = res.data.data;
-          })
-          .catch(function(rej) {
-            vue.errors = { error: rej.response.data.error };
-          });
+        .post("/api/user/announcements/get/user", { id: this.$route.params.id })
+        .then(res => {
+          this.annc = res.data.data;
+        })
+        .catch(function(rej) {
+          vue.errors = { error: rej.response.data.error };
+        });
     },
     resetPassword(email) {
       this.errors = [];
       this.alerts = [];
       const vue = this;
       window.axios
-        .post("/api/admin/user/reset/password", {"email": email})
+        .post("/api/admin/user/reset/password", { email: email })
         .then(response => {
           this.alerts = { message: response.data.message };
           this.getUser();
@@ -390,12 +429,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .annc-top{
-    overflow: auto;
-    height: 90%;
-    max-height: 600px;
-  }
-.mother-load{
+.annc-top {
+  overflow: auto;
+  height: 90%;
+  max-height: 600px;
+}
+.mother-load {
   min-height: 1000px;
 }
 
@@ -403,7 +442,7 @@ export default {
   width: 65% !important;
 }
 
-  .header {
+.header {
   min-height: 400px;
   background-size: cover;
   background: #49599a;
@@ -443,11 +482,11 @@ export default {
     height: 35% !important;
   }
 }
-  .border{
-    border: 1px black solid;
-  }
+.border {
+  border: 1px black solid;
+}
 
-  .grey {
-    color: #b0bec5;
-  }
+.grey {
+  color: #b0bec5;
+}
 </style>

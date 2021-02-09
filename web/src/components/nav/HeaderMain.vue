@@ -33,7 +33,11 @@
               class="mr-sm-2"
               placeholder="Search"
             ></b-form-input>
-            <b-button @click="$router.push('/search/' + searchTerm + '/')" size="sm" class="my-2 my-sm-0" type="submit"
+            <b-button
+              @click="$router.push('/search/' + searchTerm + '/')"
+              size="sm"
+              class="my-2 my-sm-0"
+              type="submit"
               >Search</b-button
             >
           </b-nav-form>
@@ -86,7 +90,7 @@ export default {
   data() {
     return {
       notifications: 0,
-      searchTerm: "",
+      searchTerm: ""
     };
   },
   methods: {

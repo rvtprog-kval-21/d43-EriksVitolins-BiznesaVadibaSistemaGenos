@@ -110,7 +110,7 @@ export default {
       for (let iter = 0; iter < this.fields.length; iter++) {
         const errors = validate(this.fields[iter], constraints);
         if (errors) {
-          console.log(errors)
+          console.log(errors);
           this.makeToast(errors.email, "danger");
           this.makeToast(errors.role, "danger");
           this.makeToast(errors.last_name, "danger");

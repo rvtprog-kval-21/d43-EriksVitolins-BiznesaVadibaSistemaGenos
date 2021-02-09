@@ -23,6 +23,12 @@ Projektā tiek izmantots:
     - vue-good-table
     - vue-select
     - vue-showdown
+    - vue2-datepicker
+    - vue2-timepicker
+    - vue-simple-calendar
+    - vue-month-picker
+    - vue-form-wizard
+    - vue-quill-editor
   - SCSS
 
 ## Izmantotie avoti
@@ -74,6 +80,16 @@ Projektā tiek izmantots:
     [Vuejs Docs](https://vuejs.org/v2/guide/installation.html) - Izmantots example kods
     
     [ValidateJs docs](https://validatejs.org/) - Izmantots example kods
+
+    [Github](https://github.com/phoenixwong/vue2-timepicker) - Izmantots example kods
+    
+    [Docs](https://binarcode.github.io/vue-form-wizard/#/) - Izmantots example kods
+    
+    [NPM](https://www.npmjs.com/package/vue-month-picker) - Izmantots example kods
+    
+    [NPM](https://www.npmjs.com/package/vue-simple-calendar) - Izmantots example kods
+    
+    [NPM](https://www.npmjs.com/package/vue2-datepicker) - Izmantots example kods
     
     [stackoverflow](https://stackoverflow.com/questions/48402747/nuxt-js-vue-js-setting-axios-auth-token-in-vuex-store-resets-after-refresh) - axios request intercept
 

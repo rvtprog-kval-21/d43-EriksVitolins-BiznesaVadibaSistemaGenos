@@ -145,8 +145,9 @@
                   />
                   <b-dropdown-item
                     @click="makeAdmin(iter.user.id)"
-                    v-if="user &&
-                      user.is_owner &&
+                    v-if="
+                      user &&
+                        user.is_owner &&
                         getXUser(iter.user.id).is_admin == false &&
                         getXUser(iter.user.id).is_owner == false &&
                         currentUser.id != iter.user.id
@@ -156,22 +157,24 @@
                   >
                   <b-dropdown-item
                     @click="unmakeAdmin(iter.user.id)"
-                    v-else-if="user &&
-                      (user.is_owner &&
+                    v-else-if="
+                      user &&
+                        user.is_owner &&
                         getXUser(iter.user.id).is_admin == true &&
                         getXUser(iter.user.id).is_owner == false &&
-                        currentUser.id != iter.user.id)
+                        currentUser.id != iter.user.id
                     "
                     href="#"
                     >Take Away Admin</b-dropdown-item
                   >
                   <b-dropdown-item
                     @click="kickUser(iter.user.id)"
-                    v-if="user &&
-                      ((user.is_owner || user.is_admin) &&
+                    v-if="
+                      user &&
+                        (user.is_owner || user.is_admin) &&
                         getXUser(iter.user.id).is_admin == false &&
                         getXUser(iter.user.id).is_owner == false &&
-                        currentUser.id != iter.user.id)
+                        currentUser.id != iter.user.id
                     "
                     href="#"
                     >Kick</b-dropdown-item
@@ -263,14 +266,13 @@ export default {
         });
     },
     getAnn() {
-
       this.loadingNew = true;
       window.axios
         .get(
           `api/projects/see/${this.$route.params.id}/current/announcement?currentPage=${this.currentPage}`
         )
         .then(res => {
-          if (res.data){
+          if (res.data) {
             const arr = res.data.annc;
             this.annc = this.annc.concat(arr);
             this.currentPage += 1;
@@ -280,7 +282,7 @@ export default {
           }
         })
         .catch(rej => {
-          if (rej.response){
+          if (rej.response) {
             this.makeToast(rej.response.data.error, "danger");
           }
         });

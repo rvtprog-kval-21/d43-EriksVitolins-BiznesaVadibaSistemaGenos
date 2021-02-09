@@ -25,7 +25,7 @@ export default {
     pingServer() {
       let currentUser = this.currentUser;
       if (currentUser.id) {
-        console.log(1)
+        console.log(1);
         window.axios.get("/api/ping");
       }
       setInterval(function() {
