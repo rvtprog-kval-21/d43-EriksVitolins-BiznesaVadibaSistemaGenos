@@ -6,9 +6,15 @@
           <div></div>
           <b-button
             @click="saveTimeTable()"
-            v-if="showSave"
+            v-if="showSave && !isSavedResults"
             variant="outline-success"
             >Save</b-button
+          >
+          <b-button
+              @click="updateTimeTable()"
+              v-if="showSave && isSavedResults"
+              variant="outline-success"
+          >Update</b-button
           >
         </div>
         <div class=" d-flex justify-content-center">
@@ -20,9 +26,10 @@
         <template v-for="(iter, index) in dates">
           <div :key="index" class="row-date">
             <div class="d-flex justify-content-between">
-              <h6>{{ iter.date.toDateString() }}</h6>
+              <h6>{{ new Date(iter.date).toDateString() }}</h6>
               <b-form-select
                 class="w-25"
+                @change="statusChanged(index)"
                 v-model="iter.status"
                 :options="options"
               ></b-form-select>
@@ -60,6 +67,9 @@ export default {
       dates: [],
       showSave: true,
       isInit: false,
+      isSavedResults: false,
+      start_date: null,
+      end_date: null,
       date: {
         from: null,
         to: null,
@@ -67,7 +77,7 @@ export default {
         year: null
       },
       options: [
-        { value: null, text: "Not working" },
+        { value: "", text: "Not working" },
         { value: "1", text: "Working on this day" },
         { value: "S", text: "Sick leave" },
         { value: "A", text: "Vacation" },
@@ -78,6 +88,23 @@ export default {
     };
   },
   methods: {
+    statusChanged(index) {
+      if (this.dates[index].status !== "1") {
+        return
+      }
+      if (this.dates[index].start_time.HH == "") {
+        this.dates[index].start_time.HH = "09"
+      }
+      if (this.dates[index].start_time.mm == "") {
+        this.dates[index].start_time.mm = "00"
+      }
+      if (this.dates[index].end_time.HH == "") {
+        this.dates[index].end_time.HH = "18"
+      }
+      if (this.dates[index].end_time.mm == "") {
+        this.dates[index].end_time.mm = "00"
+      }
+    },
     showDate(date) {
       this.date = date;
       if (this.isInit) {
@@ -108,22 +135,47 @@ export default {
       this.showSave = false;
     },
     getDaysInMonth(month, year) {
+      this.start_date = null
+      this.end_date = null
       let date = new Date(year, month, 1);
       let days = [];
       while (date.getMonth() === month) {
+        if (!this.start_date) {
+          this.start_date = new Date(date)
+          console.log(this.start_date)
+        }
         days.push({
           date: new Date(date),
-          status: null,
+          status: "",
           start_time: { HH: "09", mm: "00" },
           end_time: { HH: "18", mm: "00" }
         });
+        this.end_date = new Date(date)
         date.setDate(date.getDate() + 1);
       }
+      console.log(this.end_date)
       this.dates = days;
+      this.getTimetable()
     },
     saveTimeTable() {
       window.axios.post(`/api/timetable/save/schedule`, {"dates":  this.dates}).then(() => {
         this.makeToast("Table saved", "success");
+      });
+    },
+    updateTimeTable() {
+      window.axios.post(`/api/timetable/update/schedule`, {"dates":  this.dates}).then(() => {
+        this.makeToast("Table saved", "success");
+      });
+    },
+    getTimetable() {
+      console.log("adas " +  this.start_date)
+      window.axios.post(`/api/timetable/get/personal/schedule`, {"start_date":  this.start_date, "end_date": this.end_date}).then(res => {
+        if(this.dates <= res.data.dates) {
+          this.dates = res.data.dates
+          this.isSavedResults = true
+        } else {
+          this.isSavedResults = false
+        }
       });
     },
     makeToast(text, variant) {

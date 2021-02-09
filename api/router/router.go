@@ -130,6 +130,7 @@ func timetableRoutes(api *gin.RouterGroup) {
 	manager := api.Group("/timetable")
 	manager.POST("/save/schedule", timetable.Save)
 	manager.POST("/get/personal/schedule", timetable.Get)
+	manager.POST("/update/schedule", timetable.Update)
 }
 
 func projectRoutes(api *gin.RouterGroup) {

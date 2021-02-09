@@ -27,7 +27,7 @@ type TimetableResponse struct {
 }
 
 type timeObj struct {
-	HH string `json:"hh"`
+	HH string `json:"HH"`
 	MM string `json:"mm"`
 }
 
@@ -39,8 +39,8 @@ func UpdateTimetable(table Timetable) {
 	database.DBConn.Save(&table)
 }
 
-func GetTimetable(userID interface{},startDate time.Time, endDate time.Time) []TimetableResponse {
+func GetTimetable(userID interface{},startDate time.Time, endDate time.Time) []Timetable {
 	var dates []Timetable
 	database.DBConn.Where("user_id = ?", userID).Where("date >= ?", startDate).Where("date <= ?", endDate).Find(&dates)
-	return []TimetableResponse{}
+	return dates
 }
