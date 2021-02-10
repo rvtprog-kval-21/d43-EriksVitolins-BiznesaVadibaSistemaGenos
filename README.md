@@ -89,6 +89,8 @@ Projektā tiek izmantots:
     
     [NPM](https://www.npmjs.com/package/vue-simple-calendar) - Izmantots example kods
     
+    [Stackoverflow](https://stackoverflow.com/questions/34722862/how-do-i-remove-time-part-from-javascript-date) - Kā noņemt datumu
+    
     [NPM](https://www.npmjs.com/package/vue2-datepicker) - Izmantots example kods
     
     [stackoverflow](https://stackoverflow.com/questions/48402747/nuxt-js-vue-js-setting-axios-auth-token-in-vuex-store-resets-after-refresh) - axios request intercept

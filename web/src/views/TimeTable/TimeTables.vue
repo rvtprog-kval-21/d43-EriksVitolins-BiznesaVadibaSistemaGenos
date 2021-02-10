@@ -49,7 +49,33 @@
           </div>
         </template>
       </b-tab>
-      <b-tab title="Working Hours"><p>I'm the second tab</p></b-tab>
+      <b-tab title="Working Schedule">
+       <div class="d-flex justify-content-between flex-wrap">
+         <div class="row-user" v-for="iter in datesAll" :key="iter.id">
+           <b-card img-alt="Image" img-top>
+             <div
+                 class="d-flex align-items-center"
+             >
+               <b-avatar
+                   class="mr-1"
+                   size="2rem"
+                   :src="getImgUrl(iter.user.avatar)"
+               ></b-avatar>
+               <p class="mb-0 text-muted">
+                 {{ iter.user.name + " " + iter.user.last_name }}
+               </p>
+             </div>
+             <hr />
+             <div class="d-flex" v-for="(liter, index) in options" :key="index">
+               <template v-if="liter.value === iter.status">
+                 <h5>{{liter.text}}</h5>
+                 <h5 v-if="iter.status == 1">: {{iter.start_time}} - {{iter.end_time}}</h5>
+               </template>
+             </div>
+           </b-card>
+         </div>
+       </div>
+      </b-tab>
     </b-tabs>
   </div>
 </template>
@@ -70,6 +96,7 @@ export default {
       isSavedResults: false,
       start_date: null,
       end_date: null,
+      datesAll: [],
       date: {
         from: null,
         to: null,
@@ -88,6 +115,10 @@ export default {
     };
   },
   methods: {
+    getImgUrl(image) {
+      let images = process.env.VUE_APP_API + "/static" + image;
+      return images;
+    },
     statusChanged(index) {
       if (this.dates[index].status !== "1") {
         return
@@ -153,22 +184,22 @@ export default {
         this.end_date = new Date(date)
         date.setDate(date.getDate() + 1);
       }
-      console.log(this.end_date)
       this.dates = days;
       this.getTimetable()
     },
     saveTimeTable() {
       window.axios.post(`/api/timetable/save/schedule`, {"dates":  this.dates}).then(() => {
         this.makeToast("Table saved", "success");
+        this.getTimetableAll()
       });
     },
     updateTimeTable() {
       window.axios.post(`/api/timetable/update/schedule`, {"dates":  this.dates}).then(() => {
         this.makeToast("Table saved", "success");
+        this.getTimetableAll()
       });
     },
     getTimetable() {
-      console.log("adas " +  this.start_date)
       window.axios.post(`/api/timetable/get/personal/schedule`, {"start_date":  this.start_date, "end_date": this.end_date}).then(res => {
         if(this.dates <= res.data.dates) {
           this.dates = res.data.dates
@@ -176,6 +207,11 @@ export default {
         } else {
           this.isSavedResults = false
         }
+      });
+    },
+    getTimetableAll() {
+      window.axios.post(`/api/timetable/get/everyone/schedule`, {"start_date": new Date(new Date().toDateString())}).then(res => {
+          this.datesAll = res.data.dates
       });
     },
     makeToast(text, variant) {
@@ -194,8 +230,13 @@ export default {
       year: new Date().getUTCFullYear()
     };
     this.date = date;
+    this.getTimetableAll()
   }
 };
 </script>
-
-<style scoped></style>
+<style scoped>
+.row-user{
+  width: 49%;
+  margin-bottom: 25px;
+}
+</style>

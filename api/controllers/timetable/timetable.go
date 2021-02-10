@@ -108,3 +108,19 @@ func Update(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
+func GetAll(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	var request RequestGet
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	arr := timetable.GetTimetableAll(request.StartDate)
+
+	context.JSON(http.StatusOK, gin.H{"dates": arr})
+}

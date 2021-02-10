@@ -44,3 +44,9 @@ func GetTimetable(userID interface{},startDate time.Time, endDate time.Time) []T
 	database.DBConn.Where("user_id = ?", userID).Where("date >= ?", startDate).Where("date <= ?", endDate).Find(&dates)
 	return dates
 }
+
+func GetTimetableAll(startDate time.Time) []Timetable {
+	var dates []Timetable
+	database.DBConn.Preload("User").Where("date = ?", startDate).Find(&dates)
+	return dates
+}
