@@ -1,5 +1,12 @@
 <template>
   <b-container class="mt-3 container">
+    <b-button
+        class="mr-3"
+        variant="outline-info"
+        v-if="creatorIsOpended"
+        @click="creatorIsOpended = false"
+    >View submissions</b-button
+    >
     <template v-if="currentUser.role === 'admin' || isManager">
       <div class="d-flex justify-content-end">
         <b-button
@@ -8,13 +15,6 @@
           v-if="!creatorIsOpended"
           @click="creatorIsOpended = true"
           >Create submissions</b-button
-        >
-        <b-button
-          class="mr-3"
-          variant="outline-info"
-          v-else
-          @click="creatorIsOpended = false"
-          >View submissions</b-button
         >
         <a href="/tracking/admin">
           <b-button
