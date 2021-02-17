@@ -66,6 +66,8 @@ Projektā tiek izmantots:
   
     [stackoverflow](https://stackoverflow.com/questions/59249418/how-to-get-the-claims-from-the-token) - kā parse jwt
     
+    [Github](https://github.com/AnupKumarPanwar/Golang-realtime-chat-rooms) - kā izveidot real time chat
+
     [stackoverflow](https://stackoverflow.com/questions/37932551/mkdir-if-not-exists-using-golang) - kā izveidot mapes, ja tās neeksistē
   - Docker
   

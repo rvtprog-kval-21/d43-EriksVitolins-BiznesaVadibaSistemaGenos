@@ -30,6 +30,8 @@ const Home = () => import("../views/Home");
 const Timetable = () => import("../views/TimeTable/TimeTables");
 const Notifications = () => import("../views/Notifications/Notifications");
 
+const Chatting = () => import("../views/Chatting/Chatting");
+
 const Calendar = () => import("../views/Calendar/Calendar");
 Vue.use(VueRouter);
 
@@ -49,6 +51,13 @@ const routes = [
   {
     path: "/notifications",
     component: Notifications,
+    meta: {
+      requireAdmin: true
+    }
+  },
+  {
+    path: "/chat",
+    component: Chatting,
     meta: {
       requireAdmin: true
     }

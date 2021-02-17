@@ -3,6 +3,7 @@ package router
 import (
 	"api/config"
 	"api/controllers/calendar"
+	"api/controllers/chatting"
 	"api/controllers/general"
 	"api/controllers/notifications"
 	"api/controllers/projects"
@@ -75,6 +76,7 @@ func apiRoutes(api *gin.RouterGroup) {
 	api.GET("/ping", general.Ping)
 	api.GET("/usersonline", general.UsersOnline)
 	api.POST("/users", general.UserList)
+	api.POST("/users/not/included", general.UserListNotIncluded)
 	api.POST("/users/search", general.SearchUser)
 	api.GET("/account/check/", general.SeeIfUserInitiated)
 	api.GET("/account/init/", general.InitUser)
@@ -83,6 +85,7 @@ func apiRoutes(api *gin.RouterGroup) {
 	managerRoutes(api)
 	trackingRoutes(api)
 	calendarRoutes(api)
+	ChattingRoutes(api)
 }
 
 func blogRoutes(api *gin.RouterGroup) {
@@ -177,4 +180,15 @@ func userAnnouncementsRoutes(api *gin.RouterGroup) {
 	user.POST("follower/start", general.AddFollower)
 	user.POST("follower/delete", general.DeleteFollower)
 	user.POST("follower/check", general.SeeIfFollowing)
+}
+
+func ChattingRoutes(api *gin.RouterGroup) {
+	chat := api.Group("/chatting")
+	chat.POST("/new/group", chatting.CreateGroup)
+	chat.GET("/get/rooms", chatting.GetGroups)
+	chat.POST("/get/room", chatting.GetGroup)
+	chat.GET("get/websocket/:roomId", func(c *gin.Context) {
+		roomId := c.Param("roomId")
+		chatting.ServeWs(c.Writer, c.Request, roomId)
+	})
 }

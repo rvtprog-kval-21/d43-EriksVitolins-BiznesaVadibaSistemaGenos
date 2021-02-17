@@ -99,6 +99,18 @@ func UserList(context *gin.Context) {
 	users := user2.GetAllUsers()
 	context.JSON(http.StatusOK, gin.H{"users": users})
 }
+
+func UserListNotIncluded(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	users := user2.GetAllUsersNotINcluded(claims["id"])
+	context.JSON(http.StatusOK, gin.H{"users": users})
+}
+
+
 func User(context *gin.Context) {
 	userObject, err := user2.GetUserById(context.Param("id"))
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"api/database"
 	"api/model/blog"
 	"api/model/calendar"
+	"api/model/chatting"
 	"api/model/notifications"
 	"api/model/projects"
 	"api/model/timetable"
@@ -34,6 +35,9 @@ func migrateTables() {
 	err = database.DBConn.AutoMigrate(&notifications.Notifications{})
 	err = database.DBConn.AutoMigrate(&calendar.Event{})
 	err = database.DBConn.AutoMigrate(&calendar.EventMember{})
+	err = database.DBConn.AutoMigrate(&chatting.Rooms{})
+	err = database.DBConn.AutoMigrate(&chatting.RoomParticipants{})
+	err = database.DBConn.AutoMigrate(&chatting.RoomMessages{})
 	err = database.DBConn.AutoMigrate(&timetable.Timetable{})
 	err = database.DBConn.AutoMigrate(&user2.FollowingUser{})
 	err = database.DBConn.AutoMigrate(&user2.AnnouncementsUser{})

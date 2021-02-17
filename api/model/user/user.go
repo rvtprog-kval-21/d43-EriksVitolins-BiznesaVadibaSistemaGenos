@@ -54,6 +54,12 @@ func GetAllUsers() []User {
 	return users
 }
 
+func GetAllUsersNotINcluded(id interface{}) []User {
+	var users []User
+	database.DBConn.Where("id != ?", id).Find(&users)
+	return users
+}
+
 func GetUserById(id interface{}) (*User, error) {
 	var user User
 	response := database.DBConn.Unscoped().Where("id = ?", id).First(&user)
