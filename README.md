@@ -67,6 +67,10 @@ Projektā tiek izmantots:
     [stackoverflow](https://stackoverflow.com/questions/59249418/how-to-get-the-claims-from-the-token) - kā parse jwt
     
     [Github](https://github.com/AnupKumarPanwar/Golang-realtime-chat-rooms) - kā izveidot real time chat
+    
+    [Github](https://github.com/gorilla/websocket/issues/367) - kā salabot orgin not allowed
+
+    []
 
     [stackoverflow](https://stackoverflow.com/questions/37932551/mkdir-if-not-exists-using-golang) - kā izveidot mapes, ja tās neeksistē
   - Docker
@@ -98,6 +102,8 @@ Projektā tiek izmantots:
     [stackoverflow](https://stackoverflow.com/questions/48402747/nuxt-js-vue-js-setting-axios-auth-token-in-vuex-store-resets-after-refresh) - axios request intercept
 
     [BootstrapVue](https://bootstrap-vue.org/) - izmantots exmaple kods 
+
+    [SomeTutorial](https://tutorialedge.net/javascript/vuejs/vuejs-websocket-tutorial/) - kā izveidot websocket connection
     
     [stackoverflow](https://stackoverflow.com/questions/49414697/how-to-change-vue-js-data-value-when-screen-size-changes) - mainīt mainīgo vuejs ,kad mainās ekrāna izmērs  
   

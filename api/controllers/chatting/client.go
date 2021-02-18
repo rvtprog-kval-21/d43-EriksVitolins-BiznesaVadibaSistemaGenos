@@ -1,7 +1,6 @@
 package chatting
 
 import (
-	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -40,7 +39,7 @@ type connection struct {
 func (s subscription) readPump() {
 	c := s.conn
 	defer func() {
-		h.unregister <- s
+		Hub.unregister <- s
 		c.ws.Close()
 	}()
 	c.ws.SetReadLimit(maxMessageSize)
@@ -55,7 +54,7 @@ func (s subscription) readPump() {
 			break
 		}
 		m := message{msg, s.room}
-		h.broadcast <- m
+		Hub.broadcast <- m
 	}
 }
 
@@ -92,16 +91,16 @@ func (s *subscription) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func ServeWs(w http.ResponseWriter, r *http.Request, roomId string) {
-	fmt.Print(roomId)
+func ServeWs(w http.ResponseWriter, r *http.Request) {
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err.Error())
 		return
 	}
 	c := &connection{send: make(chan []byte, 256), ws: ws}
-	s := subscription{c, roomId}
-	h.register <- s
+	s := subscription{c, "1"}
+	Hub.register <- s
 	go s.writePump()
 	go s.readPump()
 }

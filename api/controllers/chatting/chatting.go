@@ -6,6 +6,7 @@ import (
 	"api/utlis/jwtParser"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 type Rooms struct {
@@ -101,6 +102,67 @@ func GetGroup(context *gin.Context) {
 
 	context.JSON(200, gin.H{"room": rooms})
 	return
+}
+
+func SaveMessageRegular(context *gin.Context) {
+	var message chatting.RoomMessages
+	err := context.ShouldBindJSON(&message)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	if message.Message == "" && message.RoomsID != 0 {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+	message.UserID = int(claims["id"].(float64))
+	message.Sent = time.Now()
+	message, arr:= chatting.SaveMessage(message)
+
+	for _, iter := range arr {
+		newView := chatting.MessageViews{
+			UserID: iter.UserID,
+			MessageID: message.ID,
+		}
+		chatting.SaveView(newView)
+	}
+
+	context.JSON(200, gin.H{"message": "message saved"})
+}
+
+func GetUnViewed(context *gin.Context) {
+	var message chatting.RoomMessages
+	err := context.ShouldBindJSON(&message)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	if message.RoomsID != 0 {
+		context.JSON(422, gin.H{"error": "Fields were not filled"})
+		return
+	}
+
+	arr:= chatting.GetUnViewedMessages(int(claims["id"].(float64)),message.RoomsID)
+	var idArr []int
+
+	for _, iter := range arr {
+		idArr = append(idArr, iter.ID)
+	}
+	chatting.UpdateViews(int(claims["id"].(float64)), idArr)
+
+	context.JSON(200, gin.H{"messages": arr})
 }
 
 func findIfDuplicate(id int,arr []int ) bool{

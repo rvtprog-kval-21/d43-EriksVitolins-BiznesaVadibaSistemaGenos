@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api/controllers/chatting"
 	"api/database"
 	"api/database/migrations"
 	"api/router"
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	go chatting.Hub.Run()
+
 	argsWithoutProg := os.Args[1:]
 	if argsWithoutProg[0] == "server" {
 		go online.Initiate()

@@ -32,6 +32,9 @@ func setupCors(router *gin.Engine) {
 func setupRoutes(router *gin.Engine) {
 	router.POST("/auth/login", general.Login)
 	router.Static("/static", "./storage")
+	router.GET("get/websocket", func(c *gin.Context) {
+		chatting.ServeWs(c.Writer, c.Request)
+	})
 
 	api := router.Group("/api")
 	api.Use(jwt.Auth(config.Secret))
@@ -187,8 +190,6 @@ func ChattingRoutes(api *gin.RouterGroup) {
 	chat.POST("/new/group", chatting.CreateGroup)
 	chat.GET("/get/rooms", chatting.GetGroups)
 	chat.POST("/get/room", chatting.GetGroup)
-	chat.GET("get/websocket/:roomId", func(c *gin.Context) {
-		roomId := c.Param("roomId")
-		chatting.ServeWs(c.Writer, c.Request, roomId)
-	})
+	chat.POST("/get/rooms/unseen/chats", chatting.GetUnViewed)
+	chat.POST("/send/regular/message", chatting.SaveMessageRegular)
 }

@@ -43,6 +43,8 @@
                   placeholder="Type your message"
                   rows="1"
                   max-rows="4"
+
+
               ></b-form-textarea>
             </div>
             <div class="pr-5">
@@ -94,6 +96,7 @@ export default {
     return {
       selectedID: 0,
       CreatingNewGroup: false,
+      connection: null,
       newGroup: {
         name: "",
         about: "",
@@ -123,7 +126,9 @@ export default {
       });
     },
     SendMessage(){
-
+      window.axios.post("api/chatting/send/regular/message",{"message": this.message, "rooms_id": this.selectedID}).then(() => {
+        this.message = "";
+      })
     },
     createNewGroup() {
       if (this.newGroup.name === "") {
@@ -183,7 +188,25 @@ export default {
    created() {
     this.getUsers()
      this.getRooms()
-   }
+
+     let name = process.env.VUE_APP_API.replace("http://", "")
+
+     this.connection = new WebSocket("ws://"+ name+ "/get/websocket")
+     this.connection.onmessage = function(event) {
+       console.log(event);
+     }
+
+     this.connection.onopen = function(event) {
+       console.log(event)
+       console.log("Successfully connected to the echo websocket server...")
+     }
+
+     this.connection.onmessage = function (evt) {
+       let messages = evt.data;
+       console.log(messages)
+     };
+
+   },
 }
 </script>
 

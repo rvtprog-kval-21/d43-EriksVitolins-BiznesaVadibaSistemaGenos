@@ -38,6 +38,7 @@ func migrateTables() {
 	err = database.DBConn.AutoMigrate(&chatting.Rooms{})
 	err = database.DBConn.AutoMigrate(&chatting.RoomParticipants{})
 	err = database.DBConn.AutoMigrate(&chatting.RoomMessages{})
+	err = database.DBConn.AutoMigrate(&chatting.MessageViews{})
 	err = database.DBConn.AutoMigrate(&timetable.Timetable{})
 	err = database.DBConn.AutoMigrate(&user2.FollowingUser{})
 	err = database.DBConn.AutoMigrate(&user2.AnnouncementsUser{})
