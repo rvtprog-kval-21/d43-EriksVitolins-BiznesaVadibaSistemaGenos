@@ -32,7 +32,13 @@
           </div>
         </div>
         <div class="chat-field">
-          <div class="chat">Hey</div>
+          <div class="chat flex-column">
+            <template v-for="(iter,index) in this.room.messages">
+              <div :key="index" class="mb-3">
+                <p>{{iter.message}}</p>
+              </div>
+            </template>
+          </div>
           <div class="bottom">
             <div class="pl-5">
               <b-icon class="mr-2 hover" icon="mic" variant="primary" font-scale="1.5"></b-icon>
@@ -43,8 +49,6 @@
                   placeholder="Type your message"
                   rows="1"
                   max-rows="4"
-
-
               ></b-form-textarea>
             </div>
             <div class="pr-5">
@@ -128,6 +132,7 @@ export default {
     SendMessage(){
       window.axios.post("api/chatting/send/regular/message",{"message": this.message, "rooms_id": this.selectedID}).then(() => {
         this.message = "";
+        this.getUnreadMessages()
       })
     },
     createNewGroup() {
@@ -156,6 +161,24 @@ export default {
         this.searchRoom()
       })
     },
+    updateRoom(id) {
+      if (id == this.selectedID && id == this.room.id) {
+        let test = this.getUnreadMessages()
+        console.log(test)
+        this.room.message = this.room.message.append(test)
+      } else {
+        this.getRooms()
+      }
+    },
+    getUnreadMessages() {
+      window.axios.post("api/chatting/get/rooms/unseen/chats",{"rooms_id": this.selectedID}).then(res => {
+        let arr = res.data.messages;
+        if (arr) {
+         return arr
+        }
+      })
+      return []
+    },
     searchRoom() {
       this.roomsSearched = [];
       for (let i = 0; this.rooms.length > i; i++) {
@@ -170,6 +193,8 @@ export default {
       window.axios.post("api/chatting/get/room", {"id": this.selectedID}).then(res => {
         this.room = res.data.room
       })
+      var container = this.$el.querySelector("#container");
+      container.scrollTop = container.scrollHeight;
     },
     makeToast(text, variant) {
       this.$bvToast.toast(text, {
@@ -201,11 +226,12 @@ export default {
        console.log("Successfully connected to the echo websocket server...")
      }
 
+     let vue = this
      this.connection.onmessage = function (evt) {
        let messages = evt.data;
-       console.log(messages)
+       messages = messages.split(" ")
+       vue.updateRoom(messages[1])
      };
-
    },
 }
 </script>

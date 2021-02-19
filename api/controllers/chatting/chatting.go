@@ -129,6 +129,7 @@ func SaveMessageRegular(context *gin.Context) {
 		newView := chatting.MessageViews{
 			UserID: iter.UserID,
 			MessageID: message.ID,
+			RoomsID: message.RoomsID,
 		}
 		chatting.SaveView(newView)
 	}
@@ -149,7 +150,7 @@ func GetUnViewed(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
 		return
 	}
-	if message.RoomsID != 0 {
+	if message.RoomsID == 0 {
 		context.JSON(422, gin.H{"error": "Fields were not filled"})
 		return
 	}
