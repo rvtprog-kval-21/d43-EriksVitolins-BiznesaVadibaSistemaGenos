@@ -19,6 +19,8 @@ Vue.use(VueQuillEditor /* { default global options } */);
 // import the styles
 import "vue-good-table/dist/vue-good-table.css";
 
+import VueChatScroll from 'vue-chat-scroll'
+Vue.use(VueChatScroll)
 Vue.use(VueGoodTablePlugin);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);

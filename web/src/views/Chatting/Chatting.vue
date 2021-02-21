@@ -32,13 +32,16 @@
           </div>
         </div>
         <div class="chat-field">
-          <div class="chat flex-column">
+          <ul v-chat-scroll="{always: true, smooth: true, scrollonremoved:true, smoothonremoved: false}" class="chat flex-column">
             <template v-for="(iter,index) in this.room.messages">
-              <div :key="index" class="mb-3">
-                <p>{{iter.message}}</p>
-              </div>
+              <li :key="index" class="mb-3">
+                <p></p>
+                <div :class="{ 'personal' : currentUser.id == iter.user_id}">
+                  <div>{{iter.message}}</div>
+                </div>
+              </li>
             </template>
-          </div>
+          </ul>
           <div class="bottom">
             <div class="pl-5">
               <b-icon class="mr-2 hover" icon="mic" variant="primary" font-scale="1.5"></b-icon>
@@ -164,26 +167,28 @@ export default {
     updateRoom(id) {
       if (id == this.selectedID && id == this.room.id) {
         let test = this.getUnreadMessages()
-        console.log(test)
         this.room.message = this.room.message.append(test)
       } else {
         this.getRooms()
       }
     },
-    getUnreadMessages() {
-      window.axios.post("api/chatting/get/rooms/unseen/chats",{"rooms_id": this.selectedID}).then(res => {
+    async getUnreadMessages() {
+      await window.axios.post("api/chatting/get/rooms/unseen/chats",{"rooms_id": this.selectedID}).then(res => {
         let arr = res.data.messages;
         if (arr) {
-         return arr
+          this.room.messages = this.room.messages.concat(arr)
+        } else {
+          return []
         }
+      }).catch(() => {
+        return []
       })
-      return []
+
     },
     searchRoom() {
       this.roomsSearched = [];
       for (let i = 0; this.rooms.length > i; i++) {
         if (this.searchTerm === ""|| this.rooms[i].name.includes(this.searchTerm)) {
-          console.log(this.roomsSearched)
           this.roomsSearched.push(this.rooms[i])
         }
       }
@@ -193,8 +198,6 @@ export default {
       window.axios.post("api/chatting/get/room", {"id": this.selectedID}).then(res => {
         this.room = res.data.room
       })
-      var container = this.$el.querySelector("#container");
-      container.scrollTop = container.scrollHeight;
     },
     makeToast(text, variant) {
       this.$bvToast.toast(text, {
@@ -287,6 +290,17 @@ export default {
       flex-direction: column;
       .chat{
         overflow: auto;
+        list-style-type:none;
+        li{
+          width: 100%;
+        }
+        .personal{
+          width: 50%;
+          margin-left: 50%;
+          display: flex;
+          justify-content: flex-end;
+        }
+
       }
       .bottom{
         height: 100px;

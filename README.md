@@ -107,6 +107,8 @@ Projektā tiek izmantots:
     
     [stackoverflow](https://stackoverflow.com/questions/49414697/how-to-change-vue-js-data-value-when-screen-size-changes) - mainīt mainīgo vuejs ,kad mainās ekrāna izmērs  
   
+    [NPM](https://www.npmjs.com/package/vue-chat-scroll) - kā izmantot libary
+
     [youtube](https://www.youtube.com/watch?v=C1r85Q3BFqQ&list=PLJpBh2VJhy5wPhAmjDB42pkHUnqolqxxq&index=5 ) - vuejs spa autorazācija ar tokens
       
     [Stackoverflow](https://stackoverflow.com/questions/1643320/get-month-name-from-date/18648314#18648314) - datumu formatēšana
