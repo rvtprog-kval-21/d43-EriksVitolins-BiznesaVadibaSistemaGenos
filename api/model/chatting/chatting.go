@@ -9,7 +9,6 @@ import (
 type Rooms struct {
 	ID              int                `gorm:"primaryKey;not null" json:"id"`
 	About           string             `json:"about"`
-	RoomID          int                `json:"room_id" gorm:"index;not null"`
 	Name            string             `json:"name"`
 	Avatar          string             `json:"avatar"`
 	Participants    []RoomParticipants `json:"participants"`
@@ -82,7 +81,7 @@ func GetRooms(id interface{}) []Rooms {
 func GetRoom(id interface{}, idRoom int) Rooms {
 	var rooms Rooms
 	subquey := database.DBConn.Select("rooms_id").Where("user_id = ?", id).Where("rooms_id = ?", idRoom).Table("room_participants")
-	database.DBConn.Preload("Participants.User").Preload("Messages").Where("id in (?)", subquey).Where("is_deleted = ?", 0).Find(&rooms)
+	database.DBConn.Preload("Participants.User").Preload("Messages.User").Where("id in (?)", subquey).Where("is_deleted = ?", 0).Find(&rooms)
 	return rooms
 }
 
@@ -97,10 +96,34 @@ func SaveMessage(obj RoomMessages) (RoomMessages, []RoomParticipants) {
 func GetUnViewedMessages(userID int, roomID int) []RoomMessages {
 	var arr []RoomMessages
 	subquey := database.DBConn.Select("message_id").Where("user_id = ?", userID).Where("rooms_id = ?", roomID).Where("seen = ?", 0).Table("message_views")
-	database.DBConn.Where("id in (?)", subquey).Find(&arr)
+	database.DBConn.Preload("User").Where("id in (?)", subquey).Find(&arr)
 	return arr
 }
 
 func UpdateViews(userID int, ids []int) {
 	database.DBConn.Model(&MessageViews{}).Where("user_id = ?", userID).Where("message_id IN (?)", ids).Update("seen", 1)
+}
+
+func GetMember(roomID int, userID interface{}) RoomParticipants{
+	var usr RoomParticipants
+	database.DBConn.Where("rooms_id = ?", roomID).Where("user_id = ?", userID).Find(&usr)
+	return usr
+}
+
+func UpdateName(rooms Rooms) {
+	database.DBConn.Model(&Rooms{}).Where("id = ?", rooms.ID).Update("name", rooms.Name)
+}
+
+func UpdateAbout(rooms Rooms) {
+	database.DBConn.Model(&Rooms{}).Where("id = ?", rooms.ID).Update("about", rooms.About)
+}
+
+func UpdateAvatar(rooms Rooms) {
+	database.DBConn.Model(&Rooms{}).Where("id = ?", rooms.ID).Update("avatar", rooms.Avatar)
+}
+
+func GetNonMembers(roomId int) []user.User{
+	var users []user.User
+	database.DBConn.Raw("SELECT DISTINCT users.email, users.id FROM `users` left join room_participants on room_participants.user_id = users.id WHERE users.id NOT IN (SELECT room_participants.user_id FROM room_participants WHERE room_participants.rooms_id = ?)", roomId).Scan(&users)
+	return users
 }

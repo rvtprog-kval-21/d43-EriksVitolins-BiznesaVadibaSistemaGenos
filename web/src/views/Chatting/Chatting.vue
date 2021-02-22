@@ -21,23 +21,35 @@
       </div>
       <div class="right" v-if="selectedID !==0 && room">
         <div class="header d-flex justify-content-between">
-          <div class="d-flex">
+          <b-button variant="white" class="d-flex align-items-center" @click="[profileOpened = !profileOpened, settingsOpened = false]">
             <b-avatar v-if="room.avatar !== ''" :src="getImgUrl(room.avatar)"></b-avatar>
-           <h5>{{room.name}}</h5>
+            <h5 class="hove-text">{{room.name}}</h5>
+          </b-button>
+          <div class="d-flex">
           </div>
           <div>
-            <b-button variant="white">
+            <b-button v-if="!settingsOpened && !profileOpened" @click="settingsOpened = true" variant="white">
               <b-icon icon="gear" ></b-icon>
+            </b-button>
+            <b-button v-if="settingsOpened && !profileOpened" @click="settingsOpened = false" variant="white">
+              <b-icon icon="arrow-left" ></b-icon>
+            </b-button>
+            <b-button v-if="profileOpened && !settingsOpened" @click="profileOpened = false" variant="white">
+              <b-icon icon="arrow-left" ></b-icon>
             </b-button>
           </div>
         </div>
-        <div class="chat-field">
+        <div v-if="!settingsOpened && !profileOpened" class="chat-field">
           <ul v-chat-scroll="{always: true, smooth: true, scrollonremoved:true, smoothonremoved: false}" class="chat flex-column">
             <template v-for="(iter,index) in this.room.messages">
               <li :key="index" class="mb-3">
                 <p></p>
-                <div :class="{ 'personal' : currentUser.id == iter.user_id}">
-                  <div>{{iter.message}}</div>
+                <div :class="[(currentUser.id == iter.user_id) ? 'personal' : null, (currentUser.id != iter.user_id) ? 'other' : null]">
+                  <div class="message-field">
+                    <div class="message-author">{{iter.user.name + " " + iter.user.last_name}}</div>
+                    <div class="message-content">{{iter.message}}</div>
+                    <div class="message-date">{{ new Date(iter.sent).getHours() + ":"+ new Date(iter.sent).getUTCMinutes() + " " + new Date(iter.sent).toDateString()}}</div>
+                  </div>
                 </div>
               </li>
             </template>
@@ -60,6 +72,79 @@
               <b-icon class="hover" v-else @click="SendMessage()" icon="forward" variant="primary" font-scale="1.5"></b-icon>
             </div>
           </div>
+        </div>
+        <div v-if="settingsOpened" class="settings p-4">
+          <div
+              class="borders mt-5"
+          >
+            <h4>Group name:</h4>
+            <b-form-input
+                class="w-75"
+                v-model="room.name"
+                placeholder="Enter project name"
+            ></b-form-input>
+            <b-button @click="saveName()" variant="success" class="mt-2" v-if="room.name != ''"
+            >Save</b-button
+            >
+          </div>
+          <div class="borders mt-5">
+            <div class=" editor">
+              <h5>Project About:</h5>
+              <b-form-textarea
+                  id="textarea"
+                  v-model="room.about"
+                  placeholder="Enter something..."
+                  rows="3"
+                  max-rows="6"
+              ></b-form-textarea>
+              <b-button variant="success" class="mt-2" @click="saveAbout()" v-if="room.about != ''"
+              >Save</b-button
+              >
+            </div>
+          </div>
+          <div class="borders mt-5">
+            <h4>Group avatar:</h4>
+            <b-form-file
+                v-model="avatar"
+                :state="Boolean(avatar)"
+                placeholder="Choose a photo or drop it here..."
+                drop-placeholder="Drop photo here..."
+                accept="image/*"
+            ></b-form-file>
+            <b-button variant="success" class="mt-2" @click="saveAvatar()" v-if="avatar != null"
+            >Save</b-button
+            >
+          </div>
+          <div class="borders mt-5">
+            <h5>Invite to Group:</h5>
+            <vSelect
+                class="w-75"
+                multiple
+                v-model="invitees"
+                label="email"
+                :options="options"
+            />
+            <b-button
+                class="mt-2"
+                variant="success"
+                @click="inviteUsers()"
+                v-if="invitees.length > 0"
+            >Add</b-button
+            >
+          </div>
+        </div>
+        <div class="profile p-4" v-if="profileOpened">
+          <div class="d-flex">
+            <b-avatar v-if="room.avatar !== ''" :src="getImgUrl(room.avatar)"></b-avatar>
+            <h3 class="hove-text">{{room.name}}</h3>
+          </div>
+          <div class="about">
+            <p>{{room.about}}</p>
+          </div>
+          <div class="members">
+
+          </div>
+          <b-button class="w-100" variant="danger">Leave</b-button>
         </div>
       </div>
     </div>
@@ -101,6 +186,9 @@ export default {
   },
   data() {
     return {
+      avatar: null,
+      profileOpened:false,
+      settingsOpened: false,
       selectedID: 0,
       CreatingNewGroup: false,
       connection: null,
@@ -111,6 +199,8 @@ export default {
       },
       rooms: [],
       roomsSearched: [],
+      invitees: [],
+      options: [],
       searchTerm: "",
       message: "",
       room: {},
@@ -132,10 +222,53 @@ export default {
         this.users = res.data.users;
       });
     },
+    saveName(){
+      window.axios.post("api/chatting/settings/add/name",this.room).then(() => {
+        this.makeToast("name update successfully", "success")
+        this.getRooms()
+      })
+          .catch(() => {
+            this.makeToast("There was a problem", "danger")
+          });
+    },
+    saveAbout(){
+      window.axios.post("api/chatting/settings/add/about",this.room).then(() => {
+        this.makeToast("about update successfully", "success")
+        this.getRooms()
+      })
+          .catch(() => {
+            this.makeToast("There was a problem", "danger")
+          });
+    },
+    saveAvatar() {
+      let formData = new FormData();
+      formData.append("avatar", this.avatar);
+      formData.append("id", this.selectedID)
+      window.axios
+          .post(
+              `api/chatting/settings/add/avatar`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data"
+                }
+              }
+          )
+          .then(() => {
+            this.makeToast("Group avatar changed successfully", "success");
+            this.getRooms()
+          })
+          .catch(rej => {
+            this.makeToast(rej.response.data.error, "danger");
+          });
+    },
+    inviteUsers() {
+
+    },
     SendMessage(){
       window.axios.post("api/chatting/send/regular/message",{"message": this.message, "rooms_id": this.selectedID}).then(() => {
         this.message = "";
-        this.getUnreadMessages()
+        this.connection.send("room " + this.selectedID)
       })
     },
     createNewGroup() {
@@ -166,8 +299,7 @@ export default {
     },
     updateRoom(id) {
       if (id == this.selectedID && id == this.room.id) {
-        let test = this.getUnreadMessages()
-        this.room.message = this.room.message.append(test)
+       this.getUnreadMessages()
       } else {
         this.getRooms()
       }
@@ -299,6 +431,31 @@ export default {
           margin-left: 50%;
           display: flex;
           justify-content: flex-end;
+          .message-field{
+            background: #c8e6c9;
+          }
+        }
+        .other{
+          width: 50%;
+          margin-right: 50%;
+          display: flex;
+          .message-field{
+            background: white;
+          }
+        }
+
+        .message-field{
+          border-radius: 12px;
+          padding: 10px;
+          .message-date{
+            font-size: 12px;
+            color: #9e9e9e;
+          }
+          .message-author{
+            color: orange;
+            font-size: 13px;
+            padding-bottom: 5px;
+          }
         }
 
       }
@@ -308,6 +465,11 @@ export default {
         justify-content: space-between;
         align-items: center;
       }
+    }
+    .hove-text{
+     &:hover{
+       color: red;
+     }
     }
   }
   .header{

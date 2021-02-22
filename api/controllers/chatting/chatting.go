@@ -4,8 +4,11 @@ import (
 	"api/model/chatting"
 	"api/model/user"
 	"api/utlis/jwtParser"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -173,4 +176,144 @@ func findIfDuplicate(id int,arr []int ) bool{
 		}
 	}
 	return false
+}
+
+func ChangeName(context *gin.Context) {
+	var request chatting.Rooms
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	user := chatting.GetMember(request.ID, claims["id"])
+	if !(user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+	if request.Name == "" {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Field is empty"})
+		return
+	}
+
+	chatting.UpdateName(request)
+
+	context.JSON(200, gin.H{"message": "Name was changed successfully"})
+}
+
+func ChangeAbout(context *gin.Context) {
+	var request chatting.Rooms
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	user := chatting.GetMember(request.ID, claims["id"])
+	if !(user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+	if request.About == "" {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Field is empty"})
+		return
+	}
+
+	chatting.UpdateAbout(request)
+
+	context.JSON(200, gin.H{"message": "Name was changed successfully"})
+}
+
+func ChangeAvatar(context *gin.Context) {
+	var rooms int
+	rooms, _ = strconv.Atoi(context.PostForm("id"))
+
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	user := chatting.GetMember(rooms, claims["id"])
+	if !(user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+	file, _ := context.FormFile("avatar")
+	if file != nil {
+		path := "/chatting/%s/"
+		path = fmt.Sprintf(path, fmt.Sprint(rooms))
+		if _, err := os.Stat("storage" + path); os.IsNotExist(err) {
+			os.MkdirAll("storage"+path, os.ModeDir)
+		}
+		path = path + file.Filename
+		err := context.SaveUploadedFile(file, "storage"+path)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error saving the avatar"})
+			return
+		}
+		var request chatting.Rooms
+		request.ID = rooms
+		request.Avatar = path
+		chatting.UpdateAvatar(request)
+		context.JSON(200, gin.H{"message": "Avatar was changed successfully"})
+	}
+	context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error getting the Avatar"})
+	return
+}
+
+func GetNonMembers(context *gin.Context) {
+	var request chatting.Rooms
+	err := context.ShouldBindJSON(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	user := chatting.GetNonMembers(request.ID)
+	context.JSON(200,gin.H{"users": user})
+}
+
+type RequestInvitees struct {
+	Users []user.User `json:"users"`
+	RoomID int `json:"room_id"`
+}
+
+func AddUsers(context *gin.Context) {
+	var users RequestInvitees
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	err := context.ShouldBindJSON(&users)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	user := chatting.GetMember(users.RoomID, claims["id"])
+	if !(user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+
+	var members []chatting.RoomParticipants
+
+	for _, iter := range users.Users {
+		var newMember chatting.RoomParticipants
+		newMember.UserID = iter.ID
+		newMember.IsAdmin = false
+		newMember.RoomsID = users.RoomID
+		members = append(members, newMember)
+	}
+
+	chatting.SaveParticipants(members)
+
+	context.JSON(200, gin.H{"message": "Members Added"})
 }
