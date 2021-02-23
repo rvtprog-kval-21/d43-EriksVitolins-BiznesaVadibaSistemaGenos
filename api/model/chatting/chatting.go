@@ -74,7 +74,7 @@ func DeleteRoom(obj Rooms) {
 func GetRooms(id interface{}) []Rooms {
 	var rooms []Rooms
 	subquey := database.DBConn.Select("rooms_id").Where("user_id = ?", id).Table("room_participants")
-	database.DBConn.Preload("NotSeenMessages", "seen = ? ", 0).Preload("Participants.User").Preload("Messages").Where("id in (?)", subquey).Where("is_deleted = ?", 0).Find(&rooms)
+	database.DBConn.Preload("NotSeenMessages", "seen = 0 AND user_id = ?", id).Preload("Participants.User").Preload("Messages").Where("id in (?)", subquey).Where("is_deleted = ?", 0).Find(&rooms)
 	return rooms
 }
 

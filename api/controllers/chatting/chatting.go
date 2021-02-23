@@ -13,6 +13,7 @@ import (
 )
 
 type Rooms struct {
+	ID int `json:"id"`
 	About string `json:"about"`
 	Name string `json:"name"`
 	Participants []user.User `json:"participants"`
@@ -102,6 +103,13 @@ func GetGroup(context *gin.Context) {
 		return
 	}
 	rooms := chatting.GetRoom(claims["id"], room.ID)
+	arr:= chatting.GetUnViewedMessages(int(claims["id"].(float64)),rooms.ID)
+	var idArr []int
+
+	for _, iter := range arr {
+		idArr = append(idArr, iter.ID)
+	}
+	chatting.UpdateViews(int(claims["id"].(float64)), idArr)
 
 	context.JSON(200, gin.H{"room": rooms})
 	return
@@ -316,4 +324,46 @@ func AddUsers(context *gin.Context) {
 	chatting.SaveParticipants(members)
 
 	context.JSON(200, gin.H{"message": "Members Added"})
+}
+
+func AddParticipants(context *gin.Context) {
+	var roomRequest Rooms
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	err := context.ShouldBindJSON(&roomRequest)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+	
+	user := chatting.GetMember(roomRequest.ID, claims["id"])
+	if !(user.IsAdmin) {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+		return
+	}
+
+	userCount := len(roomRequest.Participants)
+
+	if userCount == 0 {
+		context.JSON(422, gin.H{"error": "No users were provided"})
+		return
+	}
+	var participantArr []chatting.RoomParticipants
+
+	for _, iter := range roomRequest.Participants {
+		participantArr = append(participantArr, chatting.RoomParticipants{
+			IsAdmin: false,
+			UserID: iter.ID,
+			RoomsID: roomRequest.ID,
+			IsDeleted: false,
+		})
+	}
+
+	chatting.SaveParticipants(participantArr)
+
+	context.JSON(200, gin.H{"message": "Member added"})
+	return
 }

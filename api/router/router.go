@@ -197,5 +197,5 @@ func ChattingRoutes(api *gin.RouterGroup) {
 	chat.POST("settings/add/avatar", chatting.ChangeAvatar)
 	chat.POST("settings/add/about", chatting.ChangeAbout)
 	chat.POST("settings/get/non/members", chatting.GetNonMembers)
-
+	chat.POST("settings/add/members", chatting.AddParticipants)
 }

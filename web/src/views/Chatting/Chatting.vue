@@ -13,8 +13,22 @@
         </div>
         <div class="groups">
          <template v-for="(iter,index) in roomsSearched">
-           <div class="group-row"  :class="{ 'opened' : selectedID == iter.id}" @click="getRoom(iter.id)" :key="index">
-             <p>{{iter.name}}</p>
+           <div class="group-row d-flex align-items-center justify-content-between"  :class="{ 'opened' : selectedID == iter.id}" @click="getRoom(iter.id)" :key="index">
+              <div class="d-flex align-items-center">
+                <div class="mr-3">
+                  <b-avatar :src="getImgUrl(iter.avatar)"></b-avatar>
+                </div>
+                <div >
+                  <h5 class="mb-0">{{iter.name}}</h5>
+                  <p v-if="iter.not_seen_messages.length > 0" class="mb-0 red">{{iter.not_seen_messages.length}} New messages</p>
+                  <p v-else class="grey mb-0">{{iter.messages[iter.messages.length - 1].message}}</p>
+                </div>
+              </div>
+             <div>
+               <div>
+                 <p class="grey mb-0">{{ new Date(iter.messages[iter.messages.length - 1].sent).getHours() + ":"+ new Date(iter.messages[iter.messages.length - 1].sent).getUTCMinutes() + " " + new Date(iter.messages[iter.messages.length - 1].sent).toDateString()}}</p>
+               </div>
+             </div>
            </div>
          </template>
         </div>
@@ -122,7 +136,7 @@
                 multiple
                 v-model="invitees"
                 label="email"
-                :options="options"
+                :options="nonMembers"
             />
             <b-button
                 class="mt-2"
@@ -134,12 +148,12 @@
           </div>
         </div>
         <div class="profile p-4" v-if="profileOpened">
-          <div class="d-flex">
+          <div class="d-flex mb-3">
             <b-avatar v-if="room.avatar !== ''" :src="getImgUrl(room.avatar)"></b-avatar>
-            <h3 class="hove-text">{{room.name}}</h3>
+            <h3 class="ml-3">{{room.name}}</h3>
           </div>
           <div class="about">
-            <p>{{room.about}}</p>
+            <p class="p-3">{{room.about}}</p>
           </div>
           <div class="members">
 
@@ -192,6 +206,7 @@ export default {
       selectedID: 0,
       CreatingNewGroup: false,
       connection: null,
+      nonMembers: [],
       newGroup: {
         name: "",
         about: "",
@@ -226,6 +241,7 @@ export default {
       window.axios.post("api/chatting/settings/add/name",this.room).then(() => {
         this.makeToast("name update successfully", "success")
         this.getRooms()
+        this.getRoom(this.selectedID)
       })
           .catch(() => {
             this.makeToast("There was a problem", "danger")
@@ -234,7 +250,7 @@ export default {
     saveAbout(){
       window.axios.post("api/chatting/settings/add/about",this.room).then(() => {
         this.makeToast("about update successfully", "success")
-        this.getRooms()
+        this.getRoom(this.selectedID)
       })
           .catch(() => {
             this.makeToast("There was a problem", "danger")
@@ -257,13 +273,32 @@ export default {
           .then(() => {
             this.makeToast("Group avatar changed successfully", "success");
             this.getRooms()
+            this.getRoom(this.selectedID)
           })
           .catch(rej => {
             this.makeToast(rej.response.data.error, "danger");
           });
     },
+    getNonMembers() {
+      window.axios.post("api/chatting/settings/get/non/members",{"id": this.selectedID}).then(res => {
+        let members =  res.data.users
+        if (members && members.length > 0) {
+          this.nonMembers = res.data.users;
+        } else {
+          this.nonMembers = []
+        }
+      })
+    },
     inviteUsers() {
-
+      window.axios.post("api/chatting/settings/add/members", {"id": this.selectedID, "participants": this.invitees}).then(() => {
+        this.makeToast("members added successfully", "success")
+        this.getRooms()
+        this.getRoom(this.selectedID)
+        this.invitees = []
+      })
+          .catch(() => {
+            this.makeToast("There was a problem", "danger")
+          });
     },
     SendMessage(){
       window.axios.post("api/chatting/send/regular/message",{"message": this.message, "rooms_id": this.selectedID}).then(() => {
@@ -276,7 +311,6 @@ export default {
         this.makeToast("Name needs to be filled", "danger")
         return
       }
-
       window.axios.post("api/chatting/new/group",this.newGroup).then(() => {
         this.makeToast("group made successfully", "success")
         this.CreatingNewGroup = false;
@@ -329,6 +363,8 @@ export default {
       this.selectedID = id
       window.axios.post("api/chatting/get/room", {"id": this.selectedID}).then(res => {
         this.room = res.data.room
+        this.getNonMembers()
+        this.room.newMessage = false
       })
     },
     makeToast(text, variant) {
@@ -399,6 +435,9 @@ export default {
       }
       .opened{
         background: #e1f5fe;
+      }
+      .red{
+        color: red;
       }
     }
   }
@@ -472,6 +511,10 @@ export default {
      }
     }
   }
+  .grey{
+    color: #9e9e9e;
+    font-size: 12px;
+  }
   .header{
     height: 60px;
     width: 100%;
@@ -479,5 +522,9 @@ export default {
     align-items: center;
   }
   .w-60{}
+  .about{
+    border: 1px #9e9e9e solid;
+    margin-bottom: 20px;
+  }
 }
 </style>
