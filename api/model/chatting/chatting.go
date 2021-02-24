@@ -93,6 +93,10 @@ func SaveMessage(obj RoomMessages) (RoomMessages, []RoomParticipants) {
 	return obj, arr
 }
 
+func UpdateAt(roomId int)  {
+	database.DBConn.Model(&Rooms{}).Where("id = ?", roomId).Update("updated_at", time.Now())
+}
+
 func GetUnViewedMessages(userID int, roomID int) []RoomMessages {
 	var arr []RoomMessages
 	subquey := database.DBConn.Select("message_id").Where("user_id = ?", userID).Where("rooms_id = ?", roomID).Where("seen = ?", 0).Table("message_views")

@@ -135,7 +135,7 @@ func SaveMessageRegular(context *gin.Context) {
 	message.UserID = int(claims["id"].(float64))
 	message.Sent = time.Now()
 	message, arr:= chatting.SaveMessage(message)
-
+	chatting.UpdateAt(message.RoomsID)
 	for _, iter := range arr {
 		newView := chatting.MessageViews{
 			UserID: iter.UserID,
@@ -322,7 +322,7 @@ func AddUsers(context *gin.Context) {
 	}
 
 	chatting.SaveParticipants(members)
-
+	chatting.UpdateAt( users.RoomID)
 	context.JSON(200, gin.H{"message": "Members Added"})
 }
 
@@ -363,6 +363,7 @@ func AddParticipants(context *gin.Context) {
 	}
 
 	chatting.SaveParticipants(participantArr)
+	chatting.UpdateAt( roomRequest.ID)
 
 	context.JSON(200, gin.H{"message": "Member added"})
 	return

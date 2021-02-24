@@ -21,12 +21,14 @@
                 <div >
                   <h5 class="mb-0">{{iter.name}}</h5>
                   <p v-if="iter.not_seen_messages.length > 0" class="mb-0 red">{{iter.not_seen_messages.length}} New messages</p>
-                  <p v-else class="grey mb-0">{{iter.messages[iter.messages.length - 1].message}}</p>
+                  <div v-else>
+                    <p class="grey mb-0" v-if="iter.messages.length > 0 && iter.messages[iter.messages.length - 1]">{{iter.messages[iter.messages.length - 1].message}}</p>
+                  </div>
                 </div>
               </div>
              <div>
                <div>
-                 <p class="grey mb-0">{{ new Date(iter.messages[iter.messages.length - 1].sent).getHours() + ":"+ new Date(iter.messages[iter.messages.length - 1].sent).getUTCMinutes() + " " + new Date(iter.messages[iter.messages.length - 1].sent).toDateString()}}</p>
+                 <p class="grey mb-0" v-if="iter.messages.length > 0 && iter.messages[iter.messages.length - 1]">{{ new Date(iter.messages[iter.messages.length - 1].sent).getHours() + ":"+ new Date(iter.messages[iter.messages.length - 1].sent).getUTCMinutes() + " " + new Date(iter.messages[iter.messages.length - 1].sent).toDateString()}}</p>
                </div>
              </div>
            </div>
@@ -334,9 +336,26 @@ export default {
     updateRoom(id) {
       if (id == this.selectedID && id == this.room.id) {
        this.getUnreadMessages()
+        this.getRooms()
       } else {
         this.getRooms()
       }
+    },
+    bubble(arr) {
+      let len = this.roomsSearched.length;
+      console.log(len)
+      for (let i = 0; i < len ; i++) {
+        for(let j = 0 ; j < len - i - 1; j++){
+          let a = new Date(this.roomsSearched[j].updated_at)
+          let b = new Date(this.roomsSearched[j + 1].updated_at)
+          if (a.getTime() < b.getTime()) {
+            let temp = this.roomsSearched[j];
+            this.roomsSearched[j] = this.roomsSearched[j+1];
+            this.roomsSearched[j + 1] = temp;
+          }
+        }
+      }
+      return arr;
     },
     async getUnreadMessages() {
       await window.axios.post("api/chatting/get/rooms/unseen/chats",{"rooms_id": this.selectedID}).then(res => {
@@ -358,12 +377,14 @@ export default {
           this.roomsSearched.push(this.rooms[i])
         }
       }
+      this.bubble()
     },
     getRoom(id) {
       this.selectedID = id
       window.axios.post("api/chatting/get/room", {"id": this.selectedID}).then(res => {
         this.room = res.data.room
         this.getNonMembers()
+        this.getRooms()
         this.room.newMessage = false
       })
     },

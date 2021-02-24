@@ -103,6 +103,10 @@ Projektā tiek izmantots:
 
     [BootstrapVue](https://bootstrap-vue.org/) - izmantots exmaple kods 
 
+    [Bubble Sort](https://stackabuse.com/merge-sort-in-javascript/) - kā izmantot bubble sort
+
+    [Stackoverflow](https://stackoverflow.com/questions/492994/compare-two-dates-with-javascript) - kā salīdzināt laiku
+
     [SomeTutorial](https://tutorialedge.net/javascript/vuejs/vuejs-websocket-tutorial/) - kā izveidot websocket connection
     
     [stackoverflow](https://stackoverflow.com/questions/49414697/how-to-change-vue-js-data-value-when-screen-size-changes) - mainīt mainīgo vuejs ,kad mainās ekrāna izmērs  
