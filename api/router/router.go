@@ -198,4 +198,6 @@ func ChattingRoutes(api *gin.RouterGroup) {
 	chat.POST("settings/add/about", chatting.ChangeAbout)
 	chat.POST("settings/get/non/members", chatting.GetNonMembers)
 	chat.POST("settings/add/members", chatting.AddParticipants)
+	chat.POST("settings/leave/room", chatting.LeaveRoom)
+	chat.POST("message/delete", chatting.DeleteMEssage)
 }

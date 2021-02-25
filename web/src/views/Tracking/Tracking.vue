@@ -1,11 +1,11 @@
 <template>
   <b-container class="mt-3 container">
     <b-button
-        class="mr-3"
-        variant="outline-info"
-        v-if="creatorIsOpended"
-        @click="creatorIsOpended = false"
-    >View submissions</b-button
+      class="mr-3"
+      variant="outline-info"
+      v-if="creatorIsOpended"
+      @click="creatorIsOpended = false"
+      >View submissions</b-button
     >
     <template v-if="currentUser.role === 'admin' || isManager">
       <div class="d-flex justify-content-end">

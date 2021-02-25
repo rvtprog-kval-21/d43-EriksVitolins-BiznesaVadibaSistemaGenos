@@ -48,9 +48,7 @@ func CreateGroup(context *gin.Context) {
 		UserID: int(claims["id"].(float64)),
 		IsAdmin: true,
 		RoomsID: newRoom.ID,
-		IsDeleted: false,
 	})
-	newRoom.IsDeleted = false
 
 	chatting.SaveRoom(&newRoom)
 
@@ -66,7 +64,6 @@ func CreateGroup(context *gin.Context) {
 			IsAdmin: false,
 			UserID: iter.ID,
 			RoomsID: newRoom.ID,
-			IsDeleted: false,
 		})
 	}
 	participantArr[0].RoomsID = newRoom.ID
@@ -198,17 +195,17 @@ func ChangeName(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
 		return
 	}
-	user := chatting.GetMember(request.ID, claims["id"])
-	if !(user.IsAdmin) {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		return
-	}
+
 	if request.Name == "" {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Field is empty"})
 		return
 	}
 
 	chatting.UpdateName(request)
+
+	usre, _ := user.GetUserById(claims["id"])
+	msg := "User " + usre.Name + " " + usre.LastName + " has changed the Avatar"
+	notification(msg, request.ID)
 
 	context.JSON(200, gin.H{"message": "Name was changed successfully"})
 }
@@ -225,17 +222,16 @@ func ChangeAbout(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
 		return
 	}
-	user := chatting.GetMember(request.ID, claims["id"])
-	if !(user.IsAdmin) {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		return
-	}
 	if request.About == "" {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Field is empty"})
 		return
 	}
 
 	chatting.UpdateAbout(request)
+
+	usre, _ := user.GetUserById(claims["id"])
+	msg := "User " + usre.Name + " " + usre.LastName + " has changed the Avatar"
+	notification(msg, request.ID)
 
 	context.JSON(200, gin.H{"message": "Name was changed successfully"})
 }
@@ -249,11 +245,7 @@ func ChangeAvatar(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
 		return
 	}
-	user := chatting.GetMember(rooms, claims["id"])
-	if !(user.IsAdmin) {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
-		return
-	}
+
 	file, _ := context.FormFile("avatar")
 	if file != nil {
 		path := "/chatting/%s/"
@@ -271,8 +263,13 @@ func ChangeAvatar(context *gin.Context) {
 		request.ID = rooms
 		request.Avatar = path
 		chatting.UpdateAvatar(request)
+		usre, _ := user.GetUserById(claims["id"])
+		msg := "User " + usre.Name + " " + usre.LastName + " has changed the Avatar"
+		notification(msg, rooms)
 		context.JSON(200, gin.H{"message": "Avatar was changed successfully"})
+		return
 	}
+
 	context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error getting the Avatar"})
 	return
 }
@@ -305,8 +302,8 @@ func AddUsers(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
 		return
 	}
-	user := chatting.GetMember(users.RoomID, claims["id"])
-	if !(user.IsAdmin) {
+	usr := chatting.GetMember(users.RoomID, claims["id"])
+	if !(usr.IsAdmin) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 		return
 	}
@@ -323,6 +320,13 @@ func AddUsers(context *gin.Context) {
 
 	chatting.SaveParticipants(members)
 	chatting.UpdateAt( users.RoomID)
+
+	for _,iter := range members {
+		usre, _ := user.GetUserById(iter.UserID)
+		msg := "User " + usre.Name + " " + usre.LastName + " has joined the group"
+		notification(msg, iter.RoomsID)
+	}
+
 	context.JSON(200, gin.H{"message": "Members Added"})
 }
 
@@ -339,8 +343,8 @@ func AddParticipants(context *gin.Context) {
 		return
 	}
 	
-	user := chatting.GetMember(roomRequest.ID, claims["id"])
-	if !(user.IsAdmin) {
+	usr := chatting.GetMember(roomRequest.ID, claims["id"])
+	if !(usr.IsAdmin) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 		return
 	}
@@ -358,13 +362,68 @@ func AddParticipants(context *gin.Context) {
 			IsAdmin: false,
 			UserID: iter.ID,
 			RoomsID: roomRequest.ID,
-			IsDeleted: false,
 		})
 	}
 
 	chatting.SaveParticipants(participantArr)
 	chatting.UpdateAt( roomRequest.ID)
 
+	for _,iter := range participantArr {
+		usre, _ := user.GetUserById(iter.UserID)
+		msg := "User " + usre.Name + " " + usre.LastName + " has joined the group"
+		notification(msg, roomRequest.ID)
+	}
 	context.JSON(200, gin.H{"message": "Member added"})
+	return
+}
+
+func LeaveRoom(context *gin.Context) {
+	var roomRequest Rooms
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	err := context.ShouldBindJSON(&roomRequest)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+
+	chatting.LeaveAt( roomRequest.ID, claims["id"])
+	usr, err := user.GetUserById(claims["id"])
+	msg := "User " + usr.Name + " " + usr.LastName + " has left the group"
+	notification(msg, roomRequest.ID)
+
+	context.JSON(200, gin.H{"message": "Member added"})
+	return
+}
+
+func notification(message string, roomID int) {
+	msg := chatting.RoomMessages{
+		RoomsID: roomID,
+		Message: message,
+		IsNotification: true,
+		Sent: time.Now(),
+	}
+	chatting.SaveNotification(msg)
+}
+
+func DeleteMEssage(context *gin.Context) {
+	var roomRequest chatting.RoomMessages
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+	err := context.ShouldBindJSON(&roomRequest)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't unmarshal json"})
+		return
+	}
+
+	chatting.DeleteMessage( roomRequest)
+
+	context.JSON(200, gin.H{"message": "Message deleted"})
 	return
 }

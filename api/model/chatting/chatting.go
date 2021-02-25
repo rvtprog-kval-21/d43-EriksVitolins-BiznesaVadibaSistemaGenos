@@ -12,7 +12,6 @@ type Rooms struct {
 	Name            string             `json:"name"`
 	Avatar          string             `json:"avatar"`
 	Participants    []RoomParticipants `json:"participants"`
-	IsDeleted       bool               `json:"is_deleted" gorm:"index"`
 	UpdatedAt       *time.Time         `json:"updated_at"`
 	Messages        []RoomMessages     `json:"messages"`
 	NotSeenMessages []MessageViews     `json:"not_seen_messages"`
@@ -25,7 +24,6 @@ type RoomParticipants struct {
 	User      user.User `json:"user" gorm:"foreignKey:UserID"`
 	UserID    int       `json:"user_id" gorm:"index"`
 	IsAdmin   bool      `json:"is_admin"`
-	IsDeleted bool      `json:"is_deleted" gorm:"index"`
 }
 
 type RoomMessages struct {
@@ -38,7 +36,6 @@ type RoomMessages struct {
 	Message        string    `json:"message"`
 	IsDeleted      bool      `json:"is_deleted"`
 	IsNotification bool      `json:"is_notification" `
-	IsEdited       bool      `json:"is_edited"`
 	ReferenceID    int       `json:"Reference_id;omitempty" gorm:"index"`
 	Attachment     string    `json:"attachment;omitempty"`
 	Audio          string    `json:"audio;omitempty"`
@@ -130,4 +127,16 @@ func GetNonMembers(roomId int) []user.User{
 	var users []user.User
 	database.DBConn.Raw("SELECT DISTINCT users.email, users.id FROM `users` left join room_participants on room_participants.user_id = users.id WHERE users.id NOT IN (SELECT room_participants.user_id FROM room_participants WHERE room_participants.rooms_id = ?)", roomId).Scan(&users)
 	return users
+}
+
+func LeaveAt(roomId int, id interface{}) {
+	database.DBConn.Where("user_id = ?", id).Where("rooms_id = ?", roomId).Delete(&RoomParticipants{})
+}
+
+func DeleteMessage(obj RoomMessages) {
+	database.DBConn.Model(&obj).Where("id = ?", obj.ID).Update("is_deleted", 1)
+}
+
+func SaveNotification(obj RoomMessages) {
+		database.DBConn.Select("rooms_id", "is_notification", "message", "sent").Create(&obj)
 }

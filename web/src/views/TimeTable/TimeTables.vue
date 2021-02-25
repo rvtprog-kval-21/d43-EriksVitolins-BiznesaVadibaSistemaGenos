@@ -11,10 +11,10 @@
             >Save</b-button
           >
           <b-button
-              @click="updateTimeTable()"
-              v-if="showSave && isSavedResults"
-              variant="outline-success"
-          >Update</b-button
+            @click="updateTimeTable()"
+            v-if="showSave && isSavedResults"
+            variant="outline-success"
+            >Update</b-button
           >
         </div>
         <div class=" d-flex justify-content-center">
@@ -50,31 +50,35 @@
         </template>
       </b-tab>
       <b-tab title="Working Schedule">
-       <div class="d-flex justify-content-between flex-wrap">
-         <div class="row-user" v-for="iter in datesAll" :key="iter.id">
-           <b-card img-alt="Image" img-top>
-             <div
-                 class="d-flex align-items-center"
-             >
-               <b-avatar
-                   class="mr-1"
-                   size="2rem"
-                   :src="getImgUrl(iter.user.avatar)"
-               ></b-avatar>
-               <p class="mb-0 text-muted">
-                 {{ iter.user.name + " " + iter.user.last_name }}
-               </p>
-             </div>
-             <hr />
-             <div class="d-flex" v-for="(liter, index) in options" :key="index">
-               <template v-if="liter.value === iter.status">
-                 <h5>{{liter.text}}</h5>
-                 <h5 v-if="iter.status == 1">: {{iter.start_time}} - {{iter.end_time}}</h5>
-               </template>
-             </div>
-           </b-card>
-         </div>
-       </div>
+        <div class="d-flex justify-content-between flex-wrap">
+          <div class="row-user" v-for="iter in datesAll" :key="iter.id">
+            <b-card img-alt="Image" img-top>
+              <div class="d-flex align-items-center">
+                <b-avatar
+                  class="mr-1"
+                  size="2rem"
+                  :src="getImgUrl(iter.user.avatar)"
+                ></b-avatar>
+                <p class="mb-0 text-muted">
+                  {{ iter.user.name + " " + iter.user.last_name }}
+                </p>
+              </div>
+              <hr />
+              <div
+                class="d-flex"
+                v-for="(liter, index) in options"
+                :key="index"
+              >
+                <template v-if="liter.value === iter.status">
+                  <h5>{{ liter.text }}</h5>
+                  <h5 v-if="iter.status == 1">
+                    : {{ iter.start_time }} - {{ iter.end_time }}
+                  </h5>
+                </template>
+              </div>
+            </b-card>
+          </div>
+        </div>
       </b-tab>
     </b-tabs>
   </div>
@@ -121,19 +125,19 @@ export default {
     },
     statusChanged(index) {
       if (this.dates[index].status !== "1") {
-        return
+        return;
       }
       if (this.dates[index].start_time.HH == "") {
-        this.dates[index].start_time.HH = "09"
+        this.dates[index].start_time.HH = "09";
       }
       if (this.dates[index].start_time.mm == "") {
-        this.dates[index].start_time.mm = "00"
+        this.dates[index].start_time.mm = "00";
       }
       if (this.dates[index].end_time.HH == "") {
-        this.dates[index].end_time.HH = "18"
+        this.dates[index].end_time.HH = "18";
       }
       if (this.dates[index].end_time.mm == "") {
-        this.dates[index].end_time.mm = "00"
+        this.dates[index].end_time.mm = "00";
       }
     },
     showDate(date) {
@@ -166,14 +170,14 @@ export default {
       this.showSave = false;
     },
     getDaysInMonth(month, year) {
-      this.start_date = null
-      this.end_date = null
+      this.start_date = null;
+      this.end_date = null;
       let date = new Date(year, month, 1);
       let days = [];
       while (date.getMonth() === month) {
         if (!this.start_date) {
-          this.start_date = new Date(date)
-          console.log(this.start_date)
+          this.start_date = new Date(date);
+          console.log(this.start_date);
         }
         days.push({
           date: new Date(date),
@@ -181,38 +185,51 @@ export default {
           start_time: { HH: "09", mm: "00" },
           end_time: { HH: "18", mm: "00" }
         });
-        this.end_date = new Date(date)
+        this.end_date = new Date(date);
         date.setDate(date.getDate() + 1);
       }
       this.dates = days;
-      this.getTimetable()
+      this.getTimetable();
     },
     saveTimeTable() {
-      window.axios.post(`/api/timetable/save/schedule`, {"dates":  this.dates}).then(() => {
-        this.makeToast("Table saved", "success");
-        this.getTimetableAll()
-      });
+      window.axios
+        .post(`/api/timetable/save/schedule`, { dates: this.dates })
+        .then(() => {
+          this.makeToast("Table saved", "success");
+          this.getTimetableAll();
+        });
     },
     updateTimeTable() {
-      window.axios.post(`/api/timetable/update/schedule`, {"dates":  this.dates}).then(() => {
-        this.makeToast("Table saved", "success");
-        this.getTimetableAll()
-      });
+      window.axios
+        .post(`/api/timetable/update/schedule`, { dates: this.dates })
+        .then(() => {
+          this.makeToast("Table saved", "success");
+          this.getTimetableAll();
+        });
     },
     getTimetable() {
-      window.axios.post(`/api/timetable/get/personal/schedule`, {"start_date":  this.start_date, "end_date": this.end_date}).then(res => {
-        if(this.dates <= res.data.dates) {
-          this.dates = res.data.dates
-          this.isSavedResults = true
-        } else {
-          this.isSavedResults = false
-        }
-      });
+      window.axios
+        .post(`/api/timetable/get/personal/schedule`, {
+          start_date: this.start_date,
+          end_date: this.end_date
+        })
+        .then(res => {
+          if (this.dates <= res.data.dates) {
+            this.dates = res.data.dates;
+            this.isSavedResults = true;
+          } else {
+            this.isSavedResults = false;
+          }
+        });
     },
     getTimetableAll() {
-      window.axios.post(`/api/timetable/get/everyone/schedule`, {"start_date": new Date(new Date().toDateString())}).then(res => {
-          this.datesAll = res.data.dates
-      });
+      window.axios
+        .post(`/api/timetable/get/everyone/schedule`, {
+          start_date: new Date(new Date().toDateString())
+        })
+        .then(res => {
+          this.datesAll = res.data.dates;
+        });
     },
     makeToast(text, variant) {
       this.$bvToast.toast(text, {
@@ -220,7 +237,7 @@ export default {
         variant: variant,
         title: "Notification"
       });
-    },
+    }
   },
   created() {
     const date = {
@@ -230,12 +247,12 @@ export default {
       year: new Date().getUTCFullYear()
     };
     this.date = date;
-    this.getTimetableAll()
+    this.getTimetableAll();
   }
 };
 </script>
 <style scoped>
-.row-user{
+.row-user {
   width: 49%;
   margin-bottom: 25px;
 }
