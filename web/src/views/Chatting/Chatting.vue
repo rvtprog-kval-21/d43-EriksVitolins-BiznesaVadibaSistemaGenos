@@ -156,12 +156,11 @@
                         }}
                       </div>
                     </div>
-                    <b-dropdown v-if="!iter.is_notification" size="lg" class=" pl-1 pr-0"  variant="link" toggle-class="text-decoration-none" no-caret>
+                    <b-dropdown v-if="!iter.is_notification && iter.user_id === currentUser.id" size="lg" class=" pl-1 pr-0"  variant="link" toggle-class="text-decoration-none" no-caret>
                       <template #button-content>
                        <b-icon size="1rem" variant="dark" icon="arrow-right-short"></b-icon>
                       </template>
-                      <b-dropdown-item >Reply</b-dropdown-item>
-                      <b-dropdown-item v-if="iter.user_id === currentUser.id" @click="deleteMessage(iter.id)">Delete</b-dropdown-item>
+                      <b-dropdown-item  @click="deleteMessage(iter.id)">Delete</b-dropdown-item>
                     </b-dropdown>
                   </div>
                 </div>
