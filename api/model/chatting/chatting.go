@@ -140,3 +140,10 @@ func DeleteMessage(obj RoomMessages) {
 func SaveNotification(obj RoomMessages) {
 		database.DBConn.Select("rooms_id", "is_notification", "message", "sent").Create(&obj)
 }
+
+func GetUnreadCount(id interface{}) int64 {
+	var count int64
+	subquey := database.DBConn.Select("rooms_id").Where("user_id = ?", id).Table("room_participants")
+	database.DBConn.Model(&MessageViews{}).Where("rooms_id in (?)", subquey).Where("user_id = ?", id).Where("seen = ?", 0).Count(&count)
+	return count
+}

@@ -200,4 +200,5 @@ func ChattingRoutes(api *gin.RouterGroup) {
 	chat.POST("settings/add/members", chatting.AddParticipants)
 	chat.POST("settings/leave/room", chatting.LeaveRoom)
 	chat.POST("message/delete", chatting.DeleteMEssage)
+	chat.GET("get/unread/count", chatting.GetUnreadCount)
 }

@@ -56,7 +56,7 @@ const routes = [
     }
   },
   {
-    path: "/chat",
+    path: "/chat/:id",
     component: Chatting,
     meta: {
       requireAdmin: true

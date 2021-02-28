@@ -427,3 +427,15 @@ func DeleteMEssage(context *gin.Context) {
 	context.JSON(200, gin.H{"message": "Message deleted"})
 	return
 }
+
+func GetUnreadCount(context *gin.Context) {
+	claims := jwtParser.GetClaims(context)
+	if claims == nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "There was an error unparsing the token"})
+		return
+	}
+
+	cnt := 	chatting.GetUnreadCount(claims["id"])
+	context.JSON(200, gin.H{"count": cnt})
+	return
+}

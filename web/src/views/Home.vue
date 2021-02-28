@@ -112,8 +112,65 @@
         </div>
       </div>
       <div class="top-row d-flex mt-3">
-        <div class="random mr-0">
-          Test
+        <div class="groups">
+          <h5>Chat:</h5>
+          <hr>
+          <template v-for="(iter, index) in roomsSearched">
+            <div
+                class="group-row d-flex align-items-center justify-content-between"
+                :class="{ opened: selectedID == iter.id }"
+                @click="$router.push('/chat/'+iter.id)"
+                :key="index"
+            >
+              <div class="d-flex align-items-center">
+                <div class="mr-3">
+                  <b-avatar :src="getImgUrl(iter.avatar)"></b-avatar>
+                </div>
+                <div>
+                  <h5 class="mb-0">{{ iter.name }}</h5>
+                  <p v-if="iter.not_seen_messages.length > 0" class="mb-0 red">
+                    {{ iter.not_seen_messages.length }} New messages
+                  </p>
+                  <div v-else>
+                    <p
+                        class="grey mb-0"
+                        v-if="
+                        iter.messages.length > 0 &&
+                          iter.messages[iter.messages.length - 1]
+                      "
+                    >
+                      {{ iter.messages[iter.messages.length - 1].message }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <p
+                      class="grey mb-0"
+                      v-if="
+                      iter.messages.length > 0 &&
+                        iter.messages[iter.messages.length - 1]
+                    "
+                  >
+                    {{
+                      new Date(
+                          iter.messages[iter.messages.length - 1].sent
+                      ).getHours() +
+                      ":" +
+                      new Date(
+                          iter.messages[iter.messages.length - 1].sent
+                      ).getUTCMinutes() +
+                      " " +
+                      new Date(
+                          iter.messages[iter.messages.length - 1].sent
+                      ).toDateString()
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
         <div class="follow-field">
           <h5 class="ml-3 mb-4">Announcements from people You follow:</h5>
@@ -193,7 +250,10 @@ export default {
       events: [],
       isInit: true,
       annc: [],
-      users: []
+      users: [],
+      searchTerm: "",
+      roomsSearched: [],
+      rooms: [],
     };
   },
   methods: {
@@ -217,6 +277,40 @@ export default {
             this.users = res.data.users;
           });
       }
+    },
+    getRooms() {
+      window.axios.get("api/chatting/get/rooms").then(res => {
+        this.rooms = res.data.rooms;
+        this.searchRoom();
+      });
+    },
+    searchRoom() {
+      this.roomsSearched = [];
+      for (let i = 0; this.rooms.length > i; i++) {
+        if (
+            this.searchTerm === "" ||
+            this.rooms[i].name.includes(this.searchTerm)
+        ) {
+          this.roomsSearched.push(this.rooms[i]);
+        }
+      }
+      this.bubble();
+    },
+    bubble(arr) {
+      let len = this.roomsSearched.length;
+      console.log(len);
+      for (let i = 0; i < len; i++) {
+        for (let j = 0; j < len - i - 1; j++) {
+          let a = new Date(this.roomsSearched[j].updated_at);
+          let b = new Date(this.roomsSearched[j + 1].updated_at);
+          if (a.getTime() < b.getTime()) {
+            let temp = this.roomsSearched[j];
+            this.roomsSearched[j] = this.roomsSearched[j + 1];
+            this.roomsSearched[j + 1] = temp;
+          }
+        }
+      }
+      return arr;
     },
     getEvents() {
       window.axios.post("api/calendar/get/home/events/").then(res => {
@@ -271,6 +365,7 @@ export default {
   created() {
     this.getOnlineUsers();
     this.getBlogs();
+    this.getRooms()
     this.getEvents();
     this.getAnnc();
     this.checkInit();
@@ -321,6 +416,26 @@ export default {
     &:hover {
       border: solid 1px cornflowerblue;
     }
+  }
+}
+.groups {
+  padding: 10px;
+  overflow: auto;
+  .group-row {
+    border-radius: 8px;
+    margin-bottom: 5px;
+    padding: 0 15px;
+    min-height: 75px;
+    &:hover {
+      cursor: pointer;
+      background: #fafafa;
+    }
+  }
+  .opened {
+    background: #e1f5fe;
+  }
+  .red {
+    color: red;
   }
 }
 .random {

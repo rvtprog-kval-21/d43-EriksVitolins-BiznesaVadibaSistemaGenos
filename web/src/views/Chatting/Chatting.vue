@@ -188,12 +188,6 @@
           </ul>
           <div class="bottom">
             <div class="pl-5">
-              <b-icon
-                class="mr-2 hover"
-                icon="mic"
-                variant="primary"
-                font-scale="1.5"
-              ></b-icon>
             </div>
             <div class="w-75">
               <b-form-textarea
@@ -204,12 +198,6 @@
               ></b-form-textarea>
             </div>
             <div class="pr-5">
-              <b-icon
-                class="mr-2 hover"
-                icon="paperclip"
-                variant="primary"
-                font-scale="1.5"
-              ></b-icon>
               <b-icon
                 v-if="message === ''"
                 icon="forward"
@@ -377,6 +365,7 @@ export default {
   data() {
     return {
       avatar: null,
+      file1: null,
       currentProfile: {},
       profileOpened: false,
       settingsOpened: false,
@@ -526,15 +515,15 @@ export default {
         });
     },
     SendMessage() {
-      window.axios
-        .post("api/chatting/send/regular/message", {
-          message: this.message,
-          rooms_id: this.selectedID
-        })
-        .then(() => {
-          this.message = "";
-          this.connection.send("room " + this.selectedID);
-        });
+        window.axios
+            .post("api/chatting/send/regular/message", {
+              message: this.message,
+              rooms_id: this.selectedID
+            })
+            .then(() => {
+              this.message = "";
+              this.connection.send("room " + this.selectedID);
+            });
     },
     LeaveRoom() {
       window.axios
@@ -572,10 +561,9 @@ export default {
         this.searchRoom();
       });
     },
-    updateRoom(id) {
+    async updateRoom(id) {
       if (id == this.selectedID && id == this.room.id) {
         this.getUnreadMessages();
-        this.getRooms();
       } else {
         this.getRooms();
       }
@@ -605,6 +593,7 @@ export default {
           let arr = res.data.messages;
           if (arr) {
             this.room.messages = this.room.messages.concat(arr);
+            this.getRooms();
           } else {
             return [];
           }
@@ -652,6 +641,7 @@ export default {
     }
   },
   created() {
+    this.getRoom(parseInt(this.$route.params.id))
     this.getUsers();
     this.getRooms();
 

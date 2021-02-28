@@ -83,7 +83,7 @@
           to="/chat"
           exact
         >
-          <a>Chat</a>
+          <a>Chat <span v-if="counts !== 0">{{counts}}</span></a>
         </router-link>
       </b-col>
     </b-row>
@@ -153,11 +153,13 @@ export default {
   name: "SidebarContent",
   data() {
     return {
-      image: ""
+      image: "",
+      counts: 0
     };
   },
   mounted() {
     this.getImgUrl();
+    this.GetUnreadCount()
   },
   methods: {
     getImgUrl() {
@@ -167,13 +169,20 @@ export default {
     },
     profile() {
       this.$router.push("/user/" + this.currentUser.id + "/profile");
-    }
+    },
+    GetUnreadCount() {
+      window.axios
+          .get("api/chatting/get/unread/count")
+          .then(res => {
+            this.counts = res.data.count
+          });
+    },
   },
   computed: {
     currentUser() {
       return this.$store.getters.currentUser;
     }
-  }
+  },
 };
 </script>
 
@@ -242,6 +251,10 @@ export default {
     a {
       color: #ffc107;
     }
+  }
+  span{
+    background: red;
+    padding: 0px 5px;
   }
 }
 .nav-menu-inside {
