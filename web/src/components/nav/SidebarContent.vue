@@ -80,7 +80,7 @@
           class="nav-row"
           tag="li"
           active-class="active"
-          to="/chat"
+          to="/chat/0"
           exact
         >
           <a>Chat <span v-if="counts !== 0">{{counts}}</span></a>
