@@ -254,7 +254,7 @@ export default {
       this.alerts = [];
       const vue = this;
       window.axios
-        .post("/api/admin/user/" + this.user.ID + "/lock")
+        .post("/api/admin/user/settings/" + this.$route.params.id + "/lock")
         .then(response => {
           this.alerts = { message: response.data.data };
           this.getUser();
@@ -268,7 +268,7 @@ export default {
       this.alerts = [];
       const vue = this;
       window.axios
-        .post("/api/admin/user/" + this.user.ID + "/unlock")
+        .post("/api/admin/user/settings/" + this.$route.params.id+ "/unlock")
         .then(response => {
           this.alerts = { message: response.data.data };
           this.getUser();
