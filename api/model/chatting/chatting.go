@@ -18,12 +18,12 @@ type Rooms struct {
 }
 
 type RoomParticipants struct {
-	ID        int       `gorm:"primaryKey;not null" json:"id"`
-	Rooms     Rooms     `json:"rooms" gorm:"foreignKey:RoomsID"`
-	RoomsID   int       `json:"rooms_id" gorm:"index"`
-	User      user.User `json:"user" gorm:"foreignKey:UserID"`
-	UserID    int       `json:"user_id" gorm:"index"`
-	IsAdmin   bool      `json:"is_admin"`
+	ID      int       `gorm:"primaryKey;not null" json:"id"`
+	Rooms   Rooms     `json:"rooms" gorm:"foreignKey:RoomsID"`
+	RoomsID int       `json:"rooms_id" gorm:"index"`
+	User    user.User `json:"user" gorm:"foreignKey:UserID"`
+	UserID  int       `json:"user_id" gorm:"index"`
+	IsAdmin bool      `json:"is_admin"`
 }
 
 type RoomMessages struct {
@@ -71,14 +71,14 @@ func DeleteRoom(obj Rooms) {
 func GetRooms(id interface{}) []Rooms {
 	var rooms []Rooms
 	subquey := database.DBConn.Select("rooms_id").Where("user_id = ?", id).Table("room_participants")
-	database.DBConn.Preload("NotSeenMessages", "seen = 0 AND user_id = ?", id).Preload("Participants.User").Preload("Messages").Where("id in (?)", subquey).Where("is_deleted = ?", 0).Find(&rooms)
+	database.DBConn.Preload("NotSeenMessages", "seen = 0 AND user_id = ?", id).Preload("Participants.User").Preload("Messages").Where("id in (?)", subquey).Find(&rooms)
 	return rooms
 }
 
 func GetRoom(id interface{}, idRoom int) Rooms {
 	var rooms Rooms
 	subquey := database.DBConn.Select("rooms_id").Where("user_id = ?", id).Where("rooms_id = ?", idRoom).Table("room_participants")
-	database.DBConn.Preload("Participants.User").Preload("Messages.User").Where("id in (?)", subquey).Where("is_deleted = ?", 0).Find(&rooms)
+	database.DBConn.Preload("Participants.User").Preload("Messages.User").Where("id in (?)", subquey).Find(&rooms)
 	return rooms
 }
 
@@ -90,7 +90,7 @@ func SaveMessage(obj RoomMessages) (RoomMessages, []RoomParticipants) {
 	return obj, arr
 }
 
-func UpdateAt(roomId int)  {
+func UpdateAt(roomId int) {
 	database.DBConn.Model(&Rooms{}).Where("id = ?", roomId).Update("updated_at", time.Now())
 }
 
@@ -105,7 +105,7 @@ func UpdateViews(userID int, ids []int) {
 	database.DBConn.Model(&MessageViews{}).Where("user_id = ?", userID).Where("message_id IN (?)", ids).Update("seen", 1)
 }
 
-func GetMember(roomID int, userID interface{}) RoomParticipants{
+func GetMember(roomID int, userID interface{}) RoomParticipants {
 	var usr RoomParticipants
 	database.DBConn.Where("rooms_id = ?", roomID).Where("user_id = ?", userID).Find(&usr)
 	return usr
@@ -123,7 +123,7 @@ func UpdateAvatar(rooms Rooms) {
 	database.DBConn.Model(&Rooms{}).Where("id = ?", rooms.ID).Update("avatar", rooms.Avatar)
 }
 
-func GetNonMembers(roomId int) []user.User{
+func GetNonMembers(roomId int) []user.User {
 	var users []user.User
 	database.DBConn.Raw("SELECT DISTINCT users.email, users.id FROM `users` left join room_participants on room_participants.user_id = users.id WHERE users.id NOT IN (SELECT room_participants.user_id FROM room_participants WHERE room_participants.rooms_id = ?)", roomId).Scan(&users)
 	return users
@@ -138,7 +138,7 @@ func DeleteMessage(obj RoomMessages) {
 }
 
 func SaveNotification(obj RoomMessages) {
-		database.DBConn.Select("rooms_id", "is_notification", "message", "sent").Create(&obj)
+	database.DBConn.Select("rooms_id", "is_notification", "message", "sent").Create(&obj)
 }
 
 func GetUnreadCount(id interface{}) int64 {
