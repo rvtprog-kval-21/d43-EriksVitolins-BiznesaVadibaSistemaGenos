@@ -9,9 +9,6 @@ Admins iedod attiecīgo lomu lietotājiem, kuri pēc tām var izveidot blogus iz
 # Iespéja nodot kvītis, iesniegumus un tam līdzīgas lietas
 Lietotāji var viegli nodot kvītis iesniegumus un citas līdzīgas lietas, šīs lietas var viegli apskatīt cilvēki ar attiecīgo piekļuvi
 
-# Izveidot formas
-Var izveidot formas, kuras var parādīt visiem vai tikai dažiem cilvēkiem
-
 # Minimála projektu vadíba
 Var izveidot projektu, kurā var cilvēkus iedalīt grupās
 
