@@ -177,4 +177,6 @@ Vajadzīgais software: docker-compose, Go, npm
 
 8. cd web
 
-9. npm run serve
+9. npm run install
+
+10. npm run serve
