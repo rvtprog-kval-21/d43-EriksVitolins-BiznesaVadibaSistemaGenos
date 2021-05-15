@@ -153,6 +153,11 @@ Projektā tiek izmantots:
     [Icons](https://tablericons.com/) - svg ikonas
   
 
+## vajadzīgie rīki uz datora
+1.docker un docker-compose
+2.go jeb golang
+3. nodejs un npm 
+
 ## Uzstādīšanas instrukcijas
 Vajadzīgais software: docker-compose, Go, npm 
 
