@@ -1,21 +1,20 @@
 version: '3.2'
-
 services:
-    mysql:
-        image: mysql
-        command: --default-authentication-plugin=mysql_native_password
-        restart: always
-        environment:
-            MYSQL_DATABASE: genos
-            MYSQL_USER: genos
-            MYSQL_PASSWORD: mua3Rgadasdadasdasdasasagas2a41aASeXK8XMUPvMN
-            MYSQL_ROOT_PASSWORD: mua3Rgadasdadasdasdasasagas2a41aASeXK8XMUPvMN
-            Service_Name: mysql
-        ports:
-            - 3306:3306
-        volumes:
-            - ./mysql:/var/lib/mysql
-        networks:
-            - webNet
+  mysql:
+    image: mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: always
+    environment:
+      MYSQL_DATABASE: genos
+      MYSQL_USER: genos
+      MYSQL_PASSWORD: mua3Rgadasdadasdasdasasagas2a41aASeXK8XMUPvMN
+      MYSQL_ROOT_PASSWORD: mua3Rgadasdadasdasdasasagas2a41aASeXK8XMUPvMN
+      Service_Name: mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - './mysql:/var/lib/mysql'
+    networks:
+      - webNet
 networks:
-    webNet:
+  webNet: null

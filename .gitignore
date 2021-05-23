@@ -5,3 +5,5 @@
 /api/storage/
 avatar.jpg
 node_modules
+.vscode/launch.json
+.env
