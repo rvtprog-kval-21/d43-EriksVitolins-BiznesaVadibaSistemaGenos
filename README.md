@@ -180,3 +180,9 @@ Vajadzīgais software: docker-compose, Go, npm
 9. npm run install
 
 10. npm run serve
+
+11. atvērt localhost:8000 un var izmantot šos login datus
+
+test@test.com test
+
+test@test.lv test
